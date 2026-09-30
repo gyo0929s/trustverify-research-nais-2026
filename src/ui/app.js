@@ -172,7 +172,8 @@ const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 대운해 (2024). Exploring AI-Assisted Wr
 
 // UI State
 const state = {
-  ceP0: null, // Claim–Evidence P0: article + committed preset claims from GET /api/claim-evidence/p0 (no results)
+  ceP0: null,
+  ceTraceContext: 'FINANCE_D4', // active trace preset context (see CE_TRACE_CONTEXTS) // Claim–Evidence P0: article + committed preset claims from GET /api/claim-evidence/p0 (no results)
   currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
@@ -243,6 +244,8 @@ const el = {
   btnLoadCeD4Contrast: $('btnLoadCeD4Contrast'),
   btnLoadCeExample: $('btnLoadCeExample'),
   btnLoadCeInsufficient: $('btnLoadCeInsufficient'),
+  btnLoadCeK2: $('btnLoadCeK2'),
+  btnLoadCeK2Control: $('btnLoadCeK2Control'),
   ceSelectedPaperId: $('ceSelectedPaperId'),
   ceSelectedPaperStatus: $('ceSelectedPaperStatus'),
   ceSelectedPaperTitle: $('ceSelectedPaperTitle'),
@@ -1524,6 +1527,39 @@ const FINANCE_D4_BIBLIOGRAPHY_ROWS = [
 ];
 const FINANCE_D4_DRAFT_SENTENCE = 'The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].';
 const FINANCE_D4_CONTRAST_SENTENCE = 'The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [1].';
+// K2 (ESG disclosure) — values copied from artifacts/evaluation/claim-evidence-korean/korean-cases.json (tested to match).
+const KOREAN_K2_REFERENCE = "[1] 이형기 (2024). 금융상품의 지속 가능성 공시기준에 관한 연구. 무역금융보험연구, 25(4), 3-24. https://doi.org/10.22875/jiti.2024.25.4.001";
+const KOREAN_K2_PERTURBATION_SENTENCE = "투자자문사가 투자 프로세스에 포함하는 ESG 요인 정보를 정확하게 공시하지 않거나 ESG 투자방침이나 절차에 미비가 있으면 미국 SEC는 반드시 제재금을 부과한다 [1].";
+const KOREAN_K2_CONTROL_SENTENCE = "투자자문사가 투자 프로세스에 포함하는 ESG 요인 정보를 정확하게 공시하지 않거나 ESG 투자방침이나 절차에 미비가 있는 경우, 미국 SEC가 제재금을 부과한 사례가 있다 [1].";
+
+// Trace contexts: which frozen evidence set and bibliography a preset uses. Results always come from the backend.
+const CE_TRACE_CONTEXTS = {
+  FINANCE_D4: { scenario: 'FINANCE_D4', references: FINANCE_D4_BIBLIOGRAPHY_ROWS },
+  KOREAN_K2: { scenario: 'KOREAN_P0', references: [KOREAN_K2_REFERENCE] },
+};
+
+const CE_TRACE_STATUS = {
+  CONSISTENT_WITH_EVIDENCE: { ko: '공개 근거 범위에서 정합', badge: 'badge-consistent' },
+  POTENTIAL_CLAIM_SHIFT: { ko: '주장 강도 변화 가능성', badge: 'badge-shift' },
+  INSUFFICIENT_EVIDENCE: { ko: '현재 공개 근거만으로 판단 불충분', badge: 'badge-insufficient' },
+};
+const CE_SHIFT_TEXT = '실제 KCI 초록 근거와 비교해 표현 강도 변화가 관측되었습니다.';
+const CE_INSUFFICIENT_TEXT = '현재 확보된 KCI 공개 초록 범위에서 이 문장을 뒷받침하는 충분한 근거를 특정하지 못했습니다.';
+
+// Pre-verification display: shows the cited reference row only, never a record ID or verdict.
+function showPendingReference(draftText) {
+  const context = CE_TRACE_CONTEXTS[state.ceTraceContext] ?? CE_TRACE_CONTEXTS.FINANCE_D4;
+  const marker = String(draftText ?? '').match(/\[\s*(\d{1,3})\s*\]/u);
+  const row = marker ? context.references.find(reference => reference.startsWith(`[${marker[1]}]`)) : null;
+  const parts = row ? row.match(/^\[\d+\]\s*(.+?)\s*\((\d{4})\)\.\s*(.+?)\.\s/u) : null;
+  if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = marker ? `검증 대기 · 인용 [${marker[1]}]` : '검증 대기 · 인용 번호 없음';
+  if (el.ceSelectedPaperStatus) el.ceSelectedPaperStatus.innerHTML = '<span class="source-status roadmap">검증 전</span>';
+  if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = parts ? parts[3] : '';
+  if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = parts
+    ? `${parts[1].split(/,\s*/u).join('·')} (${parts[2]}) · KCI 레코드와 판정은 검증 실행 후 백엔드 결과로 표시됩니다`
+    : 'KCI 레코드와 판정은 검증 실행 후 백엔드 결과로 표시됩니다';
+}
+
 const LINKING_FAILURE_LABELS = {
   MARKER_UNRESOLVED: '인용 번호를 연결할 수 없음',
   MULTIPLE_MARKERS_UNSUPPORTED: '현재 P0에서는 복수 인용번호 검토 필요',
@@ -1536,25 +1572,25 @@ async function loadClaimEvidenceP0() {
     const res = await fetch('/api/claim-evidence/p0');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.ceP0 = await res.json();
-    const { article, abstracts } = state.ceP0;
-    if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${article.record_id}`;
-    if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = article.title;
-    if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `KCI articleDetail 초록 ${abstracts[0]?.sentence_count ?? '-'}개 문장 · Frozen Evaluation Evidence`;
     if (el.ceVerifyInputText && !el.ceVerifyInputText.value.trim()) {
       el.ceVerifyInputText.value = FINANCE_D4_DRAFT_SENTENCE;
     }
+    showPendingReference(el.ceVerifyInputText?.value);
   } catch {
     if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = 'KCI ID: 근거를 불러오지 못했습니다';
   }
 }
 
 function fillCePreset(caseId) {
-  if (caseId === 'D4' && el.ceVerifyInputText) {
-    el.ceVerifyInputText.value = FINANCE_D4_DRAFT_SENTENCE;
-    return;
-  }
-  if (caseId === 'D4-CONTRAST' && el.ceVerifyInputText) {
-    el.ceVerifyInputText.value = FINANCE_D4_CONTRAST_SENTENCE;
+  const traced = {
+    D4: ['FINANCE_D4', FINANCE_D4_DRAFT_SENTENCE],
+    'D4-CONTRAST': ['FINANCE_D4', FINANCE_D4_CONTRAST_SENTENCE],
+    'K2-PERTURBATION': ['KOREAN_K2', KOREAN_K2_PERTURBATION_SENTENCE],
+    'K2-CONTROL': ['KOREAN_K2', KOREAN_K2_CONTROL_SENTENCE],
+  }[caseId];
+  if (traced && el.ceVerifyInputText) {
+    [state.ceTraceContext, el.ceVerifyInputText.value] = traced;
+    showPendingReference(el.ceVerifyInputText.value);
     return;
   }
   const preset = state.ceP0?.presets.find(item => item.case_id === caseId);
@@ -1615,9 +1651,9 @@ async function executeCeTrace(draftText, triggerBtn) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         draft_text: draftText,
-        references: FINANCE_D4_BIBLIOGRAPHY_ROWS,
+        references: (CE_TRACE_CONTEXTS[state.ceTraceContext] ?? CE_TRACE_CONTEXTS.FINANCE_D4).references,
         evidence_mode: 'FROZEN_EVIDENCE',
-        scenario: 'FINANCE_D4',
+        scenario: (CE_TRACE_CONTEXTS[state.ceTraceContext] ?? CE_TRACE_CONTEXTS.FINANCE_D4).scenario,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -1677,24 +1713,50 @@ function renderCeTraceResult(data) {
     return;
   }
 
+  // 1b. Claim–Evidence not run: no coherent KCI record (or no frozen evidence). No claim status exists to show.
+  if (!data.claim_evidence || data.claim_evidence.state !== 'RUN') {
+    const ci = data.citation_integrity || {};
+    const ciLabel = ci.status || ci.system_state || ci.state || '-';
+    if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = ci.article_id ? `KCI ID: ${ci.article_id}` : 'KCI ID: (확정되지 않음)';
+    if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = ci.article_title || '';
+    if (el.ceSelectedPaperStatus) el.ceSelectedPaperStatus.innerHTML = `<span class="source-status roadmap">Citation Integrity: ${escapeHtml(ciLabel)}</span>`;
+    el.ceVerifyResultBody.innerHTML = `
+      <div class="ce-linking-failure-card">
+        <div class="linking-fail-head">
+          <span class="linking-fail-tag">CLAIM_EVIDENCE_NOT_RUN</span>
+          <span class="linking-fail-title">Citation Integrity: ${escapeHtml(ciLabel)}</span>
+        </div>
+        <p class="linking-fail-msg">하나의 KCI 레코드가 확정되지 않아 Claim–Evidence 대조를 실행하지 않았습니다.</p>
+        <p class="ce-caution-note">※ 인용 문장에 대한 판정이 아닙니다.</p>
+      </div>`;
+    return;
+  }
+
   // 2. Linking Resolved: Update Reference Context Header directly from endpoint response
   if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${escapeHtml(data.citation_integrity.article_id)}`;
   if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = data.citation_integrity.article_title || '';
+  if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `인용 ${data.linking.marker} → 참고문헌 #${data.linking.row_index} · 백엔드 검증 결과 (${data.evidence_mode})`;
   if (el.ceSelectedPaperStatus) {
     el.ceSelectedPaperStatus.innerHTML = `
-      <span class="ce-badge-integrity-verified" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;font-weight:800;color:var(--verified);background:var(--verified-soft);border:1px solid var(--verified-border);padding:2px 8px;border-radius:4px;">
-        ✓ Citation Integrity: ${escapeHtml(data.citation_integrity.status)} (${escapeHtml(data.citation_integrity.rule_id || 'REF-META-001')})
+      <span class="${data.citation_integrity.status === 'VERIFIED' ? 'ce-badge-integrity-verified' : 'source-status roadmap'}" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;font-weight:800;${data.citation_integrity.status === 'VERIFIED' ? 'color:var(--verified);background:var(--verified-soft);border:1px solid var(--verified-border);' : ''}padding:2px 8px;border-radius:4px;">
+        ${data.citation_integrity.status === 'VERIFIED' ? '✓ ' : ''}Citation Integrity: ${escapeHtml(data.citation_integrity.status)} (${escapeHtml(data.citation_integrity.rule_id || '-')})
       </span>`;
   }
 
   // 3. Render 3-Area Main View
   const ce = data.claim_evidence;
   const isInsufficient = ce.status === 'INSUFFICIENT_EVIDENCE';
-  const ceStatusKo = isInsufficient ? '현재 공개 근거만으로 판단 불충분' : '공개 근거 범위에서 정합';
-  const ceBadgeClass = isInsufficient ? 'badge-insufficient' : 'badge-consistent';
+  const isShift = ce.status === 'POTENTIAL_CLAIM_SHIFT';
+  const ceStatusView = CE_TRACE_STATUS[ce.status] ?? { ko: ce.status, badge: 'badge-insufficient' };
+  const ceStatusKo = ceStatusView.ko;
+  const ceBadgeClass = ceStatusView.badge;
   const ceExplanationKo = isInsufficient
-    ? (ce.boundary_note || '현재 확보된 KCI 공개 초록에서는 이 인용 문장을 뒷받침하는 구체적 근거를 확인하지 못했습니다.')
-    : (ce.why || '특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다.');
+    ? CE_INSUFFICIENT_TEXT
+    : isShift
+      ? `${CE_SHIFT_TEXT} (${(ce.signal ? [ce.signal] : []).join(', ')})`
+      : (ce.why || '특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다.');
+  const ciIsVerified = data.citation_integrity.status === 'VERIFIED';
+  const isFinanceContrast = data.scenario === 'FINANCE_D4';
 
   let evidenceSpanHtml = '';
   if (ce.evidence_span) {
@@ -1717,8 +1779,8 @@ function renderCeTraceResult(data) {
       <div class="ce-q-item">
         <span class="ce-q-label">질문 1. 실제 논문인가?</span>
         <span class="ce-q-answer">
-          <strong class="status-badge-inline verified">${escapeHtml(data.citation_integrity.status)}</strong>
-          <span style="font-family:var(--mono);font-size:12px;color:var(--text-3);">(${escapeHtml(data.citation_integrity.rule_id || 'REF-META-001')})</span>
+          <strong class="status-badge-inline ${ciIsVerified ? 'verified' : ''}">${escapeHtml(data.citation_integrity.status)}</strong>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--text-3);">(${escapeHtml(data.citation_integrity.rule_id || '-')})</span>
         </span>
       </div>
       <div class="ce-q-divider">➔</div>
@@ -1761,7 +1823,7 @@ function renderCeTraceResult(data) {
               ${escapeHtml(data.citation_integrity.article_title || '')}
             </strong>
             <div style="margin-top:4px;display:flex;align-items:center;gap:8px;">
-              <span class="source-status qualified" style="font-size:11px;">Citation: ${escapeHtml(data.citation_integrity.status)}</span>
+              <span class="source-status ${ciIsVerified ? 'qualified' : 'roadmap'}" style="font-size:11px;">Citation: ${escapeHtml(data.citation_integrity.status)}</span>
               <span style="font-family:var(--mono);font-size:11px;color:var(--text-3);">${escapeHtml(data.citation_integrity.article_id)}</span>
             </div>
           </div>
@@ -1780,8 +1842,9 @@ function renderCeTraceResult(data) {
           </div>
           <div class="ce-result-status-row">
             <span class="ce-status-badge ${ceBadgeClass}">${escapeHtml(ce.status)}</span>
-            ${ce.human_review_required ? '<span class="ce-action-badge">사람 검토 필요</span>' : '<span class="ce-action-badge verified">자동 검증 완료</span>'}
+            ${ce.human_review_required ? '<span class="ce-action-badge">사람 검토 필요</span>' : '<span class="ce-action-badge verified">공개 근거 범위 내 표현 보존</span>'}
           </div>
+          ${isShift && ce.signal ? `<div class="ce-signals-list" style="margin-top:6px;"><span class="ce-signal-badge">${escapeHtml(ce.signal)}</span></div>` : ''}
           <div class="ce-why-box" style="margin-top:8px;">
             <p style="margin:0;font-size:13px;line-height:1.5;">${escapeHtml(ceExplanationKo)}</p>
           </div>
@@ -1789,8 +1852,8 @@ function renderCeTraceResult(data) {
       </div>
     </div>
 
-    <!-- Contrast Action & Side-by-Side Comparison -->
-    <div class="ce-contrast-action-box">
+    <!-- Contrast Action & Side-by-Side Comparison (finance D4 scenario only) -->
+    <div class="ce-contrast-action-box" ${isFinanceContrast ? '' : 'hidden'}>
       <div class="ce-contrast-head">
         <span class="contrast-icon">⚖️</span>
         <strong>대조 시연: 같은 문장 · 올바른 근거 논문으로 비교</strong>
@@ -1868,6 +1931,7 @@ function renderCeTraceResult(data) {
   // Bind inline contrast buttons
   const btnContrastInline = document.getElementById('btnTraceContrastInline');
   btnContrastInline?.addEventListener('click', () => {
+    state.ceTraceContext = 'FINANCE_D4';
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_CONTRAST_SENTENCE;
     if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.add('is-active');
     if (el.btnLoadCeD4) el.btnLoadCeD4.classList.remove('is-active');
@@ -1875,6 +1939,7 @@ function renderCeTraceResult(data) {
   });
   const btnD4Inline = document.getElementById('btnTraceD4Inline');
   btnD4Inline?.addEventListener('click', () => {
+    state.ceTraceContext = 'FINANCE_D4';
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_DRAFT_SENTENCE;
     if (el.btnLoadCeD4) el.btnLoadCeD4.classList.add('is-active');
     if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.remove('is-active');
@@ -2058,6 +2123,20 @@ function init() {
     el.btnLoadCeD4Contrast?.classList.remove('is-active');
     fillCePreset('I1');
   });
+  const setPresetActive = active => [el.btnLoadCeD4, el.btnLoadCeD4Contrast, el.btnLoadCeK2, el.btnLoadCeK2Control]
+    .forEach(button => button?.classList.toggle('is-active', button === active));
+  el.btnLoadCeK2?.addEventListener('click', async () => {
+    setPresetActive(el.btnLoadCeK2);
+    fillCePreset('K2-PERTURBATION');
+    await executeCeTrace(KOREAN_K2_PERTURBATION_SENTENCE, el.btnLoadCeK2);
+  });
+  el.btnLoadCeK2Control?.addEventListener('click', async () => {
+    setPresetActive(el.btnLoadCeK2Control);
+    fillCePreset('K2-CONTROL');
+    await executeCeTrace(KOREAN_K2_CONTROL_SENTENCE, el.btnLoadCeK2Control);
+  });
+  // Editing the sentence invalidates any previous result display for the reference card.
+  el.ceVerifyInputText?.addEventListener('input', () => showPendingReference(el.ceVerifyInputText.value));
   el.btnExecuteCeVerify?.addEventListener('click', () => executeCeVerify(el.btnExecuteCeVerify));
   loadClaimEvidenceP0();
 

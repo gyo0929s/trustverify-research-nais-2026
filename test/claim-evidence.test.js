@@ -238,7 +238,12 @@ test('Finance D4 preset interaction regression: btnLoadCeD4 and btnLoadCeD4Contr
   // 3. executeCeTrace calls POST /api/claim-evidence/trace with scenario: 'FINANCE_D4' and evidence_mode: 'FROZEN_EVIDENCE'
   const fnCeTrace = app.slice(app.indexOf('function executeCeTrace('), app.indexOf('\n}\n', app.indexOf('function executeCeTrace(')));
   assert.ok(fnCeTrace.includes("fetch('/api/claim-evidence/trace'"));
-  assert.ok(fnCeTrace.includes("scenario: 'FINANCE_D4'"));
+  // The scenario comes from the active preset context; the D4 presets select the FINANCE_D4 context.
+  assert.ok(fnCeTrace.includes('CE_TRACE_CONTEXTS[state.ceTraceContext]'));
+  assert.ok(app.includes("FINANCE_D4: { scenario: 'FINANCE_D4', references: FINANCE_D4_BIBLIOGRAPHY_ROWS }"));
+  assert.ok(app.includes("D4: ['FINANCE_D4', FINANCE_D4_DRAFT_SENTENCE]"));
+  assert.ok(app.includes("'D4-CONTRAST': ['FINANCE_D4', FINANCE_D4_CONTRAST_SENTENCE]"));
+  assert.ok(app.includes("ceTraceContext: 'FINANCE_D4'"), 'finance D4 is the default context');
   assert.ok(fnCeTrace.includes("evidence_mode: 'FROZEN_EVIDENCE'"));
   assert.ok(fnCeTrace.includes("'검증 중...'"));
   assert.ok(fnCeTrace.includes('검증 요청 실패 — 연구 판정이 아닙니다.'));
