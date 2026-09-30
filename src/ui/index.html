@@ -54,7 +54,23 @@
       </button>
     </nav>
 
-    <!-- MODULE 3 & 4 PLACEHOLDER TOP NAVIGATION -->
+    <!-- MODULE 3 TOP NAVIGATION: ACADEMIC EXPRESSION & AGENT VISION (PILOT) -->
+    <nav class="topnav topnav-academic-ref" id="topnavAcademicRef" aria-label="학술 표현 참조 내비게이션" hidden>
+      <button class="topnav-tab is-active" id="navTabArReference" type="button" data-ar-view="reference">
+        <span class="tab-icon">📝</span>
+        <span>표현 참조</span>
+      </button>
+      <button class="topnav-tab" id="navTabArHandoff" type="button" data-ar-view="handoff">
+        <span class="tab-icon">🔗</span>
+        <span>검증 결과 활용</span>
+      </button>
+      <button class="topnav-tab" id="navTabArVision" type="button" data-ar-view="vision">
+        <span class="tab-icon">🧭</span>
+        <span>방법 · 비전</span>
+      </button>
+    </nav>
+
+    <!-- MODULE 2 PLACEHOLDER TOP NAVIGATION (TRANSLATION FIDELITY) -->
     <nav class="topnav topnav-expansion-placeholder" id="topnavExpansion" aria-label="확장 연구 모듈 내비게이션" hidden>
       <span class="topnav-module-pill" id="topnavModuleName">확장 모듈</span>
     </nav>
@@ -122,7 +138,7 @@
               <span class="rail-item-icon">◇</span>
               <span class="rail-item-title">학술 표현 참조</span>
             </div>
-            <div class="rail-item-sub">분야별 표현 분포</div>
+            <div class="rail-item-sub">분야별 표현 · 생성 보조</div>
             <div class="rail-item-meta">
               <span class="rail-badge badge-pilot">PILOT</span>
               <span class="rail-active-pill" id="railActiveTagAr" hidden>ACTIVE</span>
@@ -2027,129 +2043,475 @@ In this study, a significant relationship between X and Y was observed in 42.8% 
       <!-- ============================== END WORKSPACE 2 ============================== -->
 
       <!-- =========================================================================
-           WORKSPACE 3: ACADEMIC REFERENCE CONTEXT (PILOT MODULE)
+           WORKSPACE 3: ACADEMIC EXPRESSION & AGENT VISION (PILOT MODULE)
            ========================================================================= -->
       <div class="workspace-module" id="workspaceAcademicRef" hidden>
-        <section class="ext-workspace-hero">
-          <div class="ext-hero-top">
-            <span class="rail-badge badge-pilot">PILOT · 개발 중</span>
-            <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAr" type="button">
-              ← 인용 무결성 검증으로 돌아가기
-            </button>
-          </div>
-          <h1 class="ext-hero-title">학술 표현 참조</h1>
-          <p class="ext-hero-sub">Academic-language Reference Context</p>
-          <p class="ext-hero-desc">
-            "대상 영문 표현을 실제 분야 논문의 참조 분포와 비교합니다."
-          </p>
-        </section>
 
-        <!-- Prominent Disclaimer -->
-        <div class="ext-disclaimer-banner">
-          <div class="ext-disclaimer-icon">⚖️</div>
-          <div class="ext-disclaimer-body">
-            <strong>정답 판정이 아닌 참조 분포 비교 (Corpus Reference Observation)</strong>
-            <p>
-              학술 표현 참조는 문법적 정오나 품질 합격/불합격을 단정하는 검증기가 아닙니다.
-              실제 출판된 동료 평가(Peer-reviewed) 분야별 논문 코퍼스의 어휘·문장 구조 분포와 대상 영문 표현의 거리를 관측하여 연구자에게 참고 지표를 제공합니다.
+        <!-- =========================================================================
+             TAB 1: 표현 참조 (ACADEMIC EXPRESSION REFERENCE)
+             ========================================================================= -->
+        <div class="ar-view-panel" id="arViewReference">
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-pilot">PILOT</span>
+                <span class="ce-tag-pill" style="background:#f1f5f9;color:#64748b;border-color:#cbd5e1;">DATA NOT CONNECTED</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAr" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">학술 표현 참조</h1>
+            <p class="ext-hero-sub">Academic-language Reference Context · Pilot Workspace</p>
+            <p class="ext-hero-desc">
+              "내 연구 문장이 실제 분야 논문의 표현 관행과 어떻게 다른지 참고합니다."
+            </p>
+          </section>
+
+          <!-- Disclaimer / Grounding Boundary -->
+          <div class="ext-disclaimer-banner">
+            <div class="ext-disclaimer-icon">⚖️</div>
+            <div class="ext-disclaimer-body">
+              <strong>정답 판정이 아닌 참조 관측 (Reference Observation Only)</strong>
+              <p>
+                학술 표현 참조는 문법적 정오나 품질 합격/불합격을 단정하는 검증기가 아닙니다.
+                실제 출판된 분야별 논문의 표현 관행과 대상 영문 문장의 표현 특성을 관측하여 연구자에게 참고 지표를 제공하기 위한 연구 영역입니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- Input Card: Sentence and Domain -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">INPUT</span>
+                <h3 class="batch-title">연구 문장 및 분야 선택</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;">PILOT · REFERENCE CORPUS QUALIFICATION PENDING</span>
+            </div>
+
+            <div class="ce-verify-field-group" style="margin-bottom:18px;">
+              <label class="ce-field-label" for="arInputSentence">분석할 영문 학술 문장</label>
+              <textarea class="ce-verify-textarea" id="arInputSentence" rows="3" placeholder="분석할 영문 학술 문장을 입력하세요. (예: The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].)" spellcheck="false"></textarea>
+            </div>
+
+            <div class="ce-verify-field-group">
+              <label class="ce-field-label">연구 분야 (Domain Context)</label>
+              <div class="ar-domain-selector">
+                <button type="button" class="ar-domain-pill is-active" data-domain="finance">
+                  <span>Finance / Accounting</span>
+                  <span class="ar-domain-tag">Pilot Context</span>
+                </button>
+                <button type="button" class="ar-domain-pill" data-domain="cs">
+                  <span>Computer Science</span>
+                </button>
+                <button type="button" class="ar-domain-pill" data-domain="biomed">
+                  <span>Biomedical</span>
+                </button>
+                <button type="button" class="ar-domain-pill" data-domain="other">
+                  <span>Other</span>
+                </button>
+              </div>
+              <div class="ar-domain-notice">
+                ℹ️ <strong>Finance / Accounting Pilot:</strong> Reference corpus qualification pending · DATA NOT CONNECTED (실제 검증 데이터 연결 전까지 임의 수치를 제시하지 않습니다)
+              </div>
+            </div>
+
+            <div class="ce-verify-actions" style="margin-top:16px;">
+              <button class="btn btn-secondary btn-lg" type="button" disabled style="opacity:0.6;cursor:not-allowed;">
+                <span class="btn-icon">🔍</span> 표현 관측 (Reference corpus 연결 예정)
+              </button>
+            </div>
+          </div>
+
+          <!-- Observation Slots: 4 Core Dimensions -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">OBSERVATIONS</span>
+                <h3 class="batch-title">참조 관측 영역 (Reference Observation Dimensions)</h3>
+              </div>
+              <span class="batch-helper-text">코퍼스 연결 시 관측될 4대 학술 표현 차원</span>
+            </div>
+
+            <div class="ext-observation-grid">
+              <div class="ext-obs-card">
+                <div class="ext-obs-head">
+                  <span class="ext-obs-badge">HEDGING</span>
+                  <span class="ext-obs-title">Hedging · 신중한 표현</span>
+                </div>
+                <p class="ext-obs-desc">연구 한계 인정 및 신중한 결론 유보 표현의 빈도와 패턴 관측 예정</p>
+                <div class="ar-slot-status">
+                  <span class="ar-not-connected-badge">DATA NOT CONNECTED</span>
+                  <span class="ar-slot-hint">Reference corpus 연결 예정</span>
+                </div>
+              </div>
+
+              <div class="ext-obs-card">
+                <div class="ext-obs-head">
+                  <span class="ext-obs-badge">CAUSAL</span>
+                  <span class="ext-obs-title">Causal Language · 인과 표현</span>
+                </div>
+                <p class="ext-obs-desc">인과 관계를 주장하는 서술의 강도 및 조건부 전제 표기 패턴 관측 예정</p>
+                <div class="ar-slot-status">
+                  <span class="ar-not-connected-badge">DATA NOT CONNECTED</span>
+                  <span class="ar-slot-hint">Reference corpus 연결 예정</span>
+                </div>
+              </div>
+
+              <div class="ext-obs-card">
+                <div class="ext-obs-head">
+                  <span class="ext-obs-badge">CITATION</span>
+                  <span class="ext-obs-title">Citation Proximity · 인용 근접도</span>
+                </div>
+                <p class="ext-obs-desc">문장 내 인용 표기 배치 위치 및 문맥적 결합 강도 관측 예정</p>
+                <div class="ar-slot-status">
+                  <span class="ar-not-connected-badge">DATA NOT CONNECTED</span>
+                  <span class="ar-slot-hint">Reference corpus 연결 예정</span>
+                </div>
+              </div>
+
+              <div class="ext-obs-card">
+                <div class="ext-obs-head">
+                  <span class="ext-obs-badge">ASSERTION</span>
+                  <span class="ext-obs-title">Assertion Strength · 주장 강도</span>
+                </div>
+                <p class="ext-obs-desc">예외 없는 절대적 단정 표현의 상대적 희소성 관측 예정</p>
+                <div class="ar-slot-status">
+                  <span class="ar-not-connected-badge">DATA NOT CONNECTED</span>
+                  <span class="ar-slot-hint">Reference corpus 연결 예정</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ext-footer-note" style="margin-top:16px;">
+              <span>💡 <strong>설계 원칙:</strong> 본 모듈은 점수나 합격/불합격을 산출하지 않으며, 공인된 코퍼스 적격성 심사가 완료된 후에만 실제 통계 분포가 연결됩니다.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 2: 검증 결과 활용 (EVIDENCE CONTRACT -> PROMPT COMPILER)
+             ========================================================================= -->
+        <div class="ar-view-panel" id="arViewHandoff" hidden>
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-expansion">EVIDENCE HANDOFF</span>
+                <span class="ce-tag-pill" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;">DESIGN PREVIEW</span>
+                <span class="ce-tag-pill" style="background:#f1f5f9;color:#475569;border-color:#cbd5e1;">NO SOLAR LIVE</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromArHandoff" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">검증 결과 활용</h1>
+            <p class="ext-hero-sub">Evidence Contract → Grounded Prompt Handoff</p>
+            <p class="ext-hero-desc">
+              "TrustVerify 검증 결과를 다른 생성형 AI가 근거를 유지하도록 사용할 수 있는 형태로 전달합니다."
+            </p>
+          </section>
+
+          <!-- Critical Agent Framing Banner -->
+          <div class="ar-agent-framing-banner">
+            <div class="ar-framing-icon">🛡️</div>
+            <div class="ar-framing-content">
+              <strong>TrustVerify 에이전트 설계 원칙</strong>
+              <p>
+                "TrustVerify의 에이전트 역할은 판정을 생성하는 것이 아니라 근거를 찾고, 연결하고, 검증 단계를 오케스트레이션하는 것입니다."
+              </p>
+              <div class="ar-framing-highlight">
+                Canonical verdict는 결정론 규칙이 담당합니다. 외부 생성 모델은 검증 결과를 준수하는 보조 도구일 뿐, 판정을 변경하거나 대체할 수 없습니다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Flow Diagram -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">WORKFLOW</span>
+                <h3 class="batch-title">검증 결과 연계 워크플로우</h3>
+              </div>
+              <span class="batch-helper-text">결정론적 검증 결과가 생성 보조로 전달되는 파이프라인</span>
+            </div>
+
+            <div class="ar-handoff-flow-steps">
+              <div class="ar-flow-node">
+                <span class="ar-node-badge">STEP 1</span>
+                <strong>TrustVerify Finding</strong>
+                <span class="ar-node-sub">결정론적 판정 완료</span>
+              </div>
+              <div class="ar-flow-arr">↓</div>
+              <div class="ar-flow-node">
+                <span class="ar-node-badge">STEP 2</span>
+                <strong>Evidence Contract</strong>
+                <span class="ar-node-sub">정형화된 근거 계약</span>
+              </div>
+              <div class="ar-flow-arr">↓</div>
+              <div class="ar-flow-node">
+                <span class="ar-node-badge">STEP 3</span>
+                <strong>Grounded Prompt</strong>
+                <span class="ar-node-sub">근거 보존 프롬프트</span>
+              </div>
+              <div class="ar-flow-arr">↓</div>
+              <div class="ar-flow-node future-node">
+                <span class="ar-node-badge future-tag">FUTURE</span>
+                <strong>External AI / Solar</strong>
+                <span class="ar-node-sub">근거 범위 내 수정 제안</span>
+              </div>
+              <div class="ar-flow-arr">↓</div>
+              <div class="ar-flow-node">
+                <span class="ar-node-badge human-tag">FINAL</span>
+                <strong>Human Review</strong>
+                <span class="ar-node-sub">연구자 최종 판단</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evidence Contract Input Slot (Empty Shell) -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">CONTRACT</span>
+                <h3 class="batch-title">Evidence Contract 슬롯</h3>
+              </div>
+              <button class="btn btn-secondary btn-sm" type="button" disabled style="opacity:0.6;cursor:not-allowed;" title="현재 검증 세션 연결 준비 중">
+                📋 최근 검증 결과 불러오기
+              </button>
+            </div>
+
+            <div class="ar-contract-grid">
+              <div class="ar-contract-field">
+                <span class="ar-contract-key">검증 상태 (Verification Status)</span>
+                <div class="ar-contract-val empty-state">검증 결과가 아직 연결되지 않았습니다.</div>
+              </div>
+              <div class="ar-contract-field">
+                <span class="ar-contract-key">근거 논문 (Grounded Paper)</span>
+                <div class="ar-contract-val empty-state">—</div>
+              </div>
+              <div class="ar-contract-field full-width">
+                <span class="ar-contract-key">Evidence Span (근거 문장)</span>
+                <div class="ar-contract-val empty-state">—</div>
+              </div>
+              <div class="ar-contract-field full-width">
+                <span class="ar-contract-key">Observed Difference (관측된 차이)</span>
+                <div class="ar-contract-val empty-state">—</div>
+              </div>
+              <div class="ar-contract-field">
+                <span class="ar-contract-key">Rule (적용 규칙)</span>
+                <div class="ar-contract-val empty-state">—</div>
+              </div>
+              <div class="ar-contract-field">
+                <span class="ar-contract-key">Human Review Requirement (사람 검토 요구)</span>
+                <div class="ar-contract-val empty-state">—</div>
+              </div>
+            </div>
+            <p class="ce-caution-note" style="margin-top:12px;">
+              ※ 실제 검증이 완료된 Finding만 본 Contract로 정형화되며, 검증 결과 없는 임의 생성 데이터는 투입되지 않습니다.
             </p>
           </div>
-        </div>
 
-        <!-- Pilot Corpus Profile -->
-        <div class="batch-card">
-          <div class="batch-card-header">
-            <div class="batch-title-wrap">
-              <span class="batch-step-pill">REFERENCE CORPUS</span>
-              <h3 class="batch-title">Finance-20 Pilot Reference Profile</h3>
-            </div>
-            <span class="batch-helper-text">재무·회계 실증 연구 논문 20편 기반 파일럿 참조 기준</span>
-          </div>
-
-          <div class="ext-pilot-summary">
-            <div class="ext-pilot-metric">
-              <span class="ep-num">20</span>
-              <span class="ep-lbl">실증 연구 표본 논문</span>
-            </div>
-            <div class="ext-pilot-metric">
-              <span class="ep-num">1,840</span>
-              <span class="ep-lbl">참조 문장 단위</span>
-            </div>
-            <div class="ext-pilot-metric">
-              <span class="ep-num">Finance & Accounting</span>
-              <span class="ep-lbl">특화 연구 도메인</span>
-            </div>
-            <div class="ext-pilot-metric">
-              <span class="ep-num">Distributional</span>
-              <span class="ep-lbl">비교 방식 (규범적 판정 배제)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Observation Examples -->
-        <div class="batch-card">
-          <div class="batch-card-header">
-            <div class="batch-title-wrap">
-              <span class="batch-step-pill">OBSERVATIONS</span>
-              <h3 class="batch-title">분야별 학술 표현 관측 차원 (Observation Dimensions)</h3>
-            </div>
-            <span class="batch-helper-text">해당 분야 정규 논문 집합에서 추출된 표현 패턴 예시</span>
-          </div>
-
-          <div class="ext-observation-grid">
-            <div class="ext-obs-card">
-              <div class="ext-obs-head">
-                <span class="ext-obs-badge">HEDGING</span>
-                <span class="ext-obs-title">신중한 어조 (Hedging)</span>
+          <!-- Prompt Compiler Preview (Template Shell) -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">PROMPT</span>
+                <h3 class="batch-title">근거 보존 프롬프트 (Prompt Compiler Preview)</h3>
               </div>
-              <p class="ext-obs-desc">연구 한계 인정 및 신중한 결론 유보 표현의 빈도와 패턴</p>
-              <div class="ext-obs-example">
-                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
-                <code>"The results suggest that...", "may indicate a modest correlation", "consistent with prior evidence"</code>
+              <div class="batch-badges">
+                <span class="rail-badge badge-expansion">DESIGN PREVIEW</span>
+                <span class="ce-tag-pill" style="background:#f1f5f9;color:#64748b;border-color:#cbd5e1;">NO SOLAR LIVE</span>
               </div>
             </div>
 
-            <div class="ext-obs-card">
-              <div class="ext-obs-head">
-                <span class="ext-obs-badge">CAUSAL</span>
-                <span class="ext-obs-title">인과 언어 (Causal language)</span>
-              </div>
-              <p class="ext-obs-desc">인과 관계를 주장하는 서술의 강도 및 조건부 전제 표기 빈도</p>
-              <div class="ext-obs-example">
-                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
-                <code>"leads to under specific boundary conditions", "is associated with increased risk"</code>
-              </div>
+            <div class="ar-prompt-explanation">
+              <p>
+                "검증 결과와 근거 span을 다른 생성형 AI에 전달할 때, 검증된 사실과 불확실성 경계를 유지하도록 하는 프롬프트 구조입니다."
+              </p>
             </div>
 
-            <div class="ext-obs-card">
-              <div class="ext-obs-head">
-                <span class="ext-obs-badge">CITATION</span>
-                <span class="ext-obs-title">인용 근접도 (Citation proximity)</span>
+            <div class="ar-prompt-template-shell">
+              <div class="ar-template-head">
+                <span class="ar-template-tag">PROMPT TEMPLATE STRUCTURE</span>
+                <span class="ar-template-sub">Empty Template Shell (비실행 설계안)</span>
               </div>
-              <p class="ext-obs-desc">문장 내 인용 표기의 배치 위치와 문맥적 결합 강도</p>
-              <div class="ext-obs-example">
-                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
-                <code>"(e.g., Kim et al., 2023)", "Following the methodology of Park (2022)..."</code>
-              </div>
+              <pre class="ar-template-code"><code>### 1. SOURCE RECORD
+- Target Article ID: [KCI Official Record ID]
+- Publication Title: [Canonical Paper Title]
+- Citation Integrity: VERIFIED (REF-META-001)
+
+### 2. VERIFIED EVIDENCE
+- Grounded Evidence Span: "[Canonical Abstract Sentence Text]"
+- Grounding Boundary Hash: [Evidence Hash SHA-256]
+
+### 3. CURRENT FINDING
+- Citing Draft Statement: "[User's Draft Sentence]"
+- Claim-Evidence Status: [CONSISTENT_WITH_EVIDENCE | INSUFFICIENT_EVIDENCE | POTENTIAL_CLAIM_SHIFT]
+- Observed Signal: [None / Shift Dimension]
+
+### 4. DO NOT CHANGE (CONSTRAINTS)
+- DO NOT alter the core claim direction of the verified evidence span.
+- DO NOT strengthen certainty (e.g., maintain 'suggest' instead of 'prove').
+- DO NOT remove or remap the verified citation marker.
+
+### 5. REVIEW REQUIRED
+- Uncertainty Flags: [Boundary Notes / Ambiguity Conditions]
+- Human Verification Requirement: [Mandatory for Unresolved Gaps]
+
+### 6. TASK FOR GENERATION MODEL
+- Propose a revised academic sentence that remains strictly faithful to the verified evidence above.
+- If evidence is insufficient, preserve cautious framing and explicit limitations.</code></pre>
             </div>
 
-            <div class="ext-obs-card">
-              <div class="ext-obs-head">
-                <span class="ext-obs-badge">ASSERTION</span>
-                <span class="ext-obs-title">단정적 주장 (Strong assertion)</span>
-              </div>
-              <p class="ext-obs-desc">예외 없는 절대적 단정 표현의 희소성 관측 (분야 논문에서 극히 드묾)</p>
-              <div class="ext-obs-example">
-                <div class="ext-example-lbl">코퍼스 관측 빈도:</div>
-                <code>"proves definitively", "undeniably demonstrates" (코퍼스 내 발생 빈도 &lt; 0.2%)</code>
-              </div>
+            <div class="ar-prompt-actions" style="margin-top:16px;">
+              <button class="btn btn-secondary btn-lg" type="button" disabled style="opacity:0.6;cursor:not-allowed;">
+                ⚙️ 근거 기반 프롬프트 만들기 (COMING NEXT)
+              </button>
             </div>
-          </div>
-
-          <div class="ext-footer-note">
-            <span>💡 <strong>로드맵 안내:</strong> 학술 표현 참조 모듈은 단일 정답 규칙이 아닌, 연구 분야별(컴퓨터과학, 경영, 생명공학 등) 표현 분포를 연구자가 자율적으로 탐색할 수 있도록 확장될 예정입니다.</span>
           </div>
         </div>
+
+        <!-- =========================================================================
+             TAB 3: 방법 · 비전 (METHODOLOGY & AGENT VISION)
+             ========================================================================= -->
+        <div class="ar-view-panel" id="arViewVision" hidden>
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-core" style="background:#e0e7ff;color:#3730a3;border-color:#c7d2fe;">VISION</span>
+                <span class="ce-tag-pill" style="background:#f8fafc;color:#475569;border-color:#cbd5e1;">AGENT ARCHITECTURE</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromArVision" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">방법 · 비전</h1>
+            <p class="ext-hero-sub">Methodology &amp; Agent Vision</p>
+            <p class="ext-hero-desc">
+              "생성하는 에이전트가 넘쳐나는 시대에, TrustVerify는 그 산출물을 실제 근거에 묶어 검증하는 에이전트입니다."
+            </p>
+          </section>
+
+          <!-- Core Vision Hero Banner -->
+          <div class="ar-vision-hero-banner">
+            <div class="ar-vision-quote">
+              "AI가 생성하고, TrustVerify가 검증하고, 생성 보조 모델이 검증 결과에 묶여 수정안을 제안하며, 최종 판단은 연구자가 내립니다."
+            </div>
+          </div>
+
+          <!-- 4-Step Global Flow -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">FLOW</span>
+                <h3 class="batch-title">4단계 엔드투엔드 연구 검증 흐름</h3>
+              </div>
+              <span class="batch-helper-text">생성부터 검증, 보조, 최종 연구자 승인까지의 전주기</span>
+            </div>
+
+            <div class="ar-big-4step-flow">
+              <div class="ar-big-step-card">
+                <div class="ab-num">1</div>
+                <div class="ab-title">AI GENERATE</div>
+                <p class="ab-desc">AI가 연구 초안 / 인용 / 영문 표현 생성</p>
+              </div>
+
+              <div class="ar-big-step-arr">➔</div>
+
+              <div class="ar-big-step-card is-core-highlight">
+                <div class="ab-num">2</div>
+                <div class="ab-title">TRUSTVERIFY VERIFY</div>
+                <p class="ab-desc">
+                  실제 학술 근거 연결<br>
+                  <strong>Citation Integrity</strong> (KCI 레코드 대조)<br>
+                  <strong>Claim–Evidence Alignment</strong> (공개 초록 대조)
+                </p>
+                <span class="ab-badge-core">LIVE &amp; P0 IMPLEMENTED</span>
+              </div>
+
+              <div class="ar-big-step-arr">➔</div>
+
+              <div class="ar-big-step-card is-future-step">
+                <div class="ab-num">3</div>
+                <div class="ab-title">GROUNDED ASSIST</div>
+                <p class="ab-desc">
+                  검증 결과에 묶인 수정안 / 프롬프트 생성
+                </p>
+                <span class="ab-badge-future">FUTURE</span>
+              </div>
+
+              <div class="ar-big-step-arr">➔</div>
+
+              <div class="ar-big-step-card">
+                <div class="ab-num">4</div>
+                <div class="ab-title">HUMAN REVIEW</div>
+                <p class="ab-desc">연구자 최종 판단 및 학술적 책임 확인</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agent Architecture: Responsibilities Separated -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">ARCHITECTURE</span>
+                <h3 class="batch-title">에이전트 역할 분리 아키텍처</h3>
+              </div>
+              <span class="batch-helper-text">오케스트레이션과 결정론적 판정 권한의 엄격한 분리</span>
+            </div>
+
+            <div class="ar-arch-grid">
+              <!-- Box 1: AGENT ORCHESTRATION -->
+              <div class="ar-arch-card">
+                <div class="ar-arch-head">
+                  <span class="ar-arch-icon">🤖</span>
+                  <h4 class="ar-arch-title">AGENT ORCHESTRATION</h4>
+                  <span class="ar-arch-role">오케스트레이션 에이전트</span>
+                </div>
+                <ul class="ar-arch-list">
+                  <li><strong>인용 추출:</strong> 연구 본문에서 인용 마커([1], [2]) 파싱</li>
+                  <li><strong>참고문헌 연결:</strong> 인용 마커를 서지 목록의 특정 행과 매핑</li>
+                  <li><strong>KCI record binding:</strong> NRF Open API를 통해 실제 레코드 식별</li>
+                  <li><strong>검증 단계 실행:</strong> 정합성 및 의미 보존 검증 파이프라인 구동</li>
+                  <li><strong>Evidence contract 전달:</strong> 검증된 근거 경계를 정형 계약으로 포장</li>
+                </ul>
+              </div>
+
+              <!-- Box 2: CANONICAL VERDICT -->
+              <div class="ar-arch-card verdict-owner">
+                <div class="ar-arch-head">
+                  <span class="ar-arch-icon">⚖️</span>
+                  <h4 class="ar-arch-title">CANONICAL VERDICT</h4>
+                  <span class="ar-arch-role">결정론적 판정 엔진 (판정 권한 독점)</span>
+                </div>
+                <ul class="ar-arch-list">
+                  <li><strong>Deterministic rules:</strong> 100% 재현 가능한 규칙 기반 판정</li>
+                  <li><strong>Reproducible &amp; explainable:</strong> 결과에 대한 명확한 규칙 ID 및 이유 제공</li>
+                  <li><strong>Evidence boundary:</strong> Frozen/live 근거 범위 엄격 준수</li>
+                  <li><strong>Human review trigger:</strong> 불충분한 근거에 대한 단정 배제 및 사람 검토 권고</li>
+                  <li><strong>No LLM hallucination:</strong> 판정에 확률적 언어모델 개입 일체 배제</li>
+                </ul>
+              </div>
+
+              <!-- Box 3: GENERATION ASSISTANT (FUTURE) -->
+              <div class="ar-arch-card future-box">
+                <div class="ar-arch-head">
+                  <span class="ar-arch-icon">💡</span>
+                  <h4 class="ar-arch-title">GENERATION ASSISTANT</h4>
+                  <span class="ar-arch-role">Solar / external LLM · FUTURE</span>
+                </div>
+                <ul class="ar-arch-list">
+                  <li><strong>Grounded revision proposal:</strong> 검증된 근거 범위 내에서만 수정안 제안</li>
+                  <li><strong>Prompt generation:</strong> 제약 조건을 준수하는 보조 프롬프트 생성</li>
+                  <li><strong>No verdict change:</strong> 결정론적 규칙이 내린 판정을 절대 변경할 수 없음</li>
+                  <li><strong>Optional downstream:</strong> 연구자가 필요로 할 때만 구동되는 보조기</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
       <!-- ============================== END WORKSPACE 3 ============================== -->
 

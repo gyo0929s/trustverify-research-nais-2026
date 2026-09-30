@@ -178,6 +178,7 @@ const state = {
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
   currentCeCase: 'D4', // 'D4' | 'D4-CONTRAST' | 'D2' | 'D3' | 'D1'
+  currentArView: 'reference', // 'reference' | 'handoff' | 'vision'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
   currentView: 'batch', // 'batch' | 'single' | 'method'
@@ -216,12 +217,23 @@ const el = {
   btnBackToCitationFromCeMethod: $('btnBackToCitationFromCeMethod'),
   btnBackToCitationFromTf: $('btnBackToCitationFromTf'),
   btnBackToCitationFromAr: $('btnBackToCitationFromAr'),
+  btnBackToCitationFromArHandoff: $('btnBackToCitationFromArHandoff'),
+  btnBackToCitationFromArVision: $('btnBackToCitationFromArVision'),
 
   // Context-Aware Top Navigation Blocks
   topnavCitation: $('topnavCitation'),
   topnavClaimEvidence: $('topnavClaimEvidence'),
+  topnavAcademicRef: $('topnavAcademicRef'),
   topnavExpansion: $('topnavExpansion'),
   topnavModuleName: $('topnavModuleName'),
+
+  // Academic Reference Navigation Tabs & View Panels
+  navTabArReference: $('navTabArReference'),
+  navTabArHandoff: $('navTabArHandoff'),
+  navTabArVision: $('navTabArVision'),
+  arViewReference: $('arViewReference'),
+  arViewHandoff: $('arViewHandoff'),
+  arViewVision: $('arViewVision'),
 
   // Citation Integrity Navigation Tabs & View Panels
   navTabBatch: $('navTabBatch'),
@@ -355,12 +367,11 @@ function switchWorkspaceModule(moduleName, targetSubView) {
 
   if (el.topnavCitation) el.topnavCitation.hidden = !isCitation;
   if (el.topnavClaimEvidence) el.topnavClaimEvidence.hidden = !isClaimEvidence;
-  if (el.topnavExpansion) el.topnavExpansion.hidden = !(isTranslation || isAcademicRef);
+  if (el.topnavAcademicRef) el.topnavAcademicRef.hidden = !isAcademicRef;
+  if (el.topnavExpansion) el.topnavExpansion.hidden = !isTranslation;
 
   if (isTranslation && el.topnavModuleName) {
     el.topnavModuleName.textContent = '번역 충실도 (Translation Fidelity · 확장 연구)';
-  } else if (isAcademicRef && el.topnavModuleName) {
-    el.topnavModuleName.textContent = '참조 문헌 프로필 (Finance-20 · 보조 맥락)';
   }
 
   if (isCitation) {
@@ -369,7 +380,29 @@ function switchWorkspaceModule(moduleName, targetSubView) {
   } else if (isClaimEvidence) {
     if (targetSubView) switchCeView(targetSubView);
     else switchCeView(state.currentCeView || 'verify');
+  } else if (isAcademicRef) {
+    if (targetSubView) switchArView(targetSubView);
+    else switchArView(state.currentArView || 'reference');
   }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ------------------------------------------------------------------ ACADEMIC REFERENCE VIEW ROUTING */
+
+function switchArView(viewName) {
+  state.currentArView = viewName;
+  const isReference = viewName === 'reference';
+  const isHandoff = viewName === 'handoff';
+  const isVision = viewName === 'vision';
+
+  el.navTabArReference?.classList.toggle('is-active', isReference);
+  el.navTabArHandoff?.classList.toggle('is-active', isHandoff);
+  el.navTabArVision?.classList.toggle('is-active', isVision);
+
+  if (el.arViewReference) el.arViewReference.hidden = !isReference;
+  if (el.arViewHandoff) el.arViewHandoff.hidden = !isHandoff;
+  if (el.arViewVision) el.arViewVision.hidden = !isVision;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2116,8 +2149,8 @@ function init() {
     switchWorkspaceModule('translation');
   });
   el.railBtnAcademicRef?.addEventListener('click', () => {
-    location.hash = 'academic-reference';
-    switchWorkspaceModule('academic-reference');
+    location.hash = 'ar-reference';
+    switchWorkspaceModule('academic-reference', 'reference');
   });
 
   el.btnBackToCitationFromCe?.addEventListener('click', () => {
@@ -2139,6 +2172,36 @@ function init() {
   el.btnBackToCitationFromAr?.addEventListener('click', () => {
     location.hash = 'batch';
     switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromArHandoff?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromArVision?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+
+  // Top Navigation Tabs (Academic Reference & Vision)
+  el.navTabArReference?.addEventListener('click', () => {
+    location.hash = 'ar-reference';
+    switchArView('reference');
+  });
+  el.navTabArHandoff?.addEventListener('click', () => {
+    location.hash = 'ar-handoff';
+    switchArView('handoff');
+  });
+  el.navTabArVision?.addEventListener('click', () => {
+    location.hash = 'ar-vision';
+    switchArView('vision');
+  });
+
+  // Domain selector pill interactions in Tab 1
+  document.querySelectorAll('.ar-domain-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.ar-domain-pill').forEach(p => p.classList.remove('is-active'));
+      pill.classList.add('is-active');
+    });
   });
 
   // Top Navigation Tabs (Citation Integrity)
@@ -2343,8 +2406,14 @@ function handleHashRouting() {
     switchWorkspaceModule('claim-evidence', 'method');
   } else if (hash === 'translation' || hash === 'viewtranslation') {
     switchWorkspaceModule('translation');
-  } else if (hash === 'academic-reference' || hash === 'finance-20' || hash === 'viewacademicref') {
-    switchWorkspaceModule('academic-reference');
+  } else if (hash.startsWith('academic-reference') || hash.startsWith('ar-') || hash === 'finance-20' || hash === 'viewacademicref') {
+    if (hash.includes('handoff')) {
+      switchWorkspaceModule('academic-reference', 'handoff');
+    } else if (hash.includes('vision')) {
+      switchWorkspaceModule('academic-reference', 'vision');
+    } else {
+      switchWorkspaceModule('academic-reference', 'reference');
+    }
   } else if (hash === 'single' || hash === 'viewsingle') {
     switchWorkspaceModule('citation', 'single');
   } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'architecture') {
