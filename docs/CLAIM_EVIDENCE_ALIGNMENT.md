@@ -107,6 +107,21 @@ The contrast shows the reference is the only difference. D4 is reported as "the 
 
 Marker resolution handles exactly one numeric marker per sentence. A sentence with no marker, several different markers, or a number missing from the bibliography is not resolved, and the bibliography row is never guessed.
 
+### Finance-domain D4 qualification (candidate, not yet the presentation case)
+
+A qualification experiment asked whether the D4 contrast reproduces with two finance / real-estate KCI papers, without touching the engine. Result: **ADOPTED as a candidate**. The original D4 is unchanged and remains the fallback.
+
+- SOURCE A ART002961723 (김예빈·조두연 2023, monetary policy stance via text mining of Monetary Policy Board minutes) and SOURCE B ART002510435 (이보형·홍우형 2019, real estate and stock market interrelationship). Both qualified live, both `VERIFIED` with exact canonical metadata, both with Korean and English abstracts.
+- Controlled paraphrase of SOURCE A English abstract sentence #4: "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock."
+- SOURCE B's title, abstracts, and keywords contain none of SOURCE A's discriminating terms (monetary, stance, text mining, minutes, hawkish, contractionary, central bank). It shares only the generic anchors `policy` and `price`.
+
+| Case | Citation Integrity (cited row) | Claim–Evidence |
+| --- | --- | --- |
+| FIN-D4 (cites `[2]` ART002510435) | `VERIFIED` · REF-META-001 | `INSUFFICIENT_EVIDENCE` · CE-GROUND-001 · `CLAIM_NOT_GROUNDED_IN_ABSTRACT` |
+| FIN-D4-CONTRAST (same sentence, cites `[1]` ART002961723) | `VERIFIED` · REF-META-001 | `CONSISTENT_WITH_EVIDENCE` · CE-CONSIST-001 · sentence #4, coverage 1.0 |
+
+The insufficiency reason differs from the original D4 (`NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD`): two generic shared anchors meet the existing record-relevance minimum of 2, so the engine treats SOURCE B as topically related. No threshold was changed. Artifact: `artifacts/evaluation/claim-evidence-finance-d4/finance-d4.json`. Offline test: `test/claim-evidence-finance-d4.test.js`.
+
 ## Test provenance
 
 - **Controlled perturbation.** C1, C2, I1, D4, and D4-CONTRAST use citing sentences deliberately constructed by the evaluator. They test rule sensitivity. They are not observed AI hallucinations and must not be described as such.

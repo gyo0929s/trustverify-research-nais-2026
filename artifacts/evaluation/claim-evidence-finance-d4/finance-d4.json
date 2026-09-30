@@ -1,0 +1,563 @@
+{
+  "evaluation_id": "CLAIM-EVIDENCE-FINANCE-D4",
+  "observed_on": "2026-10-01",
+  "adoption": "ADOPTED",
+  "adoption_note": "Qualification only: technically clean enough to replace the original D4 later. The original D4 (claim-evidence-p0/d4-unrelated-reference.json) is unchanged and remains the fallback.",
+  "provenance": "CONTROLLED_PARAPHRASE",
+  "provenance_note": "The citing sentence was written by the evaluator as a conservative paraphrase of SOURCE A English abstract sentence #4 (hedge and direction preserved; nothing added). It is not an observed AI output.",
+  "execution_mode": "Citation Integrity and abstracts observed LIVE via the existing KCI adapter; Claim–Evidence computed over that captured evidence; frozen for FROZEN_EVIDENCE replay.",
+  "runner": "tools/evaluation/run-claim-evidence-finance-d4.mjs (qualify stage)",
+  "engine": {
+    "grounding_thresholds": "unchanged (MIN_SHARED_ANCHORS 3, MIN_COVERAGE 0.6)",
+    "record_relevance": "unchanged (MIN_SHARED_ANCHORS 2)",
+    "processing_version": "claim-evidence-p0-1.1"
+  },
+  "records": {
+    "SOURCE_A": "ART002961723",
+    "SOURCE_B": "ART002510435"
+  },
+  "qualification": {
+    "SOURCE_A": {
+      "article_id": "ART002961723",
+      "detail_state": "KCI_OK",
+      "metadata": {
+        "article_id": "ART002961723",
+        "titles": [
+          {
+            "value": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+            "lang": "original"
+          },
+          {
+            "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+            "lang": "foreign"
+          },
+          {
+            "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+            "lang": "english"
+          }
+        ],
+        "authors": [
+          {
+            "name": "김예빈",
+            "english_name": "Yebin Kim",
+            "source_text": null
+          },
+          {
+            "name": "조두연",
+            "english_name": "Dooyeon Cho",
+            "source_text": null
+          }
+        ],
+        "publication_year": "2023",
+        "journal": "국제금융연구",
+        "volume": "13",
+        "issue": "1",
+        "first_page": "5",
+        "last_page": "31",
+        "doi_raw": "http://dx.doi.org/10.34251/ifadoi.13.1.202305.001",
+        "doi_normalized": "10.34251/ifadoi.13.1.202305.001"
+      },
+      "citation": {
+        "title": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+        "authors": [
+          "김예빈",
+          "조두연"
+        ],
+        "publication_year": "2023",
+        "doi": "10.34251/ifadoi.13.1.202305.001"
+      },
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "article_id": "ART002961723",
+        "finding_id": "finding-9798e500b1cd1fc0",
+        "field_comparisons": [
+          {
+            "field": "title",
+            "result": "MATCH"
+          },
+          {
+            "field": "authors",
+            "result": "MATCH"
+          },
+          {
+            "field": "publication_year",
+            "result": "MATCH"
+          },
+          {
+            "field": "doi",
+            "result": "MATCH"
+          }
+        ],
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK"
+      },
+      "abstract_available": true,
+      "english_abstract_available": true
+    },
+    "SOURCE_B": {
+      "article_id": "ART002510435",
+      "detail_state": "KCI_OK",
+      "metadata": {
+        "article_id": "ART002510435",
+        "titles": [
+          {
+            "value": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+            "lang": "original"
+          },
+          {
+            "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+            "lang": "foreign"
+          },
+          {
+            "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+            "lang": "english"
+          }
+        ],
+        "authors": [
+          {
+            "name": "이보형",
+            "english_name": null,
+            "source_text": null
+          },
+          {
+            "name": "홍우형",
+            "english_name": "Woo-Hyung Hong",
+            "source_text": null
+          }
+        ],
+        "publication_year": "2019",
+        "journal": "신용카드리뷰",
+        "volume": "13",
+        "issue": "3",
+        "first_page": "14",
+        "last_page": "31",
+        "doi_raw": "http://dx.doi.org/10.35348/ccr.2019.13.3.002",
+        "doi_normalized": "10.35348/ccr.2019.13.3.002"
+      },
+      "citation": {
+        "title": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+        "authors": [
+          "이보형",
+          "홍우형"
+        ],
+        "publication_year": "2019",
+        "doi": "10.35348/ccr.2019.13.3.002"
+      },
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "article_id": "ART002510435",
+        "finding_id": "finding-2602bff3ce8cd3be",
+        "field_comparisons": [
+          {
+            "field": "title",
+            "result": "MATCH"
+          },
+          {
+            "field": "authors",
+            "result": "MATCH"
+          },
+          {
+            "field": "publication_year",
+            "result": "MATCH"
+          },
+          {
+            "field": "doi",
+            "result": "MATCH"
+          }
+        ],
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK"
+      },
+      "abstract_available": true,
+      "english_abstract_available": true
+    }
+  },
+  "discrimination": {
+    "claim_anchors": [
+      "contractionary",
+      "equity",
+      "estimation",
+      "hawkish",
+      "monetary",
+      "policy",
+      "price",
+      "response",
+      "shock"
+    ],
+    "source_a_unique_anchors": [
+      "contractionary",
+      "equity",
+      "estimation",
+      "hawkish",
+      "monetary",
+      "response",
+      "shock"
+    ],
+    "source_b_overlapping_anchors": [
+      "policy",
+      "price"
+    ],
+    "source_b_contains_discriminating_anchors": false,
+    "note": "SOURCE B title, abstracts, and keywords contain none of: monetary, policy stance, text mining, minutes, hawkish, contractionary, central bank, 통화정책, 텍스트 마이닝, 의사록."
+  },
+  "bibliography": "[1] 김예빈, 조두연 (2023). 텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석. 국제금융연구, 13(1), 5-31. https://doi.org/10.34251/ifadoi.13.1.202305.001\n[2] 이보형, 홍우형 (2019). 금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구. 신용카드리뷰, 13(3), 14-31. https://doi.org/10.35348/ccr.2019.13.3.002",
+  "items": [
+    {
+      "input": {
+        "title": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+        "authors": [
+          "김예빈",
+          "조두연"
+        ],
+        "publication_year": "2023",
+        "doi": "10.34251/ifadoi.13.1.202305.001"
+      },
+      "evidence_hash": "0c6eb47a5bb086c7faa953a07355c8edc8d9b6f80393a02b60e20e55a5133df8"
+    },
+    {
+      "input": {
+        "title": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+        "authors": [
+          "이보형",
+          "홍우형"
+        ],
+        "publication_year": "2019",
+        "doi": "10.35348/ccr.2019.13.3.002"
+      },
+      "evidence_hash": "027b18a7076b4ec485dc9dce98819e517cc9fcd4c373397359f4a08ee290a76f"
+    }
+  ],
+  "evidence": {
+    "0c6eb47a5bb086c7faa953a07355c8edc8d9b6f80393a02b60e20e55a5133df8": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART002961723",
+            "titles": [
+              {
+                "value": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+                "lang": "original"
+              },
+              {
+                "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+                "lang": "foreign"
+              },
+              {
+                "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김예빈",
+                "english_name": "Yebin Kim",
+                "source_text": "김예빈(성균관대학교)"
+              },
+              {
+                "name": "조두연",
+                "english_name": "Dooyeon Cho",
+                "source_text": "조두연(성균관대학교)"
+              }
+            ],
+            "publication_year": "2023",
+            "journal": "국제금융연구",
+            "volume": "13",
+            "issue": "1",
+            "first_page": "5",
+            "last_page": "31",
+            "doi_raw": "http://dx.doi.org/10.34251/ifadoi.13.1.202305.001",
+            "doi_normalized": "10.34251/ifadoi.13.1.202305.001"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART002961723",
+            "titles": [
+              {
+                "value": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+                "lang": "original"
+              },
+              {
+                "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+                "lang": "foreign"
+              },
+              {
+                "value": "Effects of Monetary Policy Stance with Text Mining on Equity and Real Estate Markets - Evidence from Korea -",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김예빈",
+                "english_name": "Yebin Kim",
+                "source_text": null
+              },
+              {
+                "name": "조두연",
+                "english_name": "Dooyeon Cho",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2023",
+            "journal": "국제금융연구",
+            "volume": "13",
+            "issue": "1",
+            "first_page": "5",
+            "last_page": "31",
+            "doi_raw": "http://dx.doi.org/10.34251/ifadoi.13.1.202305.001",
+            "doi_normalized": "10.34251/ifadoi.13.1.202305.001"
+          }
+        ]
+      }
+    },
+    "027b18a7076b4ec485dc9dce98819e517cc9fcd4c373397359f4a08ee290a76f": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART002510435",
+            "titles": [
+              {
+                "value": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+                "lang": "original"
+              },
+              {
+                "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+                "lang": "foreign"
+              },
+              {
+                "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "이보형",
+                "english_name": null,
+                "source_text": "이보형(마콜컨설팅그룹)"
+              },
+              {
+                "name": "홍우형",
+                "english_name": "Woo-Hyung Hong",
+                "source_text": "홍우형(한성대학교)"
+              }
+            ],
+            "publication_year": "2019",
+            "journal": "신용카드리뷰",
+            "volume": "13",
+            "issue": "3",
+            "first_page": "14",
+            "last_page": "31",
+            "doi_raw": "http://dx.doi.org/10.35348/ccr.2019.13.3.002",
+            "doi_normalized": "10.35348/ccr.2019.13.3.002"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART002510435",
+            "titles": [
+              {
+                "value": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+                "lang": "original"
+              },
+              {
+                "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+                "lang": "foreign"
+              },
+              {
+                "value": "A Study on the Interrelationship between Real Estate and Stock Market",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "이보형",
+                "english_name": null,
+                "source_text": null
+              },
+              {
+                "name": "홍우형",
+                "english_name": "Woo-Hyung Hong",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2019",
+            "journal": "신용카드리뷰",
+            "volume": "13",
+            "issue": "3",
+            "first_page": "14",
+            "last_page": "31",
+            "doi_raw": "http://dx.doi.org/10.35348/ccr.2019.13.3.002",
+            "doi_normalized": "10.35348/ccr.2019.13.3.002"
+          }
+        ]
+      }
+    }
+  },
+  "abstract_evidence": {
+    "ART002961723": {
+      "record_id": "ART002961723",
+      "title": "텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석",
+      "abstracts": [
+        {
+          "lang": "original",
+          "value": "2008년 글로벌 금융위기 이후 장기간 지속된 저금리 기간 동안 주요국의 중앙은행은 주로 금리 이외의 타 정책수단인 비전통적 통화정책을 시행하였다. 다양한 통화정책수단이 시행되었음에도, 분석 수단의 한계로 인해 통화정책 효과의 분석은 대부분 기준금리 혹은 콜금리를 이용하여 이루어졌다. 본 연구에서는 Lee et al. (2019) 방법론에 기초하여 텍스트 마이닝을 통해 금융통화위원회 의사록에서 통화정책 기조를 추출한 뒤, 이러한 기조가 한국 주식시장 및 부동산시장에 미치는 영향을 분석하였다. 분석결과, 긴축적인 통화정책 기조에 반응하여 주가는 하락하고, 그 영향이 일정 기간 지속되는 것으로 나타났다. 부동산 매매 가격도 하락한 뒤, 약 10개월 간 영향이 지속되었으나, 주식시장에 비하면 상대적으로 적게 반응하는 것으로 나타났다. 나아가 기존의 금리를 이용할 경우 유의한 결과가 관찰되지 않던 부동산 매매시장의 반응을 분석할 수 있다는 점에서, 본 연구에서는 텍스트 마이닝을 이용하여 중앙은행의 커뮤니케이션을 직접 분석함으로써 추출해 낸 통화정책 기조가 정책효과를 수량화하여 측정하는 새로운 분석 수단으로 활용될 수 있다는 가능성을 제시한다."
+        },
+        {
+          "lang": "english",
+          "value": "During the period of the zero lower bound (ZLB) on interest rates after the financial crisis of 2008, unconventional monetary policies were extensively implemented by central banks of major economies. However, previous studies that investigated the effectiveness of monetary policies have exceedingly relied on interest rates such as the base rate or call rate due to the lack of the analytical proxy. This study first constructs monetary policy stance (MPS) from the minutes of monetary policy meetings based on text mining following the methodology of Lee et al. (2019) and then investigates the effects of MPS on equity and real estates markets in Korea. The estimation results suggest that in response to a contractionary monetary policy shock, which is denoted as “hawkish”, equity prices fall and its impact persists over 4 months. In addition, real estate sales prices decline to a much lesser extent and its effect persists over 10 months. Finally, our findings suggest that MPS constructed through an analysis of the communication of the central bank based on text mining can be a new analytical measure in quantifying the effectivess of monetary policies, given that it is possible to analyze the response of the real estates market, which is not significant when interest rates are employed."
+        }
+      ],
+      "keywords": [
+        "Monetary policy stance",
+        "Text mining",
+        "Minutes of Monetary policy meetings",
+        "Equity market",
+        "Real estates market",
+        "통화정책 기조",
+        "텍스트 마이닝",
+        "금융통화위원회 의사록",
+        "주식시장",
+        "부동산시장"
+      ],
+      "evidence_hash": "188a556a25bddef578dc33d151f77d7df6d1e319d20265c1e5fcc8afa2ae4f36"
+    },
+    "ART002510435": {
+      "record_id": "ART002510435",
+      "title": "금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구",
+      "abstracts": [
+        {
+          "lang": "original",
+          "value": "본 연구는 부동산시장과 주식시장의 상호 영향을 살펴보고, 두 시장의 관계를 규명하여 향후 관련 금융시장 정책을 포함한 경제정책에 대한 제언을 하는데 목적이 있다. 분석자료로는 한국거래소의 KOSPI지수, KOSDAQ 지수, 국민은행 주택가격지수, 한국은행의 총통화(M2), 1일 콜금리에 대해 1997년 1월부터 2019년 1월까지 월별 자료를 수집하였다. 분석방법은 벡터자기회귀(VAR)모형을 활용하였으며, 글로벌 금융위기인 2007년을 기점으로 나누어 분석하였다. 분석 결과 부동산시장이 주식시장에 미치는 영향은 금융위기 전후에 상당히 상반된 영향을 미치는 것으로 나타났다. 금융위기 전에는 주식시장과 부동산시장의 상호관련성이 뚜렷하게 나타나지 않지만, 금융위기 이후에는 부동산가격에 대한 양의 충격이 주식시장에 부정적인 영향을 미치는 것으로 나타났다. 이러한 결과는 금융위기 이후에 부동산의 활성화가 주식시장으로 유입되는 기업에 대한 투자자금을 억제하면서 주식시장에 부(-)의 영향을 미쳤다는 것을 의미한다. 즉, 부동산시장의 무리한 확장이 주식시장의 투자활동을 구축하고 있으며 이는 경제성장에 부정적인 영향을 미칠 수 있음을 시사한다."
+        },
+        {
+          "lang": "english",
+          "value": "The purpose of this study is to examine the mutual influences between the real estate market and the stock market, to identify the relationship between the two markets, and to suggest future economic policies including relevant financial market policies. To do this, we collected the representative indexes such as the KOSPI, KOSDAQ, Kookmin Bank’s housing price index, the Bank of Korea's total currency(M2), and daily call rate. The analysis period was from January 1999 to January 2019. The analysis method used the vector autoregressive(VAR) model by dividing the global financial crisis in 2007. As a result, the impact of the real estate market on the KOSPI market was reversed before and after the global financial crisis. Before the global financial crisis, we find weak relationship between real estate market and stock market. In contrast, after the financial crisis, the positive impact on real estate prices had a negative impact on the stock market. This results indicate that the activation of real estate after the financial crisis was negative on the stock market, while restraining investment funds for companies through the stock market. This means excessive expansion of the real estate market is driving out stock market investments, suggesting that this could negatively affect economic growth."
+        }
+      ],
+      "keywords": [
+        "stock price",
+        "housing price",
+        "VAR model",
+        "KOSPI",
+        "KOSDAQ",
+        "주택가격지수",
+        "금융위기 전후",
+        "VAR",
+        "부동산정책"
+      ],
+      "evidence_hash": "5822b410b819ef9699013c5c3031c9d8d03d87233886a8fe1999df86ce6563e3"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "FIN-D4",
+      "provenance": "CONTROLLED_PARAPHRASE",
+      "draft_sentence": "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].",
+      "marker": "[2]",
+      "resolved_row_index": 2,
+      "citing_claim": "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock.",
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "article_id": "ART002510435",
+        "finding_id": "finding-2602bff3ce8cd3be"
+      },
+      "claim_evidence": {
+        "status": "INSUFFICIENT_EVIDENCE",
+        "signal": null,
+        "rule_id": "CE-GROUND-001",
+        "rule_version": "1.0",
+        "insufficiency_reason": "CLAIM_NOT_GROUNDED_IN_ABSTRACT",
+        "evidence_span": null,
+        "grounding": {
+          "grounded": false,
+          "reason": "NO_SENTENCE_MEETS_THRESHOLD",
+          "best_shared_anchors": [
+            "policy"
+          ],
+          "citing_anchor_count": 9,
+          "thresholds": {
+            "MIN_SHARED_ANCHORS": 3,
+            "MIN_COVERAGE": 0.6
+          },
+          "record_shared_anchors": [
+            "policy",
+            "price"
+          ],
+          "record_relevance_threshold": {
+            "MIN_SHARED_ANCHORS": 2
+          }
+        },
+        "why": "인용된 논문은 주제상 관련이 있지만, 현재 확보된 KCI 초록에는 이 인용 문장을 특정할 만큼 구체적인 근거 문장이 없습니다. 본문 확인이 필요하며, 인용이 틀렸다는 뜻이 아닙니다.",
+        "human_review_required": true,
+        "evidence_hash": "5822b410b819ef9699013c5c3031c9d8d03d87233886a8fe1999df86ce6563e3",
+        "finding_id": "claim-8137ba956fb76737",
+        "processing_version": "claim-evidence-p0-1.1"
+      }
+    },
+    {
+      "case_id": "FIN-D4-CONTRAST",
+      "provenance": "CONTROLLED_PARAPHRASE",
+      "draft_sentence": "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [1].",
+      "marker": "[1]",
+      "resolved_row_index": 1,
+      "citing_claim": "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock.",
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "article_id": "ART002961723",
+        "finding_id": "finding-9798e500b1cd1fc0"
+      },
+      "claim_evidence": {
+        "status": "CONSISTENT_WITH_EVIDENCE",
+        "signal": null,
+        "rule_id": "CE-CONSIST-001",
+        "rule_version": "1.0",
+        "insufficiency_reason": null,
+        "evidence_span": {
+          "text": "The estimation results suggest that in response to a contractionary monetary policy shock, which is denoted as “hawkish”, equity prices fall and its impact persists over 4 months.",
+          "sentence_index": 4,
+          "abstract_lang": "english"
+        },
+        "grounding": {
+          "grounded": true,
+          "shared_anchors": [
+            "contractionary",
+            "equity",
+            "estimation",
+            "hawkish",
+            "monetary",
+            "policy",
+            "price",
+            "response",
+            "shock"
+          ],
+          "coverage": 1,
+          "citing_anchor_count": 9,
+          "thresholds": {
+            "MIN_SHARED_ANCHORS": 3,
+            "MIN_COVERAGE": 0.6
+          }
+        },
+        "why": "특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다.",
+        "human_review_required": false,
+        "evidence_hash": "188a556a25bddef578dc33d151f77d7df6d1e319d20265c1e5fcc8afa2ae4f36",
+        "finding_id": "claim-4c638eca82e6cb66",
+        "processing_version": "claim-evidence-p0-1.1"
+      }
+    }
+  ],
+  "evidence_notice": "Sanitized bibliographic and abstract KCI evidence only. No API key, request URL, public_url, source paths, or timestamps in hashed evidence. Offline replay only; never a fallback for LIVE KCI."
+}
