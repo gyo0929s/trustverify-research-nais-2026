@@ -37,6 +37,17 @@ The engine first tries to ground the citing sentence in exactly one abstract sen
 
 If no candidate passes, or the best is ambiguous, the status is `INSUFFICIENT_EVIDENCE`, and no expression comparison is attempted. A claim with strong shift words can therefore never become `POTENTIAL_CLAIM_SHIFT` without grounded evidence.
 
+Since processing version `claim-evidence-p0-1.1`, every `INSUFFICIENT_EVIDENCE` finding also carries an `insufficiency_reason`. It explains the status and never changes it:
+
+| `insufficiency_reason` | When |
+| --- | --- |
+| `NO_PUBLIC_ABSTRACT_EVIDENCE` | The record has no usable abstract in the citing sentence's script. |
+| `NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD` | The claim shares **fewer than 2** content anchors with the whole record (title, all abstracts, and keywords). The cited paper may be real and valid, but it shows no relevant evidence for this claim. |
+| `CLAIM_NOT_GROUNDED_IN_ABSTRACT` | The record is topically related (2 or more shared anchors), but no single abstract sentence meets the grounding thresholds. |
+| `AMBIGUOUS_EVIDENCE_SPAN` | Two abstract sentences ground the claim equally. |
+
+None of these is a verdict about the reference. `NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD` marks a candidate mismatch that a human should check, not an automatic finding of miscitation. There is no `WRONG_REFERENCE`, `FAKE_REFERENCE`, or hallucination status.
+
 ### 2. Expression comparison — rules `CE-SHIFT-001` / `CE-CONSIST-001`
 
 The grounded span and the citing sentence are each classified on five dimensions using explicit English and Korean marker lists (`src/claim-evidence/markers.js`):
@@ -63,7 +74,7 @@ There is no Solar observer implementation in this repository. P0 runs fully dete
 
 ## Finding contract
 
-`track`, `status`, `signal`, `signals`, `rule_id`, `rule_version`, `citation_record_id`, `citing_claim`, `evidence_span` (text, sentence index, abstract language), `evidence_source`, `evidence_hash`, `grounding` (shared anchors, coverage, thresholds, or the reason it failed), `observed` (per-dimension levels and markers), `why`, `uncertainty`, `human_review_required`, `human_review_reason`, `observer`, `processing_version`, `finding_id`.
+`track`, `status`, `signal`, `signals`, `rule_id`, `rule_version`, `citation_record_id`, `citing_claim`, `evidence_span` (text, sentence index, abstract language), `evidence_source`, `evidence_hash`, `grounding` (shared anchors, coverage, thresholds, or the reason it failed plus whole-record shared anchors), `insufficiency_reason`, `observed` (per-dimension levels and markers), `why`, `uncertainty`, `human_review_required`, `human_review_reason`, `observer`, `processing_version`, `finding_id`.
 
 Explainability chain: Observed → Evidence → Rule → Result → Human action.
 
@@ -77,7 +88,29 @@ Evidence: ART003267604, "Computer simulation on the role of interproximal contac
 | C2 | Presentation | Same sentence with **suggest → prove** | `POTENTIAL_CLAIM_SHIFT` · `CERTAINTY_STRENGTHENED` · CE-SHIFT-001 |
 | I1 | Boundary test | "Interproximal contacts reduce the incidence of periodontal disease in elderly patients." | `INSUFFICIENT_EVIDENCE` · CE-GROUND-001 |
 
-C1 and C2 ground in the same abstract sentence (#9, 11 of 12 anchors shared). I1's best sentence shares only 2 anchors. Frozen evidence and observations: `artifacts/evaluation/claim-evidence-p0/`. Offline tests: `test/claim-evidence.test.js`.
+C1 and C2 ground in the same abstract sentence (#9, 11 of 12 anchors shared). I1's best sentence shares only 2 anchors; its record shares 4 anchors overall (interproximal, contact, periodontal, patient), so its reason is `CLAIM_NOT_GROUNDED_IN_ABSTRACT`. Frozen evidence and observations: `artifacts/evaluation/claim-evidence-p0/`. Offline tests: `test/claim-evidence.test.js`.
+
+### D4 — valid but unrelated reference (end to end)
+
+A common draft failure: the bibliography entry is a real, valid KCI paper, but it is not evidence for the sentence that cites it.
+
+- Bibliography: `[1]` ART003267604 and `[2]` ART003062835 ("Computer Vision-based Basketball Player Training System"), both exact and uncorrupted.
+- Draft sentence: the C1 claim (grounded in ART003267604) citing **[2]**.
+- Pipeline: parse the bibliography → existing Citation Integrity batch audit → resolve `[2]` to row 2 by its printed number (`src/claim-evidence/draft.js`) → take the abstract of the record Citation Integrity identified → grounding gate.
+
+| Case | Citation Integrity (cited row) | Claim–Evidence |
+| --- | --- | --- |
+| D4 (cites `[2]`) | `VERIFIED` · REF-META-001 · all fields MATCH | `INSUFFICIENT_EVIDENCE` · CE-GROUND-001 · `NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD` (0 shared anchors with the whole record) |
+| D4-CONTRAST (same sentence, cites `[1]`) | `VERIFIED` · REF-META-001 | `CONSISTENT_WITH_EVIDENCE` · CE-CONSIST-001 · sentence #9 |
+
+The contrast shows the reference is the only difference. D4 is reported as "the cited paper is a real KCI record, but the currently available abstract does not provide sufficient evidence for this citing claim" and requires human review. Artifact: `artifacts/evaluation/claim-evidence-p0/d4-unrelated-reference.json`. Offline test: `test/claim-evidence-d4.test.js`.
+
+Marker resolution handles exactly one numeric marker per sentence. A sentence with no marker, several different markers, or a number missing from the bibliography is not resolved, and the bibliography row is never guessed.
+
+## Test provenance
+
+- **Controlled perturbation.** C1, C2, I1, D4, and D4-CONTRAST use citing sentences deliberately constructed by the evaluator. They test rule sensitivity. They are not observed AI hallucinations and must not be described as such.
+- **Naturalistic AI paraphrase.** Reserved: one unedited output from a named AI or paraphrase tool, with `tool_name`, `prompt`, `raw_output`, and a timestamp if available. It must be supplied or generated by the user; it is never fabricated. Status: `NOT_PROVIDED` (`cases.json` → `naturalistic_ai_paraphrase`).
 
 ## Known limitations
 

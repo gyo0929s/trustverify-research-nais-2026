@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { canonicalJson } from '../kci/adapter.js';
 import {
-  CLAIM_RULES, CONTRACT_VERSION, GROUNDING, PROCESSING_VERSION, SIGNALS, STATUSES, TRACK,
+  CLAIM_RULES, CONTRACT_VERSION, GROUNDING, INSUFFICIENCY_REASONS, PROCESSING_VERSION, RECORD_RELEVANCE, SIGNALS, STATUSES, TRACK,
 } from './contract.js';
 import { directionOf, levelOf, markerWords } from './markers.js';
 
@@ -110,6 +110,29 @@ const WHY = {
   [STATUSES.CONSISTENT_WITH_EVIDENCE]: '특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다.',
 };
 
+// Reason-specific explanations for INSUFFICIENT_EVIDENCE. None of them says the reference or claim is wrong.
+const INSUFFICIENCY_WHY = {
+  [INSUFFICIENCY_REASONS.NO_PUBLIC_ABSTRACT_EVIDENCE]: '인용된 논문은 실제 KCI 레코드이지만, 이 인용 문장과 비교할 수 있는 공개 초록이 확보되지 않았습니다. 인용이 틀렸다는 뜻이 아닙니다.',
+  [INSUFFICIENCY_REASONS.NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD]: '인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다.',
+  [INSUFFICIENCY_REASONS.CLAIM_NOT_GROUNDED_IN_ABSTRACT]: '인용된 논문은 주제상 관련이 있지만, 현재 확보된 KCI 초록에는 이 인용 문장을 특정할 만큼 구체적인 근거 문장이 없습니다. 본문 확인이 필요하며, 인용이 틀렸다는 뜻이 아닙니다.',
+  [INSUFFICIENCY_REASONS.AMBIGUOUS_EVIDENCE_SPAN]: '현재 확보된 KCI 초록에서 이 인용 문장에 똑같이 대응하는 근거 문장이 둘 이상이라 하나로 특정할 수 없습니다. 인용이 틀렸다는 뜻이 아닙니다.',
+};
+
+// Whole-record relevance: claim anchors shared with title + all abstracts + keywords.
+function recordSharedAnchors(claim, evidence) {
+  const recordText = [evidence.title ?? '', ...(evidence.abstracts ?? []).map(abstract => abstract.value ?? ''), ...(evidence.keywords ?? [])].join(' ');
+  const recordAnchors = anchorsOf(recordText);
+  return [...anchorsOf(claim)].filter(anchor => recordAnchors.has(anchor)).sort();
+}
+
+function insufficiencyReasonOf(grounding, recordShared) {
+  if (grounding.reason === 'NO_MATCHING_ABSTRACT') return INSUFFICIENCY_REASONS.NO_PUBLIC_ABSTRACT_EVIDENCE;
+  if (grounding.reason === 'AMBIGUOUS_SPAN') return INSUFFICIENCY_REASONS.AMBIGUOUS_EVIDENCE_SPAN;
+  return recordShared.length < RECORD_RELEVANCE.MIN_SHARED_ANCHORS
+    ? INSUFFICIENCY_REASONS.NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD
+    : INSUFFICIENCY_REASONS.CLAIM_NOT_GROUNDED_IN_ABSTRACT;
+}
+
 /**
  * Aligns one citing sentence with sanitized KCI abstract evidence.
  * evidence: { record_id, title, abstracts: [{ lang, value }], keywords?, evidence_hash }
@@ -137,6 +160,8 @@ export function alignClaimWithEvidence({ citingClaim, evidence, observer = null 
   const evidenceSpan = grounding.grounded
     ? { text: grounding.span.sentence, sentence_index: grounding.span.index, abstract_lang: abstract.lang }
     : null;
+  const recordShared = grounding.grounded ? null : recordSharedAnchors(claim, evidence);
+  const insufficiencyReason = grounding.grounded ? null : insufficiencyReasonOf(grounding, recordShared);
   const finding = {
     contract_version: CONTRACT_VERSION,
     kind: 'CLAIM_EVIDENCE_FINDING',
@@ -153,9 +178,14 @@ export function alignClaimWithEvidence({ citingClaim, evidence, observer = null 
     evidence_hash: evidence.evidence_hash ?? null,
     grounding: grounding.grounded
       ? { grounded: true, shared_anchors: grounding.span.shared, coverage: Number(grounding.span.coverage.toFixed(3)), citing_anchor_count: grounding.citing_anchor_count, thresholds: grounding.thresholds }
-      : { grounded: false, reason: grounding.reason, best_shared_anchors: grounding.best_candidate?.shared ?? [], citing_anchor_count: grounding.citing_anchor_count ?? null, thresholds: grounding.thresholds ?? { ...GROUNDING } },
+      : {
+        grounded: false, reason: grounding.reason, best_shared_anchors: grounding.best_candidate?.shared ?? [], citing_anchor_count: grounding.citing_anchor_count ?? null,
+        thresholds: grounding.thresholds ?? { ...GROUNDING },
+        record_shared_anchors: recordShared, record_relevance_threshold: { ...RECORD_RELEVANCE },
+      },
+    insufficiency_reason: insufficiencyReason,
     observed,
-    why: WHY[status],
+    why: insufficiencyReason ? INSUFFICIENCY_WHY[insufficiencyReason] : WHY[status],
     uncertainty: [
       'Evidence is limited to the KCI abstract; the full text may qualify or extend these statements.',
       'Marker lexicons are explicit and incomplete; unlisted phrasings are not detected.',

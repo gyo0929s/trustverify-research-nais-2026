@@ -1184,6 +1184,462 @@ button { font: inherit; color: inherit; }
   line-height: 1.45;
 }
 
+/* --- CE Case Selector Bar & Tabs --- */
+.ce-case-selector-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.ce-selector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ce-selector-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ce-selector-flow-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--primary-border);
+}
+.ce-case-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.ce-case-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.ce-case-tab:hover {
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+.ce-case-tab.is-active {
+  background: var(--surface);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.12);
+}
+.case-tab-tag {
+  font-size: 10.5px;
+  font-family: var(--mono);
+  font-weight: 800;
+  color: var(--text-3);
+}
+.ce-case-tab.is-active .case-tab-tag {
+  color: var(--primary);
+}
+.case-tab-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.25;
+}
+.case-tab-signal {
+  font-size: 11.5px;
+  color: var(--text-2);
+}
+
+/* --- Detail Case Presentation --- */
+.ce-case-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ce-case-detail[hidden] {
+  display: none !important;
+}
+.ce-case-hero-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.ce-case-hero-banner.tone-shift {
+  background: #fffdf5;
+  border-color: #fde68a;
+}
+.ce-case-hero-banner.tone-consistent {
+  background: #fbfdfb;
+  border-color: var(--verified-border);
+}
+.ce-case-hero-banner.tone-insufficient {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+.ce-case-headline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ce-case-headline {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+.ce-case-short-desc {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --- 3-Block Vertical Presentation Flow --- */
+.ce-3step-card-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ce-flow-step-box {
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ce-flow-step-box.citing-box {
+  border-left: 4px solid var(--primary);
+}
+.ce-flow-step-box.evidence-box {
+  border-left: 4px solid var(--verified);
+}
+.ce-flow-step-box.result-box {
+  border-left: 4px solid #f59e0b;
+  background: #fafbfc;
+}
+.ce-flow-step-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ce-flow-step-num {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.ce-flow-step-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+.ce-flow-arrow-down {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  padding: 1px 0;
+}
+.ce-display-aid {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.ce-aid-badge {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--text-3);
+  background: var(--surface-3);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* --- Shift Visual (suggesting -> prove) --- */
+.ce-shift-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px;
+  background: #fffdf5;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  margin: 4px 0;
+}
+.shift-from, .shift-to {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.shift-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.shift-word {
+  font-size: 21px;
+  font-family: var(--mono);
+  font-weight: 800;
+  color: var(--text);
+}
+.shift-word.shift-alert {
+  color: #b45309;
+}
+.shift-ko {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+.shift-arrow {
+  font-size: 22px;
+  font-weight: 800;
+  color: #b45309;
+}
+
+/* --- Method 3-Step Chain & Boundary Callout --- */
+.ce-method-boundary-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 24px;
+  background: #eff6ff;
+  border: 1.5px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.boundary-quote-main {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.boundary-quote-sub {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.ce-three-step-chain {
+  display: grid;
+  grid-template-columns: 1fr auto 1.35fr auto 1.25fr;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 4px;
+}
+.ce-step-card {
+  padding: 20px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+.ce-step-card.is-boundary-step {
+  border-color: #93c5fd;
+  background: #fafcff;
+}
+.ce-step-num-badge {
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 2px 7px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+.ce-step-question {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.ce-step-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+.ce-step-flow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-family: var(--mono);
+  padding: 6px 8px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  flex-wrap: wrap;
+}
+.cs-node { color: var(--text-2); }
+.cs-node.highlight { color: var(--primary); font-weight: 700; }
+.cs-arr { color: var(--text-3); font-size: 11px; }
+.ce-step-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+.ce-step-tech-label {
+  margin-top: auto;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--text-3);
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.ce-step-connector {
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-3);
+}
+.ce-step-boundary-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.boundary-path-ok, .boundary-path-halt {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+}
+.boundary-path-ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+.boundary-path-halt {
+  background: #f1f5f9;
+  color: #475569;
+}
+.bp-icon { font-weight: 800; }
+.bp-content strong { display: inline; margin-right: 4px; }
+.ce-prominent-callout {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 12px;
+  margin-top: auto;
+  line-height: 1.4;
+}
+.ce-prominent-callout.neutral {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.ce-step-dimensions {
+  display: flex;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-3);
+  flex-wrap: wrap;
+}
+.ce-step-dimensions span {
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.ce-step-signal-box {
+  padding: 8px 10px;
+  background: #fffdf5;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sig-flow { font-size: 10.5px; font-weight: 600; color: #92400e; }
+.sig-example { font-size: 12px; font-weight: 700; color: #78350f; display: flex; align-items: center; gap: 6px; }
+.sig-tag { font-family: var(--mono); font-size: 10px; background: #fef3c7; color: #b45309; padding: 1px 5px; border-radius: 3px; }
+
+/* --- Collapsible Accordions in Method --- */
+.ce-details-accordion {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.ce-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  background: var(--surface-2);
+  user-select: none;
+  font-size: 14px;
+}
+.ce-accordion-summary:hover {
+  background: var(--surface-3);
+}
+.acc-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+.acc-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.ce-accordion-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+}
+
 .pres-section {
   scroll-margin-top: calc(var(--topbar-h) + 16px);
   display: flex; flex-direction: column; gap: 24px;
@@ -2121,8 +2577,16 @@ button { font: inherit; color: inherit; }
   .ce-three-col-layout,
   .ce-two-col-insuff,
   .ce-statuses-grid,
-  .ce-prov-grid {
+  .ce-prov-grid,
+  .ce-three-step-chain {
     grid-template-columns: 1fr;
+  }
+  .ce-step-connector {
+    transform: rotate(90deg);
+    padding: 6px 0;
+  }
+  .ce-case-tabs {
+    grid-template-columns: repeat(2, 1fr);
   }
   .ext-pilot-summary {
     grid-template-columns: repeat(2, 1fr);

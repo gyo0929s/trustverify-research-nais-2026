@@ -1,0 +1,456 @@
+{
+  "evaluation_id": "CLAIM-EVIDENCE-D4-UNRELATED-REFERENCE",
+  "observed_on": "2026-10-01",
+  "provenance": "CONTROLLED_PERTURBATION",
+  "provenance_note": "The draft sentences were deliberately constructed by the evaluator to test rule sensitivity. They are not observed AI outputs.",
+  "execution_mode": "LIVE (observed), frozen for FROZEN_EVIDENCE replay",
+  "runner": "tools/evaluation/run-claim-evidence-d4.mjs",
+  "pipeline": "bibliography -> Citation Integrity (existing batch audit) -> draft marker resolution -> KCI abstract of the identified record -> Claim–Evidence grounding gate",
+  "bibliography": "[1] 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267\n[2] 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595",
+  "items": [
+    {
+      "index": 1,
+      "raw": "[1] 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267",
+      "parse_status": "READY",
+      "input": {
+        "title": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+        "authors": [
+          "김미엘",
+          "김미선",
+          "최은숙",
+          "권호범",
+          "박영석"
+        ],
+        "publication_year": "2025",
+        "doi": "10.14368/jdras.2025.41.4.267"
+      },
+      "input_hash": "a1c7945203fe472359fbe045f6e798a99fe3e1bf6e073557d8b6b3ec7af77fea",
+      "outcome": "AUDITED",
+      "observed_status": "VERIFIED",
+      "system_state": null,
+      "rule_id": "REF-META-001",
+      "finding_id": "finding-bc9bb02137aefcde",
+      "kci_record_id": "ART003267604",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "evidence_hash": "42e31be110ebeeffd4fc1ce8400b94d97b5ddcfc8ae1534366bb8a855e4626f3"
+    },
+    {
+      "index": 2,
+      "raw": "[2] 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595",
+      "parse_status": "READY",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "10.9728/dcs.2024.25.3.595"
+      },
+      "input_hash": "0bee8a6ccbff77400769ba7ba72f2ccffa2583516f4d927da642a212d75ac3db",
+      "outcome": "AUDITED",
+      "observed_status": "VERIFIED",
+      "system_state": null,
+      "rule_id": "REF-META-001",
+      "finding_id": "finding-fae1511e0d9c5c73",
+      "kci_record_id": "ART003062835",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+    }
+  ],
+  "evidence": {
+    "42e31be110ebeeffd4fc1ce8400b94d97b5ddcfc8ae1534366bb8a855e4626f3": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003267604",
+            "titles": [
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "original"
+              },
+              {
+                "value": "교합력 전달에서 인접면 접촉의 역할에 관한 컴퓨터 시뮬레이션",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김미엘",
+                "english_name": "Mi-El Kim",
+                "source_text": "김미엘(서울대학교)"
+              },
+              {
+                "name": "김미선",
+                "english_name": "Mi-Sun Kim",
+                "source_text": "김미선(부천대학교)"
+              },
+              {
+                "name": "최은숙",
+                "english_name": "Enshu Cui",
+                "source_text": "최은숙(서울대학교 치의학대학원 치과보철학교실 및 치학연구소)"
+              },
+              {
+                "name": "권호범",
+                "english_name": "Ho-Beom Kwon",
+                "source_text": "권호범(서울대학교)"
+              },
+              {
+                "name": "박영석",
+                "english_name": "Young-Seok Park",
+                "source_text": "박영석(서울대학교)"
+              }
+            ],
+            "publication_year": "2025",
+            "journal": "구강회복응용과학지",
+            "volume": "41",
+            "issue": "4",
+            "first_page": "267",
+            "last_page": "275",
+            "doi_raw": "http://dx.doi.org/10.14368/jdras.2025.41.4.267",
+            "doi_normalized": "10.14368/jdras.2025.41.4.267"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003267604",
+            "titles": [
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "original"
+              },
+              {
+                "value": "교합력 전달에서 인접면 접촉의 역할에 관한 컴퓨터 시뮬레이션",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김미엘",
+                "english_name": "Mi-El Kim",
+                "source_text": null
+              },
+              {
+                "name": "김미선",
+                "english_name": "Mi-Sun Kim",
+                "source_text": null
+              },
+              {
+                "name": "최은숙",
+                "english_name": "Enshu Cui",
+                "source_text": null
+              },
+              {
+                "name": "권호범",
+                "english_name": "Ho-Beom Kwon",
+                "source_text": null
+              },
+              {
+                "name": "박영석",
+                "english_name": "Young-Seok Park",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2025",
+            "journal": "구강회복응용과학지",
+            "volume": "41",
+            "issue": "4",
+            "first_page": "267",
+            "last_page": "275",
+            "doi_raw": "http://dx.doi.org/10.14368/jdras.2025.41.4.267",
+            "doi_normalized": "10.14368/jdras.2025.41.4.267"
+          }
+        ]
+      }
+    },
+    "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": "장만(Dept. of Computer and Media Engineering, Tongmyong University)"
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": "신승수(Dept. of Information Security, Tongmyong University)"
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": null
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      }
+    }
+  },
+  "abstract_evidence": {
+    "ART003062835": {
+      "record_id": "ART003062835",
+      "title": "Computer Vision-based Basketball Player Training System",
+      "abstracts": [
+        {
+          "lang": "original",
+          "value": "Computer vision-based basketball player training system is a state-of-the-art field that relies on computer vision technologies and deep learning to help the basketball player train. Computer Vision-Based basketball player training systems rely on extensive training data to detect the player's movements and poses; the current training datasets are relatively small and vary in quality, affecting the basketball training effect. This paper proposes the human skeleton detection model, basketball and basketball hoop detection model, basketball shot detection model, basketball hit detection model, and basketball hit prediction model. In the proposed model, the basketball hit detection is improved by up to 9.66% over the existing method. The basketball hit prediction model is improved by up to 10.72% over the existing method using mathematical methods."
+        },
+        {
+          "lang": "english",
+          "value": "Computer vision-based basketball player training system is a state-of-the-art field that relies on computer vision technologies and deep learning to help the basketball player train. Computer Vision-Based basketball player training systems rely on extensive training data to detect the player's movements and poses; the current training datasets are relatively small and vary in quality, affecting the basketball training effect. This paper proposes the human skeleton detection model, basketball and basketball hoop detection model, basketball shot detection model, basketball hit detection model, and basketball hit prediction model. In the proposed model, the basketball hit detection is improved by up to 9.66% over the existing method. The basketball hit prediction model is improved by up to 10.72% over the existing method using mathematical methods."
+        }
+      ],
+      "keywords": [
+        "Basketball Player Training",
+        "Object Detection",
+        "Convolutional Neural Network",
+        "Single Shot MultiBox Detector",
+        "Transfer Learning",
+        "농구 선수 훈련",
+        "객체 감지",
+        "합성곱 신경망",
+        "싱글숏 멀티박스 감지기",
+        "전송 학습"
+      ],
+      "evidence_hash": "b72cbda488770a2a92b80b293f359b1839f14576db0f94a045deff17a4431184"
+    },
+    "ART003267604": {
+      "record_id": "ART003267604",
+      "title": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+      "abstracts": [
+        {
+          "lang": "original",
+          "value": "Purpose: This study aimed to investigate how interproximal contacts influence occlusal force transmission in the posterior maxilla using computer simulation. Materials and Methods: A three-dimensional model of the right maxillary second premolar, first molar, and second molar was constructed from patient CT data. Teeth and bone were defined as rigid bodies, and periodontal ligaments were represented by axial springs. Dynamic simulations were performed with occlusal forces of 100 N and 200 N applied at three points on the occlusal surface of the first molar for 0.1 s. Displacements of each tooth and the summed ligament forces were recorded and compared. Results: The first molar exhibited the greatest displacement and ligament forces, while the second premolar showed smaller secondary responses. Changes at the second molar were negligible. The peak displacement occurred on the mesial crown of the first molar, directed toward the second premolar. Increasing occlusal force from 100 N to 200 N markedly elevated the ligament forces at the first molar, whereas changes at the second premolar remained relatively small. These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts. Conclusion: Occlusal forces applied to a single molar can be transmitted to adjacent teeth through interproximal contacts, and the extent depends on loading direction and contact geometry. Clinically, establishing proper proximal contacts is essential for controlled distribution of occlusal loads and the long-term stability of the dentition."
+        },
+        {
+          "lang": "english",
+          "value": "Purpose: This study aimed to investigate how interproximal contacts influence occlusal force transmission in the posterior maxilla using computer simulation. Materials and Methods: A three-dimensional model of the right maxillary second premolar, first molar, and second molar was constructed from patient CT data. Teeth and bone were defined as rigid bodies, and periodontal ligaments were represented by axial springs. Dynamic simulations were performed with occlusal forces of 100 N and 200 N applied at three points on the occlusal surface of the first molar for 0.1 s. Displacements of each tooth and the summed ligament forces were recorded and compared. Results: The first molar exhibited the greatest displacement and ligament forces, while the second premolar showed smaller secondary responses. Changes at the second molar were negligible. The peak displacement occurred on the mesial crown of the first molar, directed toward the second premolar. Increasing occlusal force from 100 N to 200 N markedly elevated the ligament forces at the first molar, whereas changes at the second premolar remained relatively small. These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts. Conclusion: Occlusal forces applied to a single molar can be transmitted to adjacent teeth through interproximal contacts, and the extent depends on loading direction and contact geometry. Clinically, establishing proper proximal contacts is essential for controlled distribution of occlusal loads and the long-term stability of the dentition."
+        }
+      ],
+      "keywords": [
+        "interproximal contact",
+        "occlusal force",
+        "periodontal ligament",
+        "computer simulation",
+        "dental biomechanics",
+        "인접면 접촉",
+        "교합력",
+        "치주인대",
+        "컴퓨터 시뮬레이션",
+        "치과생체역학"
+      ],
+      "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "D4",
+      "provenance": "CONTROLLED_PERTURBATION",
+      "design": "Claim grounded in ART003267604 cites [2], a real, valid but unrelated KCI record (ART003062835).",
+      "draft_sentence": "The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2].",
+      "marker": "[2]",
+      "resolved_by": "PRINTED_NUMBER",
+      "resolved_row_index": 2,
+      "citing_claim": "The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.",
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "kci_record_id": "ART003062835"
+      },
+      "claim_evidence": {
+        "status": "INSUFFICIENT_EVIDENCE",
+        "signal": null,
+        "rule_id": "CE-GROUND-001",
+        "rule_version": "1.0",
+        "insufficiency_reason": "NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD",
+        "evidence_span": null,
+        "grounding": {
+          "grounded": false,
+          "reason": "NO_SENTENCE_MEETS_THRESHOLD",
+          "best_shared_anchors": [],
+          "citing_anchor_count": 12,
+          "thresholds": {
+            "MIN_SHARED_ANCHORS": 3,
+            "MIN_COVERAGE": 0.6
+          },
+          "record_shared_anchors": [],
+          "record_relevance_threshold": {
+            "MIN_SHARED_ANCHORS": 2
+          }
+        },
+        "why": "인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다.",
+        "human_review_required": true,
+        "evidence_hash": "b72cbda488770a2a92b80b293f359b1839f14576db0f94a045deff17a4431184",
+        "finding_id": "claim-d46caafa57abe6b9",
+        "processing_version": "claim-evidence-p0-1.1"
+      }
+    },
+    {
+      "case_id": "D4-CONTRAST",
+      "provenance": "CONTROLLED_PERTURBATION",
+      "design": "Identical sentence citing [1], the record the claim is actually grounded in. Isolates the reference as the only difference.",
+      "draft_sentence": "The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [1].",
+      "marker": "[1]",
+      "resolved_by": "PRINTED_NUMBER",
+      "resolved_row_index": 1,
+      "citing_claim": "The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.",
+      "citation_integrity": {
+        "status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "kci_record_id": "ART003267604"
+      },
+      "claim_evidence": {
+        "status": "CONSISTENT_WITH_EVIDENCE",
+        "signal": null,
+        "rule_id": "CE-CONSIST-001",
+        "rule_version": "1.0",
+        "insufficiency_reason": null,
+        "evidence_span": {
+          "text": "These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts.",
+          "sentence_index": 9,
+          "abstract_lang": "original"
+        },
+        "grounding": {
+          "grounded": true,
+          "shared_anchors": [
+            "additional",
+            "capacity",
+            "contact",
+            "dissipat",
+            "first",
+            "interproximal",
+            "limit",
+            "load",
+            "locally",
+            "molar",
+            "shar"
+          ],
+          "coverage": 0.917,
+          "citing_anchor_count": 12,
+          "thresholds": {
+            "MIN_SHARED_ANCHORS": 3,
+            "MIN_COVERAGE": 0.6
+          }
+        },
+        "why": "특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다.",
+        "human_review_required": false,
+        "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7",
+        "finding_id": "claim-4ea2a838ec1d26e7",
+        "processing_version": "claim-evidence-p0-1.1"
+      }
+    }
+  ],
+  "evidence_notice": "Sanitized bibliographic and abstract KCI evidence only. No API key, request URL, public_url, source paths, or timestamps. Offline replay only; never a fallback for LIVE KCI."
+}

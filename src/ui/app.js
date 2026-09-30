@@ -176,6 +176,7 @@ const state = {
   currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
+  currentCeCase: 'D2', // 'D1' | 'D2' | 'D3' | 'D4'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
   currentView: 'batch', // 'batch' | 'single' | 'method'
@@ -245,6 +246,16 @@ const el = {
   ceSelectedPaperMeta: $('ceSelectedPaperMeta'),
   ceResultModeTag: $('ceResultModeTag'),
   ceVerifyResultBody: $('ceVerifyResultBody'),
+
+  // Evaluation Examples Case Selector & Panels
+  btnCaseD1: $('btnCaseD1'),
+  btnCaseD2: $('btnCaseD2'),
+  btnCaseD3: $('btnCaseD3'),
+  btnCaseD4: $('btnCaseD4'),
+  ceCaseDetailD1: $('ceCaseDetailD1'),
+  ceCaseDetailD2: $('ceCaseDetailD2'),
+  ceCaseDetailD3: $('ceCaseDetailD3'),
+  ceCaseDetailD4: $('ceCaseDetailD4'),
 
   // Step 1: Input
   batchInputCard: $('batchInputCard'),
@@ -390,6 +401,24 @@ function switchCeView(viewName) {
   if (el.ceViewMethod) el.ceViewMethod.hidden = !isMethod;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchCeCase(caseId) {
+  state.currentCeCase = caseId;
+  const isD1 = caseId === 'D1';
+  const isD2 = caseId === 'D2';
+  const isD3 = caseId === 'D3';
+  const isD4 = caseId === 'D4';
+
+  el.btnCaseD1?.classList.toggle('is-active', isD1);
+  el.btnCaseD2?.classList.toggle('is-active', isD2);
+  el.btnCaseD3?.classList.toggle('is-active', isD3);
+  el.btnCaseD4?.classList.toggle('is-active', isD4);
+
+  if (el.ceCaseDetailD1) el.ceCaseDetailD1.hidden = !isD1;
+  if (el.ceCaseDetailD2) el.ceCaseDetailD2.hidden = !isD2;
+  if (el.ceCaseDetailD3) el.ceCaseDetailD3.hidden = !isD3;
+  if (el.ceCaseDetailD4) el.ceCaseDetailD4.hidden = !isD4;
 }
 
 function switchMainView(viewName) {
@@ -1684,6 +1713,12 @@ function init() {
   el.btnExecuteCeVerify?.addEventListener('click', executeCeVerify);
   loadClaimEvidenceP0();
 
+  // Claim-Evidence Evaluation Case Selector
+  el.btnCaseD1?.addEventListener('click', () => switchCeCase('D1'));
+  el.btnCaseD2?.addEventListener('click', () => switchCeCase('D2'));
+  el.btnCaseD3?.addEventListener('click', () => switchCeCase('D3'));
+  el.btnCaseD4?.addEventListener('click', () => switchCeCase('D4'));
+
   // Batch Step 1: Input Actions
   el.btnAnalyzeBatch?.addEventListener('click', handleAnalyzeBatch);
   el.btnLoadExampleBatch?.addEventListener('click', async () => {
@@ -1798,8 +1833,12 @@ function handleHashRouting() {
     switchWorkspaceModule('claim-evidence', 'verify');
   } else if (hash === 'ce-verify') {
     switchWorkspaceModule('claim-evidence', 'verify');
-  } else if (hash === 'ce-examples') {
+  } else if (hash.startsWith('ce-examples')) {
     switchWorkspaceModule('claim-evidence', 'examples');
+    if (hash.includes('d1')) switchCeCase('D1');
+    else if (hash.includes('d3')) switchCeCase('D3');
+    else if (hash.includes('d4')) switchCeCase('D4');
+    else switchCeCase('D2');
   } else if (hash === 'ce-method') {
     switchWorkspaceModule('claim-evidence', 'method');
   } else if (hash === 'translation' || hash === 'viewtranslation') {
