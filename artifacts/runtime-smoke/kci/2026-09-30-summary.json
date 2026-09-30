@@ -1,0 +1,61 @@
+{
+  "schema_version": "kci-runtime-smoke-v1",
+  "run_date": "2026-09-30",
+  "implementation_under_test": "src/kci/adapter.js",
+  "live_call_count": 3,
+  "requests": [
+    {
+      "request": "articleSearch-positive",
+      "expected_state": "KCI_OK",
+      "state": "KCI_OK",
+      "latency_ms": 313,
+      "record_count": 10,
+      "total": 2814,
+      "source_record_id": "ART003062835",
+      "normalized_content_sha256": "514923e38efd5654943c893e3f20ba2b0c988d71ebd883a6cd8422c14c1b700d",
+      "redacted_snapshot_sha256": "36b4a1e48a5841654742732ddb85624cfa4139ff1d8f359c53b841d87aa19334",
+      "secret_absent_from_adapter_output": true,
+      "normalized_record_serializable": true,
+      "eligible_for_citation_comparison": true,
+      "eligible_for_not_found_in_kci": false
+    },
+    {
+      "request": "articleDetail",
+      "expected_state": "KCI_OK",
+      "state": "KCI_OK",
+      "latency_ms": 225,
+      "record_count": 1,
+      "total": 1,
+      "source_record_id": "ART003062835",
+      "normalized_content_sha256": "b33fbea2bc926d7e9466b8cbe41f3608adc021e8318728b19bdd3b5960150613",
+      "redacted_snapshot_sha256": "401af01e86f3edadb5e7905f6c96253087b858bcd4196ab6000971ef8338fe98",
+      "secret_absent_from_adapter_output": true,
+      "normalized_record_serializable": true,
+      "eligible_for_citation_comparison": true,
+      "eligible_for_not_found_in_kci": false
+    },
+    {
+      "request": "articleSearch-zero",
+      "expected_state": "KCI_ZERO_RESULTS",
+      "state": "KCI_ZERO_RESULTS",
+      "latency_ms": 107,
+      "record_count": 0,
+      "total": null,
+      "source_record_id": null,
+      "normalized_content_sha256": null,
+      "redacted_snapshot_sha256": "879cc2cbb3d36beadabf7c83bf81edb0b9f015ece420001bb0bc18ee2e7d38a6",
+      "secret_absent_from_adapter_output": true,
+      "normalized_record_serializable": null,
+      "eligible_for_citation_comparison": false,
+      "eligible_for_not_found_in_kci": true
+    }
+  ],
+  "checks": {
+    "search_detail_identity_match": true,
+    "zero_result_preserved": true,
+    "no_research_finding_emitted": true,
+    "system_failure_not_eligible_for_not_found": true,
+    "snapshots_redacted": true,
+    "normalized_records_serializable": true
+  }
+}
