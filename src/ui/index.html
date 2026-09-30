@@ -899,7 +899,7 @@
             <!-- 1. Citing Sentence Input -->
             <div class="ce-verify-field-group">
               <label class="ce-field-label" for="ceVerifyInputText">내가 실제로 작성한 인용 문장 (Citing Statement with Marker)</label>
-              <textarea class="ce-verify-textarea" id="ceVerifyInputText" rows="3" placeholder="검증할 인용 문장을 입력하세요. (예: The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2].)" spellcheck="false"></textarea>
+              <textarea class="ce-verify-textarea" id="ceVerifyInputText" rows="3" placeholder="검증할 인용 문장을 입력하세요. (예: The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].)" spellcheck="false"></textarea>
             </div>
 
             <!-- 2. Selected Paper / Reference Context Display -->
@@ -1010,7 +1010,7 @@
                 "실제 존재하는 논문이라고 해서, 그 논문이 지금 문장의 근거라는 뜻은 아닙니다."
               </div>
               <p class="ce-case-short-desc">
-                "참고문헌 자체는 실제 KCI 논문이지만, 현재 확보된 해당 논문의 공개 초록에서는 이 문장을 연결할 충분한 근거를 찾지 못했습니다."
+                "참고문헌 자체는 실제 KCI 논문이지만, 현재 확보된 해당 논문의 공개 초록에서는 이 문장을 뒷받침하는 구체적 근거를 확인하지 못했습니다."
               </p>
             </div>
 
@@ -1020,7 +1020,7 @@
               <div class="trace-chain-steps">
                 <div class="trace-step-node">
                   <span class="ts-tag">본문 주장</span>
-                  <span class="ts-val">load-sharing capacity…</span>
+                  <span class="ts-val">equity prices fall…</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
@@ -1030,22 +1030,22 @@
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
                   <span class="ts-tag">참고문헌 2번</span>
-                  <span class="ts-val">Basketball Player Training System</span>
+                  <span class="ts-val">이보형, 홍우형 (2019)</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node highlight-kci">
                   <span class="ts-tag">KCI 실제 Record</span>
-                  <span class="ts-val">ART003062835 (VERIFIED)</span>
+                  <span class="ts-val">ART002510435 (VERIFIED)</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
                   <span class="ts-tag">KCI 공개 Abstract</span>
-                  <span class="ts-val">대조 실행 (공유 앵커 0건)</span>
+                  <span class="ts-val">No sufficiently grounded evidence span</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node is-halt">
                   <span class="ts-tag">근거 특정</span>
-                  <span class="ts-val">관련 evidence span을 충분히 고정하지 못함</span>
+                  <span class="ts-val">관련 evidence span을 특정하지 못함</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node is-verdict">
@@ -1062,7 +1062,7 @@
                   <span class="d4-step-num">1. 실제 논문 확인</span>
                   <div class="d4-status-val">
                     <span class="source-status qualified">VERIFIED</span>
-                    <code class="d4-record-id">KCI Record: ART003062835</code>
+                    <code class="d4-record-id">KCI Record: ART002510435</code>
                   </div>
                   <p class="d4-sub">서지 4개 항목(Title·Author·Year·DOI) 모두 공식 KCI 레코드와 100% 일치</p>
                 </div>
@@ -1073,14 +1073,14 @@
                     <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
                     <span class="rule-tag">규칙 CE-GROUND-001 (v1.0)</span>
                   </div>
-                  <p class="d4-sub">NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD</p>
+                  <p class="d4-sub">CLAIM_NOT_GROUNDED_IN_ABSTRACT</p>
                 </div>
 
                 <div class="d4-item full-width">
                   <span class="d4-step-num">3. 이유</span>
                   <div class="d4-why-box">
-                    <p>"현재 연결된 실제 논문의 공개 초록에서 이 문장을 뒷받침할 관련 근거를 보수적으로 식별하지 못했습니다."</p>
-                    <p class="d4-why-detail">인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다.</p>
+                    <p>"현재 확보된 KCI 공개 초록에서는 이 인용 문장을 뒷받침하는 구체적 근거를 확인하지 못했습니다."</p>
+                    <p class="d4-why-detail">인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록에는 이 인용 문장을 특정할 만큼 구체적인 근거 문장이 없습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다.</p>
                   </div>
                 </div>
 
@@ -1107,10 +1107,10 @@
                 <div class="contrast-col current-binding">
                   <div class="contrast-col-head">
                     <span class="contrast-tag tag-current">현재 연결 [2]</span>
-                    <span class="contrast-paper-name">Basketball Player Training System</span>
+                    <span class="contrast-paper-name">금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구</span>
                   </div>
                   <div class="contrast-col-body">
-                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003062835</code></div>
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002510435</code></div>
                     <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
                     <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span></div>
                   </div>
@@ -1124,17 +1124,17 @@
                 <div class="contrast-col target-binding">
                   <div class="contrast-col-head">
                     <span class="contrast-tag tag-target">근거 source [1]</span>
-                    <span class="contrast-paper-name">Computer simulation on interproximal contacts</span>
+                    <span class="contrast-paper-name">텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석</span>
                   </div>
                   <div class="contrast-col-body">
-                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003267604</code></div>
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002961723</code></div>
                     <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
                     <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span></div>
                   </div>
                 </div>
               </div>
               <div class="contrast-footer-defense">
-                💡 <strong>기술적 방어 논리:</strong> "문장은 그대로 두고 reference binding만 바꿨습니다. AI가 문장을 느낌으로 판단한 것이 아니라, 어떤 실제 KCI record에 연결됐는지에서 결정론적으로 발생한 결과 차이입니다."
+                💡 <strong>핵심 시사점:</strong> "참고문헌이 실제 논문이라는 사실과, 그 논문이 특정 문장의 근거라는 사실은 다릅니다."
               </div>
             </div>
 
@@ -1143,12 +1143,12 @@
               <div class="ce-flow-step-box citing-box">
                 <div class="ce-flow-step-head">
                   <span class="ce-flow-step-num">1. 내가 쓴 인용문 (Citing Statement with Marker)</span>
-                  <span class="rule-tag">Case D4 · Finding ID: claim-d46caafa57abe6b9</span>
+                  <span class="rule-tag">Case FIN-D4</span>
                 </div>
-                <p class="claim-text">"The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2]."</p>
+                <p class="claim-text">"The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2]."</p>
                 <div class="ce-display-aid">
                   <span class="ce-aid-badge">한국어 이해 보조</span>
-                  <span>"시뮬레이션 결과는 대부분의 추가 하중이 제1대구치에서 국소적으로 소산됨에 따라, 인접 접촉면의 하중 분담 능력에 한계가 있음을 시사한다 [2]."</span>
+                  <span>"추정 결과는 긴축적이고 매파적인 통화정책 충격에 대응하여 주가가 하락함을 시사한다 [2]."</span>
                 </div>
               </div>
 
@@ -1160,12 +1160,12 @@
                   <span class="source-status qualified">서지 검증: VERIFIED (REF-META-001)</span>
                 </div>
                 <div class="ce-paper-info">
-                  <span class="ce-paper-id">KCI ID: ART003062835 (실제 존재하는 KCI 공식 학술 레코드)</span>
-                  <span class="ce-paper-title">Computer Vision-based Basketball Player Training System (장만, 신승수 2024)</span>
+                  <span class="ce-paper-id">KCI ID: ART002510435 (실제 존재하는 KCI 공식 학술 레코드)</span>
+                  <span class="ce-paper-title">금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구 (이보형, 홍우형 2019)</span>
                 </div>
                 <div class="ce-grounded-span">
-                  <span class="ce-span-badge">접지 결과 · 대응 근거 0건 (NO_SENTENCE_MEETS_THRESHOLD)</span>
-                  <p class="ce-span-text">인용된 논문(컴퓨터 비전 기반 농구선수 훈련 시스템)의 공개 초록 전체를 대조했으나, 치과 생체역학 하중 분담 인용문에 대응하는 공유 앵커가 0건입니다.</p>
+                  <span class="ce-span-badge">접지 결과 · No sufficiently grounded evidence span</span>
+                  <p class="ce-span-text">인용된 논문의 공개 초록을 대조했으나, 통화정책 충격 및 주가 하락 인용문에 대응하는 관련 근거를 초록에서 특정하지 못했습니다.</p>
                 </div>
                 <div class="ce-display-aid">
                   <span class="ce-aid-badge">핵심 관측 원칙</span>
@@ -1185,8 +1185,8 @@
                   <span class="rule-tag">규칙 CE-GROUND-001 (v1.0)</span>
                 </div>
                 <div class="ce-why-box">
-                  <strong>Why? (NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD)</strong>
-                  <p>"인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다."</p>
+                  <strong>Why?</strong>
+                  <p>"현재 확보된 KCI 공개 초록에서는 이 인용 문장을 뒷받침하는 구체적 근거를 확인하지 못했습니다."</p>
                 </div>
                 <div class="ce-prominent-callout neutral">
                   🛡️ <strong>판정 원칙:</strong> 잘못된 인용이나 거짓 논문이라고 단정하지 않고, 확인 불가(INSUFFICIENT_EVIDENCE) 상태로 남깁니다.
@@ -1213,7 +1213,7 @@
               <div class="trace-chain-steps">
                 <div class="trace-step-node">
                   <span class="ts-tag">본문 주장</span>
-                  <span class="ts-val">load-sharing capacity…</span>
+                  <span class="ts-val">equity prices fall…</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
@@ -1223,22 +1223,22 @@
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
                   <span class="ts-tag">참고문헌 1번</span>
-                  <span class="ts-val">Computer simulation on interproximal contacts</span>
+                  <span class="ts-val">김예빈, 조두연 (2023)</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node highlight-kci">
                   <span class="ts-tag">KCI 실제 Record</span>
-                  <span class="ts-val">ART003267604 (VERIFIED)</span>
+                  <span class="ts-val">ART002961723 (VERIFIED)</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node">
                   <span class="ts-tag">KCI 공개 Abstract</span>
-                  <span class="ts-val">Abstract sentence #9 접지 성공</span>
+                  <span class="ts-val">Abstract sentence #4 접지 성공</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node highlight-kci">
                   <span class="ts-tag">근거 특정</span>
-                  <span class="ts-val">공유 앵커 11/12 · coverage 91.7%</span>
+                  <span class="ts-val">공유 앵커 9/9 · coverage 100%</span>
                 </div>
                 <span class="ts-arr">↓</span>
                 <div class="trace-step-node is-verdict">
@@ -1255,7 +1255,7 @@
                   <span class="d4-step-num">1. 실제 논문 확인</span>
                   <div class="d4-status-val">
                     <span class="source-status qualified">VERIFIED</span>
-                    <code class="d4-record-id">KCI Record: ART003267604</code>
+                    <code class="d4-record-id">KCI Record: ART002961723</code>
                   </div>
                   <p class="d4-sub">서지 4개 항목(Title·Author·Year·DOI) 모두 공식 KCI 레코드와 100% 일치</p>
                 </div>
@@ -1273,7 +1273,7 @@
                   <span class="d4-step-num">3. 이유</span>
                   <div class="d4-why-box">
                     <p>"특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다."</p>
-                    <p class="d4-why-detail">인용된 논문의 공개 초록 9번 문장과 91.7% 일치하며, 원문의 신중한 유보(suggesting) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다.</p>
+                    <p class="d4-why-detail">인용된 논문의 공개 초록 4번 문장과 정합하며, 원문의 신중한 유보(suggest) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다.</p>
                   </div>
                 </div>
 
@@ -1300,10 +1300,10 @@
                 <div class="contrast-col target-binding">
                   <div class="contrast-col-head">
                     <span class="contrast-tag tag-target">근거 source [1]</span>
-                    <span class="contrast-paper-name">Computer simulation on interproximal contacts</span>
+                    <span class="contrast-paper-name">텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석</span>
                   </div>
                   <div class="contrast-col-body">
-                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003267604</code></div>
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002961723</code></div>
                     <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
                     <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span></div>
                   </div>
@@ -1317,10 +1317,10 @@
                 <div class="contrast-col current-binding">
                   <div class="contrast-col-head">
                     <span class="contrast-tag tag-current">현재 연결 [2]</span>
-                    <span class="contrast-paper-name">Basketball Player Training System</span>
+                    <span class="contrast-paper-name">금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구</span>
                   </div>
                   <div class="contrast-col-body">
-                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003062835</code></div>
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002510435</code></div>
                     <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
                     <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span></div>
                   </div>
@@ -1336,12 +1336,12 @@
               <div class="ce-flow-step-box citing-box">
                 <div class="ce-flow-step-head">
                   <span class="ce-flow-step-num">1. 내가 쓴 인용문 (Citing Statement with Marker)</span>
-                  <span class="rule-tag">Case D4-CONTRAST · Finding ID: claim-4ea2a838ec1d26e7</span>
+                  <span class="rule-tag">Case FIN-D4-CONTRAST</span>
                 </div>
-                <p class="claim-text">"The simulation results <mark class="mark-grounded">suggest</mark> a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [1]."</p>
+                <p class="claim-text">"The estimation results <mark class="mark-grounded">suggest</mark> that equity prices fall in response to a contractionary, hawkish monetary policy shock [1]."</p>
                 <div class="ce-display-aid">
                   <span class="ce-aid-badge">한국어 이해 보조</span>
-                  <span>"시뮬레이션 결과는 대부분의 추가 하중이 제1대구치에서 국소적으로 소산됨에 따라, 인접 접촉면의 하중 분담 능력에 한계가 있음을 <mark class="mark-grounded">시사한다</mark> [1]."</span>
+                  <span>"추정 결과는 긴축적이고 매파적인 통화정책 충격에 대응하여 주가가 하락함을 <mark class="mark-grounded">시사한다</mark> [1]."</span>
                 </div>
               </div>
 
@@ -1353,16 +1353,16 @@
                   <span class="source-status qualified">KCI VERIFIED</span>
                 </div>
                 <div class="ce-paper-info">
-                  <span class="ce-paper-id">KCI ID: ART003267604</span>
-                  <span class="ce-paper-title">Computer simulation on the role of interproximal contacts in occlusal force transmission</span>
+                  <span class="ce-paper-id">KCI ID: ART002961723</span>
+                  <span class="ce-paper-title">텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석 (김예빈, 조두연 2023)</span>
                 </div>
                 <div class="ce-grounded-span">
-                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span) · Abstract sentence #9</span>
-                  <p class="ce-span-text">"These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, <mark class="mark-grounded">suggesting</mark> a limit in the load-sharing capacity of interproximal contacts."</p>
+                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span) · Abstract sentence #4</span>
+                  <p class="ce-span-text">"The estimation results suggest that in response to a contractionary monetary policy shock, which is denoted as “hawkish”, equity prices fall and its impact persists over 4 months."</p>
                 </div>
                 <div class="ce-display-aid">
                   <span class="ce-aid-badge">한국어 이해 보조</span>
-                  <span>"…인접 접촉면의 하중 분담 능력에 한계가 있음을 <mark class="mark-grounded">시사한다</mark>."</span>
+                  <span>"…긴축적('매파적') 통화정책 충격에 대응하여 주가가 하락함을 <mark class="mark-grounded">시사한다</mark>."</span>
                 </div>
               </div>
 
@@ -1379,7 +1379,7 @@
                 </div>
                 <div class="ce-why-box">
                   <strong>Why?</strong>
-                  <p>"실제 초록 근거의 신중한 유보(suggesting) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다."</p>
+                  <p>"실제 초록 근거의 신중한 유보(suggest) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다."</p>
                 </div>
               </div>
             </div>

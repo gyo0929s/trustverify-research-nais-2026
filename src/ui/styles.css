@@ -1502,6 +1502,50 @@ button { font: inherit; color: inherit; }
   color: #92400e;
 }
 
+/* --- Two Question Banner (Result Header) --- */
+.ce-two-question-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+.ce-q-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ce-q-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.ce-q-answer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  flex-wrap: wrap;
+}
+.ce-q-divider {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--border-strong);
+  padding: 0 4px;
+}
+.contrast-col.is-active-side {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+
 /* --- Contrast Action & Visual --- */
 .ce-contrast-action-box {
   display: flex;
