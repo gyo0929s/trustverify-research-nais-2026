@@ -174,10 +174,11 @@ const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 대운해 (2024). Exploring AI-Assisted Wr
 const state = {
   ceP0: null,
   ceTraceContext: 'FINANCE_D4', // active trace preset context (see CE_TRACE_CONTEXTS) // Claim–Evidence P0: article + committed preset claims from GET /api/claim-evidence/p0 (no results)
-  currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
+  currentModule: 'citation', // 'citation' | 'claim-evidence' | 'agent-p0' | 'translation' | 'academic-reference'
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
   currentCeCase: 'D4', // 'D4' | 'D4-CONTRAST' | 'D2' | 'D3' | 'D1'
+  currentAgentView: 'contract', // 'contract' | 'prompt' | 'reverify'
   currentArView: 'reference', // 'reference' | 'handoff' | 'vision'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
@@ -202,19 +203,25 @@ const el = {
   extensionRail: $('extensionRail'),
   railBtnCitation: $('railBtnCitation'),
   railBtnClaimEvidence: $('railBtnClaimEvidence'),
+  railBtnAgent: $('railBtnAgent'),
   railBtnTranslation: $('railBtnTranslation'),
   railBtnAcademicRef: $('railBtnAcademicRef'),
   railActiveTagCitation: $('railActiveTagCitation'),
   railActiveTagCe: $('railActiveTagCe'),
+  railActiveTagAgent: $('railActiveTagAgent'),
   railActiveTagTf: $('railActiveTagTf'),
   railActiveTagAr: $('railActiveTagAr'),
   workspaceCitation: $('workspaceCitation'),
   workspaceClaimEvidence: $('workspaceClaimEvidence'),
+  workspaceAgentP0: $('workspaceAgentP0'),
   workspaceTranslation: $('workspaceTranslation'),
   workspaceAcademicRef: $('workspaceAcademicRef'),
   btnBackToCitationFromCe: $('btnBackToCitationFromCe'),
   btnBackToCitationFromCeExamples: $('btnBackToCitationFromCeExamples'),
   btnBackToCitationFromCeMethod: $('btnBackToCitationFromCeMethod'),
+  btnBackToCitationFromAgent: $('btnBackToCitationFromAgent'),
+  btnBackToCitationFromAgentPrompt: $('btnBackToCitationFromAgentPrompt'),
+  btnBackToCitationFromAgentReverify: $('btnBackToCitationFromAgentReverify'),
   btnBackToCitationFromTf: $('btnBackToCitationFromTf'),
   btnBackToCitationFromAr: $('btnBackToCitationFromAr'),
   btnBackToCitationFromArHandoff: $('btnBackToCitationFromArHandoff'),
@@ -223,9 +230,18 @@ const el = {
   // Context-Aware Top Navigation Blocks
   topnavCitation: $('topnavCitation'),
   topnavClaimEvidence: $('topnavClaimEvidence'),
+  topnavAgent: $('topnavAgent'),
   topnavAcademicRef: $('topnavAcademicRef'),
   topnavExpansion: $('topnavExpansion'),
   topnavModuleName: $('topnavModuleName'),
+
+  // TrustVerify Agent P0 Navigation Tabs & View Panels
+  navTabAgentContract: $('navTabAgentContract'),
+  navTabAgentPrompt: $('navTabAgentPrompt'),
+  navTabAgentReverify: $('navTabAgentReverify'),
+  agentViewContract: $('agentViewContract'),
+  agentViewPrompt: $('agentViewPrompt'),
+  agentViewReverify: $('agentViewReverify'),
 
   // Academic Reference Navigation Tabs & View Panels
   navTabArReference: $('navTabArReference'),
@@ -347,26 +363,31 @@ function switchWorkspaceModule(moduleName, targetSubView) {
   state.currentModule = moduleName;
   const isCitation = moduleName === 'citation';
   const isClaimEvidence = moduleName === 'claim-evidence';
+  const isAgent = moduleName === 'agent-p0';
   const isTranslation = moduleName === 'translation';
   const isAcademicRef = moduleName === 'academic-reference';
 
   el.railBtnCitation?.classList.toggle('is-active', isCitation);
   el.railBtnClaimEvidence?.classList.toggle('is-active', isClaimEvidence);
+  el.railBtnAgent?.classList.toggle('is-active', isAgent);
   el.railBtnTranslation?.classList.toggle('is-active', isTranslation);
   el.railBtnAcademicRef?.classList.toggle('is-active', isAcademicRef);
 
   if (el.railActiveTagCitation) el.railActiveTagCitation.hidden = !isCitation;
   if (el.railActiveTagCe) el.railActiveTagCe.hidden = !isClaimEvidence;
+  if (el.railActiveTagAgent) el.railActiveTagAgent.hidden = !isAgent;
   if (el.railActiveTagTf) el.railActiveTagTf.hidden = !isTranslation;
   if (el.railActiveTagAr) el.railActiveTagAr.hidden = !isAcademicRef;
 
   if (el.workspaceCitation) el.workspaceCitation.hidden = !isCitation;
   if (el.workspaceClaimEvidence) el.workspaceClaimEvidence.hidden = !isClaimEvidence;
+  if (el.workspaceAgentP0) el.workspaceAgentP0.hidden = !isAgent;
   if (el.workspaceTranslation) el.workspaceTranslation.hidden = !isTranslation;
   if (el.workspaceAcademicRef) el.workspaceAcademicRef.hidden = !isAcademicRef;
 
   if (el.topnavCitation) el.topnavCitation.hidden = !isCitation;
   if (el.topnavClaimEvidence) el.topnavClaimEvidence.hidden = !isClaimEvidence;
+  if (el.topnavAgent) el.topnavAgent.hidden = !isAgent;
   if (el.topnavAcademicRef) el.topnavAcademicRef.hidden = !isAcademicRef;
   if (el.topnavExpansion) el.topnavExpansion.hidden = !isTranslation;
 
@@ -380,10 +401,32 @@ function switchWorkspaceModule(moduleName, targetSubView) {
   } else if (isClaimEvidence) {
     if (targetSubView) switchCeView(targetSubView);
     else switchCeView(state.currentCeView || 'verify');
+  } else if (isAgent) {
+    if (targetSubView) switchAgentView(targetSubView);
+    else switchAgentView(state.currentAgentView || 'contract');
   } else if (isAcademicRef) {
     if (targetSubView) switchArView(targetSubView);
     else switchArView(state.currentArView || 'reference');
   }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ------------------------------------------------------------------ TRUSTVERIFY AGENT P0 VIEW ROUTING */
+
+function switchAgentView(viewName) {
+  state.currentAgentView = viewName;
+  const isContract = viewName === 'contract';
+  const isPrompt = viewName === 'prompt';
+  const isReverify = viewName === 'reverify';
+
+  el.navTabAgentContract?.classList.toggle('is-active', isContract);
+  el.navTabAgentPrompt?.classList.toggle('is-active', isPrompt);
+  el.navTabAgentReverify?.classList.toggle('is-active', isReverify);
+
+  if (el.agentViewContract) el.agentViewContract.hidden = !isContract;
+  if (el.agentViewPrompt) el.agentViewPrompt.hidden = !isPrompt;
+  if (el.agentViewReverify) el.agentViewReverify.hidden = !isReverify;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1735,22 +1778,32 @@ function renderCeLogicPanel(ce) {
       </div>
       <p class="ce-logic-principle">근거를 찾기 전에 의미를 판단하지 않습니다.</p>
       <div class="ce-logic-stages">
-        <div class="ce-logic-stage ${grounded ? 'is-pass' : 'is-fail'}">
+        <div class="ce-logic-stage ${grounded ? 'is-pass' : 'is-fail'} ce-logic-stage-primary">
           <div class="ce-logic-stage-head">
             <span class="ce-logic-step">① 근거 문장 찾기</span>
             <span class="ce-logic-badge">${grounded ? 'PASS' : 'FAIL'}</span>
           </div>
-          <div class="ce-logic-rule">기준: 공유 내용어 ≥ ${escapeHtml(t.MIN_SHARED_ANCHORS)} 그리고 인용 핵심어 커버리지 ≥ ${escapeHtml(Math.round((t.MIN_COVERAGE ?? 0) * 100))}% <code>${escapeHtml(ce.rule_id === 'CE-GROUND-001' ? 'CE-GROUND-001' : 'Grounding Gate')}</code></div>
-          <div class="ce-logic-metric">
-            <span>현재 ${escapeHtml(ce._marker || '')} · 공유 내용어 <strong>${sharedCount ?? '-'} / ${escapeHtml(total ?? '-')}</strong></span>
-            ${coverageText ? `<span>인용 핵심어 커버리지 <strong>${coverageText}</strong></span>` : ''}
+          <div class="ce-logic-criteria">
+            <div class="ce-logic-criterion">
+              <span class="ce-logic-criterion-label">기준 1 · 공유 내용어</span>
+              <span class="ce-logic-criterion-rule">≥ ${escapeHtml(t.MIN_SHARED_ANCHORS)}</span>
+              <span class="ce-logic-criterion-observed">현재 ${escapeHtml(ce._marker || '')} · 공유 내용어 <strong>${sharedCount ?? '-'} / ${escapeHtml(total ?? '-')}</strong></span>
+            </div>
+            <div class="ce-logic-criterion">
+              <span class="ce-logic-criterion-label">기준 2 · 인용 핵심어 커버리지</span>
+              <span class="ce-logic-criterion-rule">≥ ${escapeHtml(Math.round((t.MIN_COVERAGE ?? 0) * 100))}%</span>
+              <span class="ce-logic-criterion-observed">${coverageText
+                ? `인용 핵심어 커버리지 <strong>${coverageText}</strong>`
+                : '근거 문장 후보 미확정 · 엔진 커버리지 값 없음'}</span>
+            </div>
           </div>
           <div class="ce-logic-outcome">${grounded
             ? `→ 근거 문장 확정 (초록 문장 #${escapeHtml(ce.evidence_span?.sentence_index ?? '-')})`
-            : '→ 충분한 근거 문장을 특정하지 못함 → INSUFFICIENT_EVIDENCE'}</div>
+            : '→ 기준 미달 → INSUFFICIENT_EVIDENCE'}</div>
+          <div class="ce-logic-rule">두 기준을 모두 충족하는 초록 문장이 있어야 근거로 확정합니다. <code>${escapeHtml(ce.rule_id === 'CE-GROUND-001' ? 'CE-GROUND-001' : 'Grounding Gate')}</code></div>
         </div>
         <div class="ce-logic-arrow" aria-hidden="true">➔</div>
-        <div class="ce-logic-stage ${!stage2Ran ? 'is-muted' : stage2Pass ? 'is-pass' : 'is-shift'}">
+        <div class="ce-logic-stage ${!stage2Ran ? 'is-muted' : stage2Pass ? 'is-pass' : 'is-shift'} ce-logic-stage-secondary">
           <div class="ce-logic-stage-head">
             <span class="ce-logic-step">② 표현 변화 확인</span>
             <span class="ce-logic-badge">${stage2Badge}</span>
@@ -1867,7 +1920,7 @@ function renderCeTraceResult(data) {
     evidenceSpanHtml = `
       <div class="ce-grounded-span empty-span" style="margin-top:6px;background:#f8fafc;border:1px dashed var(--border);">
         <span class="ce-span-badge" style="background:#cbd5e1;color:#475569;">공개 초록 대조</span>
-        <p class="ce-span-text" style="color:var(--text-3);font-style:italic;">No sufficiently grounded evidence span</p>
+        <p class="ce-span-text" style="color:var(--text-3);font-style:italic;">충분한 근거 문장을 특정하지 못함 <span style="font-size:11px;">(No sufficiently grounded evidence span)</span></p>
       </div>`;
   }
 
@@ -1901,6 +1954,7 @@ function renderCeTraceResult(data) {
         </div>
         <div class="ce-statement-box">
           <p class="ce-statement-text">"${escapeHtml(data.draft_text)}"</p>
+          ${isFinanceContrast ? '<p class="ce-statement-note">발표용 통제 인용 문장(영문) · 실제 KCI 공개 초록 기반 검증</p>' : ''}
           <div style="margin-top:10px;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;">
             <span>인용 마커:</span>
             <strong style="font-family:var(--mono);color:var(--primary);background:var(--primary-soft);padding:1px 6px;border-radius:3px;">${escapeHtml(data.linking.marker)}</strong>
@@ -2144,6 +2198,10 @@ function init() {
     location.hash = 'ce-verify';
     switchWorkspaceModule('claim-evidence', 'verify');
   });
+  el.railBtnAgent?.addEventListener('click', () => {
+    location.hash = 'agent-p0';
+    switchWorkspaceModule('agent-p0', 'contract');
+  });
   el.railBtnTranslation?.addEventListener('click', () => {
     location.hash = 'translation';
     switchWorkspaceModule('translation');
@@ -2162,6 +2220,18 @@ function init() {
     switchWorkspaceModule('citation', 'batch');
   });
   el.btnBackToCitationFromCeMethod?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromAgent?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromAgentPrompt?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromAgentReverify?.addEventListener('click', () => {
     location.hash = 'batch';
     switchWorkspaceModule('citation', 'batch');
   });
@@ -2202,6 +2272,20 @@ function init() {
       document.querySelectorAll('.ar-domain-pill').forEach(p => p.classList.remove('is-active'));
       pill.classList.add('is-active');
     });
+  });
+
+  // Top Navigation Tabs (TrustVerify Agent P0)
+  el.navTabAgentContract?.addEventListener('click', () => {
+    location.hash = 'agent-contract';
+    switchAgentView('contract');
+  });
+  el.navTabAgentPrompt?.addEventListener('click', () => {
+    location.hash = 'agent-prompt';
+    switchAgentView('prompt');
+  });
+  el.navTabAgentReverify?.addEventListener('click', () => {
+    location.hash = 'agent-reverify';
+    switchAgentView('reverify');
   });
 
   // Top Navigation Tabs (Citation Integrity)
@@ -2406,6 +2490,14 @@ function handleHashRouting() {
     switchWorkspaceModule('claim-evidence', 'method');
   } else if (hash === 'translation' || hash === 'viewtranslation') {
     switchWorkspaceModule('translation');
+  } else if (hash.startsWith('agent') || hash.startsWith('agent-p0')) {
+    if (hash.includes('prompt')) {
+      switchWorkspaceModule('agent-p0', 'prompt');
+    } else if (hash.includes('reverify')) {
+      switchWorkspaceModule('agent-p0', 'reverify');
+    } else {
+      switchWorkspaceModule('agent-p0', 'contract');
+    }
   } else if (hash.startsWith('academic-reference') || hash.startsWith('ar-') || hash === 'finance-20' || hash === 'viewacademicref') {
     if (hash.includes('handoff')) {
       switchWorkspaceModule('academic-reference', 'handoff');

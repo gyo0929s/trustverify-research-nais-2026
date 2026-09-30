@@ -54,6 +54,22 @@
       </button>
     </nav>
 
+    <!-- MODULE: TRUSTVERIFY AGENT P0 TOP NAVIGATION -->
+    <nav class="topnav topnav-agent-p0" id="topnavAgent" aria-label="TrustVerify Agent 내비게이션" hidden>
+      <button class="topnav-tab is-active" id="navTabAgentContract" type="button" data-agent-view="contract">
+        <span class="tab-icon">📦</span>
+        <span>Evidence Contract</span>
+      </button>
+      <button class="topnav-tab" id="navTabAgentPrompt" type="button" data-agent-view="prompt">
+        <span class="tab-icon">🧩</span>
+        <span>PromptPackage</span>
+      </button>
+      <button class="topnav-tab" id="navTabAgentReverify" type="button" data-agent-view="reverify">
+        <span class="tab-icon">🔁</span>
+        <span>Reverify 구조</span>
+      </button>
+    </nav>
+
     <!-- MODULE 3 TOP NAVIGATION: ACADEMIC EXPRESSION & AGENT VISION (PILOT) -->
     <nav class="topnav topnav-academic-ref" id="topnavAcademicRef" aria-label="학술 표현 참조 내비게이션" hidden>
       <button class="topnav-tab is-active" id="navTabArReference" type="button" data-ar-view="reference">
@@ -116,6 +132,19 @@
             <div class="rail-item-meta">
               <span class="rail-badge badge-expansion">EXPANSION / P0</span>
               <span class="rail-active-pill" id="railActiveTagCe" hidden>ACTIVE</span>
+            </div>
+          </button>
+
+          <!-- MODULE: TrustVerify Agent (AGENT P0) -->
+          <button class="rail-item" id="railBtnAgent" type="button" data-module="agent-p0" title="TrustVerify Agent (AGENT P0)">
+            <div class="rail-item-top">
+              <span class="rail-item-icon">◆</span>
+              <span class="rail-item-title">TrustVerify Agent</span>
+            </div>
+            <div class="rail-item-sub">검증 결과 → 근거 계약 → PromptPackage</div>
+            <div class="rail-item-meta">
+              <span class="rail-badge badge-agent-p0">AGENT P0</span>
+              <span class="rail-active-pill" id="railActiveTagAgent" hidden>ACTIVE</span>
             </div>
           </button>
 
@@ -1930,6 +1959,365 @@
         </div>
       </div>
       <!-- ============================== END WORKSPACE CLAIM–EVIDENCE ============================== -->
+
+      <!-- =========================================================================
+           WORKSPACE: TRUSTVERIFY AGENT P0 (FINDING → CONTRACT → PROMPT)
+           ========================================================================= -->
+      <div class="workspace-module" id="workspaceAgentP0" hidden>
+        <!-- TAB 1: Evidence Contract -->
+        <div class="agent-view-panel" id="agentViewContract">
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-agent-p0">AGENT P0</span>
+                <span class="ce-tag-pill" style="background:#f5f3ff;color:#6d28d9;border-color:#c4b5fd;">근거 보존형 에이전트 인터페이스</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAgent" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">TrustVerify Agent P0</h1>
+            <p class="ext-hero-sub">검증 결과를 근거 보존형 AI 입력으로 변환</p>
+            <p class="ext-hero-desc">
+              "검증 에이전트는 진실을 생성하지 않습니다. 검증된 근거와 제한 조건을 다음 생성 단계에 전달합니다."
+            </p>
+          </section>
+
+          <!-- 7-Step Agent Flow -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">PIPELINE</span>
+                <h3 class="batch-title">TrustVerify Agent 7단계 파이프라인</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#f5f3ff;color:#6d28d9;border:1px solid #c4b5fd;">CLOSED-LOOP VERIFICATION</span>
+            </div>
+
+            <div class="agent-flow-7step">
+              <div class="agent-flow-step">
+                <span class="agent-step-badge">1. FINDING</span>
+                <span class="agent-step-title">Finding</span>
+                <span class="agent-step-sub">검증 결과 도출 (Layer 1~3)</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step">
+                <span class="agent-step-badge">2. CONTRACT</span>
+                <span class="agent-step-title">Evidence Contract</span>
+                <span class="agent-step-sub">고정 근거 및 보존 제약 명세</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step">
+                <span class="agent-step-badge">3. PROMPT</span>
+                <span class="agent-step-title">Deterministic PromptPackage</span>
+                <span class="agent-step-sub">결정론적 프롬프트 패키지 생성</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step step-future">
+                <span class="agent-step-badge step-future-badge">4. FUTURE</span>
+                <span class="agent-step-title">Solar / External AI</span>
+                <span class="agent-step-sub">외부 생성 모델 추론 (향후 연동)</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step step-future">
+                <span class="agent-step-badge step-future-badge">5. FUTURE</span>
+                <span class="agent-step-title">Proposed Revision</span>
+                <span class="agent-step-sub">초록 근거 기반 후보 수정안 제안</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step step-reverify">
+                <span class="agent-step-badge step-reverify-badge">6. REVERIFY</span>
+                <span class="agent-step-title">TrustVerify Reverify</span>
+                <span class="agent-step-sub">생성 수정안 자체를 엔진으로 재검증</span>
+              </div>
+              <div class="agent-flow-arr">➔</div>
+              <div class="agent-flow-step step-human">
+                <span class="agent-step-badge step-human-badge">7. HUMAN</span>
+                <span class="agent-step-title">Human Review</span>
+                <span class="agent-step-sub">연구자 최종 검토 및 채택 승인</span>
+              </div>
+            </div>
+
+            <!-- Reverify Emphasized Banner -->
+            <div class="agent-reverify-banner">
+              <div class="agent-reverify-icon">🔁</div>
+              <div class="agent-reverify-text">
+                <strong>핵심 설계 원칙: TrustVerify Reverify (재검증 폐루프)</strong>
+                <p>"생성 모델의 수정안도 다시 TrustVerify 검증 루프를 통과합니다." 검증되지 않은 생성문은 사용자에게 확정안으로 제시되지 않으며, Citation Integrity 및 Claim–Evidence Alignment를 통과해야 최종 승인 단계로 넘어갑니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current vs Future Boundary Box -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">BOUNDARY</span>
+                <h3 class="batch-title">현재 구현(Current Implementation) vs 향후 확장(Future Expansion) 경계</h3>
+              </div>
+              <span class="batch-helper-text">엄격한 검증 계약과 생성기 연동의 책임 분리</span>
+            </div>
+            <div class="agent-boundary-box">
+              <div class="agent-boundary-col is-current">
+                <span class="agent-boundary-tag">CURRENT IMPLEMENTATION</span>
+                <h4 class="agent-boundary-title">1. 현재 구현 범위 (P0)</h4>
+                <p class="agent-boundary-desc">
+                  • <strong>Finding:</strong> KCI 실시간 서지 및 공개 초록 대조 관측 결과<br>
+                  • <strong>Evidence Contract:</strong> 검증된 공개 초록 문장 스팬 및 보존 조건 불변화<br>
+                  • <strong>Deterministic PromptPackage:</strong> 외부 모델에 전달할 엄격한 스키마 기반 프롬프트 생성
+                </p>
+              </div>
+              <div class="agent-boundary-col is-future">
+                <span class="agent-boundary-tag">FUTURE EXPANSION</span>
+                <h4 class="agent-boundary-title">2. 향후 확장 영역 (미연결)</h4>
+                <p class="agent-boundary-desc">
+                  • <strong>PromptPackage → Solar / External AI:</strong> Upstage Solar 등 LLM API와의 실제 호출 연동<br>
+                  • <strong>Proposed Revision:</strong> 프롬프트 제약 조건에 따라 초안을 수정한 후보 문장 도출<br>
+                  <em>* 현재 빌드에서는 가짜 응답을 생성하지 않으며 외부 모델 호출을 수행하지 않습니다.</em>
+                </p>
+              </div>
+              <div class="agent-boundary-col is-reverify">
+                <span class="agent-boundary-tag">VERIFICATION RE-ENTRY</span>
+                <h4 class="agent-boundary-title">3. 검증 엔진 환류 (Reverify → Human Review)</h4>
+                <p class="agent-boundary-desc">
+                  • <strong>TrustVerify Reverify:</strong> 제안된 수정안을 기존 Citation Integrity 및 Claim–Evidence 검증 루프에 재투입<br>
+                  • <strong>Human Review:</strong> 재검증 완료 보고서를 바탕으로 연구자가 직접 최종 승인
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evidence Contract Detailed Specification Card -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">CONTRACT SPEC</span>
+                <h3 class="batch-title">Evidence Contract 명세 구조</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;">IMMUTABLE PAYLOAD</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:14px;line-height:1.5;">
+              TrustVerify는 검증 결과를 자유 텍스트가 아닌 불변의 <strong>Evidence Contract(근거 계약)</strong> 객체로 표준화합니다. 생성 모델은 오직 계약에 명시된 공개 초록 근거 문장과 보존 제약 조건 안에서만 문장을 다듬을 수 있습니다.
+            </p>
+            <div class="ar-contract-grid">
+              <div class="ar-contract-col">
+                <h4 class="ar-col-title">📋 계약 구성 요소 (Contract Fields)</h4>
+                <div class="ar-field-list">
+                  <div class="ar-field-item">
+                    <span class="ar-fk">1. Target Citing Sentence</span>
+                    <span class="ar-fv">원문 작성자의 인용 문장 및 인용 마커 ([1], [2] 등)</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">2. Grounded Evidence Span</span>
+                    <span class="ar-fv">KCI 공식 등록 논문의 공개 초록 문장 (원문 번호 및 텍스트)</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">3. Observed Shift Signals</span>
+                    <span class="ar-fv">확신도 격상(Certainty), 인과 비약(Causality), 방향 불일치 등 관측 신호</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">4. Negative Constraints</span>
+                    <span class="ar-fv">"근거 초록에 없는 사실 추측 금지", "통계치·수치 불변 유지", "인용 마커 보존"</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ar-contract-col">
+                <h4 class="ar-col-title">⚙️ 계약 객체 샘플 (Sample Contract JSON)</h4>
+                <div class="ar-json-viewer">
+<pre style="margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.4;color:#1e293b;">{
+  "contract_version": "1.0-p0",
+  "target": {
+    "sentence": "The estimation results suggest that equity prices fall...",
+    "marker": "[2]",
+    "resolved_article_id": "ART002510435"
+  },
+  "grounded_evidence": {
+    "source": "KCI Open API articleDetail",
+    "sentence_index": 4,
+    "abstract_span": "...the benchmark monetary policy shock leads to a persistent decline in stock indices..."
+  },
+  "findings": {
+    "citation_integrity": "VERIFIED",
+    "claim_alignment": "INSUFFICIENT_EVIDENCE",
+    "signal": "CLAIM_NOT_GROUNDED_IN_ABSTRACT"
+  },
+  "constraints": {
+    "preserve_numbers": true,
+    "allow_speculation": false,
+    "force_reverify": true
+  }
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PromptPackage -->
+        <div class="agent-view-panel" id="agentViewPrompt" hidden>
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-agent-p0">AGENT P0</span>
+                <span class="ce-tag-pill" style="background:#f5f3ff;color:#6d28d9;border-color:#c4b5fd;">결정론적 프롬프트 패키징</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAgentPrompt" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">Deterministic PromptPackage</h1>
+            <p class="ext-hero-sub">Evidence Contract → 정형화된 프롬프트 패키지 조립</p>
+            <p class="ext-hero-desc">
+              "프롬프트 조립 단계에서 환각이 개입할 수 없도록, 고정된 규칙과 템플릿으로 결정론적(Deterministic) 패키지를 생성합니다."
+            </p>
+          </section>
+
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">SPECIFICATION</span>
+                <h3 class="batch-title">PromptPackage 구조 및 엄격한 제약 조항</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#f5f3ff;color:#6d28d9;border:1px solid #c4b5fd;">NO GENERATIVE DRIFT</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:14px;line-height:1.5;">
+              프롬프트 패키지는 임의의 대화형 프롬프트가 아니라 시스템 지시어, 고정 근거 초록 텍스트, 엄격한 네거티브 제약 조건을 표준 포맷으로 묶은 데이터 구조체입니다.
+            </p>
+            <div class="ar-contract-grid">
+              <div class="ar-contract-col">
+                <h4 class="ar-col-title">📦 PromptPackage 슬롯</h4>
+                <div class="ar-field-list">
+                  <div class="ar-field-item">
+                    <span class="ar-fk">[SLOT 1] System Role</span>
+                    <span class="ar-fv">학술 논문 교정 어시스턴트 (근거 불변 원칙 강제)</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">[SLOT 2] Verified Evidence</span>
+                    <span class="ar-fv">KCI에서 획득된 공인 초록 스팬 텍스트 (수정 불가)</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">[SLOT 3] Target Claim</span>
+                    <span class="ar-fv">교정 대상 인용 문장 및 마커</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">[SLOT 4] Negative Constraints</span>
+                    <span class="ar-fv">초록에 없는 새로운 결론 주장 절대 금지, 서지 앵커 유지</span>
+                  </div>
+                  <div class="ar-field-item">
+                    <span class="ar-fk">[SLOT 5] Expected Output Format</span>
+                    <span class="ar-fv">JSON 포맷의 수정 제안문 및 수정 이유 (단일 필드 강제)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ar-contract-col">
+                <h4 class="ar-col-title">📑 프롬프트 미리보기 (Deterministic Prompt Template)</h4>
+                <div class="ar-json-viewer">
+<pre style="margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.4;color:#1e293b;">[SYSTEM]
+You are an academic editing assistant governed by strict evidence constraints.
+Do NOT invent facts outside the verified evidence.
+
+[VERIFIED EVIDENCE SPAN]
+Source Record: KCI ART002961723
+Span: "...monetary policy shocks have heterogeneous effects across industries..."
+
+[CURRENT DRAFT CLAIM]
+Sentence: "The estimation results suggest that equity prices fall..."
+Marker: [1]
+
+[CONSTRAINTS]
+1. Retain citation marker [1] exactly.
+2. Align claim strength with the evidence span above.
+3. Do not introduce ungrounded causal claims.
+
+[OUTPUT SCHEMA]
+{
+  "proposed_revision": string,
+  "revision_rationale": string
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Reverify 구조 -->
+        <div class="agent-view-panel" id="agentViewReverify" hidden>
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-agent-p0">AGENT P0</span>
+                <span class="ce-tag-pill" style="background:#f5f3ff;color:#6d28d9;border-color:#c4b5fd;">폐루프 재검증 아키텍처</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAgentReverify" type="button">
+                ← Citation Integrity (인용 무결성)으로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">TrustVerify Reverify 구조</h1>
+            <p class="ext-hero-sub">생성 수정안의 자동 재검증 및 최종 승인 루프</p>
+            <p class="ext-hero-desc">
+              "생성 모델의 수정안도 다시 TrustVerify 검증 루프를 통과합니다. 신뢰는 생성 모델의 확신이 아니라 독립된 검증기의 재검증 통과에서 나옵니다."
+            </p>
+          </section>
+
+          <!-- Reverify Banner -->
+          <div class="agent-reverify-banner" style="margin-top:0;margin-bottom:20px;">
+            <div class="agent-reverify-icon">🔁</div>
+            <div class="agent-reverify-text">
+              <strong>생성 수정안 재검증 원칙 (Re-verification Invariant)</strong>
+              <p>"생성 모델의 수정안도 다시 TrustVerify 검증 루프를 통과합니다." 외부 생성 모델이 제안한 문장은 신뢰할 수 없는 임시 가설에 불과하며, TrustVerify의 Citation Integrity와 Claim–Evidence 검증 루프를 재통과한 후에만 연구자에게 최종 승인안으로 제시됩니다.</p>
+            </div>
+          </div>
+
+          <!-- Reverify Steps Card -->
+          <div class="batch-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">VERIFICATION LOOP</span>
+                <h3 class="batch-title">Reverify 4단계 환류 구조</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;">SAFETY GATE</span>
+            </div>
+
+            <div class="ext-checks-grid">
+              <div class="ext-check-item">
+                <div class="ext-check-head">
+                  <span class="ext-check-icon">1️⃣</span>
+                  <span class="ext-check-title">제안문 수신 (Receive)</span>
+                  <span class="ext-check-rule">INPUT</span>
+                </div>
+                <p class="ext-check-desc">외부 생성 모델(Solar 등)이 Evidence Contract 제약 조건 하에서 작성한 Proposed Revision 텍스트를 파싱하여 검증 큐에 등록합니다.</p>
+              </div>
+
+              <div class="ext-check-item">
+                <div class="ext-check-head">
+                  <span class="ext-check-icon">2️⃣</span>
+                  <span class="ext-check-title">인용 무결성 재검증</span>
+                  <span class="ext-check-rule">Layer 1 & 2</span>
+                </div>
+                <p class="ext-check-desc">생성 과정에서 인용 마커([1], [2])가 누락되거나 변조되지 않았는지, 대상 KCI 서지 레코드와의 연결이 그대로 보존되었는지 검증합니다.</p>
+              </div>
+
+              <div class="ext-check-item">
+                <div class="ext-check-head">
+                  <span class="ext-check-icon">3️⃣</span>
+                  <span class="ext-check-title">근거 정합성 재검증</span>
+                  <span class="ext-check-rule">Layer 3</span>
+                </div>
+                <p class="ext-check-desc">수정 제안문이 대상 KCI 논문의 공개 초록과 실제로 정합적인지 동일한 Grounding Gate 및 5대 표현 차원 규칙으로 재평가합니다.</p>
+              </div>
+
+              <div class="ext-check-item">
+                <div class="ext-check-head">
+                  <span class="ext-check-icon">4️⃣</span>
+                  <span class="ext-check-title">연구자 최종 승인</span>
+                  <span class="ext-check-rule">HUMAN GATE</span>
+                </div>
+                <p class="ext-check-desc">재검증을 통과한(CONSISTENT_WITH_EVIDENCE) 수정안만 전후 대비 리포트와 함께 연구자에게 제공되어 최종 채택 여부를 선택하게 합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ============================== END WORKSPACE AGENT P0 ============================== -->
 
       <!-- =========================================================================
            WORKSPACE 2: TRANSLATION FIDELITY (EXPANSION MODULE)
