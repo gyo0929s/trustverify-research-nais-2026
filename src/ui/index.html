@@ -96,7 +96,7 @@
           <h2 class="tier-title">KCI Citation Integrity (레퍼런스 무결성)</h2>
           <div class="tier-question">"Is the reference real and coherent?" (언어 무관 기본 검증층)</div>
           <p class="tier-desc">
-            생성형 AI의 의견이 아닌 한국연구재단(NRF) KCI 실제 공식 레코드와 3단계 결정론적 프로토콜(실재 확인 ➔ 레코드 고정 ➔ 필드 정합성)로 검증합니다.
+            생성형 AI의 의견이 아닌 한국연구재단(NRF) KCI 실제 공식 레코드와 3단계 결정론적 프로토콜(후보 탐색 ➔ 레코드 고정 ➔ 필드 정합성)로 검증합니다.
           </p>
           <div class="tier-features-list">
             <span>✓ 실시간 KCI Open API 연동</span>
@@ -151,36 +151,94 @@
         </p>
       </div>
 
-      <!-- COMPACT STAGED PROTOCOL (VISUAL CENTER) -->
-      <div class="staged-protocol-banner">
-        <div class="proto-step">
-          <div class="proto-step-num">STEP 1</div>
-          <div class="proto-step-title">실재 여부 확인</div>
-          <div class="proto-step-desc">KCI articleSearch ➔ 후보 레코드 발견</div>
-          <span class="proto-status live">LIVE · TESTED</span>
-        </div>
-        <span class="proto-arrow">➔</span>
-        <div class="proto-step">
-          <div class="proto-step-num">STEP 2</div>
-          <div class="proto-step-title">실제 레코드 고정</div>
-          <div class="proto-step-desc">KCI articleDetail ➔ canonical 레코드 고정</div>
-          <span class="proto-status live">LIVE · TESTED</span>
-        </div>
-        <span class="proto-arrow">➔</span>
-        <div class="proto-step">
-          <div class="proto-step-num">STEP 3</div>
-          <div class="proto-step-title">필드 단위 정합성</div>
-          <div class="proto-step-desc">Title · Author · Year · DOI ➔ 결정론적 비교</div>
-          <span class="proto-status live">LIVE · TESTED</span>
-        </div>
-        <span class="proto-arrow">➔</span>
-        <div class="proto-step proto-outcomes">
-          <div class="proto-step-num">판정 도출</div>
-          <div class="outcomes-chips">
-            <span class="oc-chip verified">VERIFIED</span>
-            <span class="oc-chip drift">METADATA_DRIFT</span>
-            <span class="oc-chip review">REVIEW_REQUIRED</span>
-            <span class="oc-chip notfound">NOT_FOUND_IN_KCI</span>
+      <!-- COMPACT STAGED PROTOCOL: ACTIVE (STEPS 1-3) VS OPTIONAL (STEPS 4-5) -->
+      <div class="staged-protocol-wrapper">
+        <div class="staged-protocol-banner">
+          <!-- Active Path: Problem Layer 1 & 2 -->
+          <div class="proto-group active-group">
+            <div class="proto-group-label">
+              <span class="group-tag active">ACTIVE 검증 경로</span>
+              <span class="group-desc">본 시연에서 실제로 판정을 생성한 핵심 3단계</span>
+            </div>
+            <div class="proto-steps-row">
+              <!-- Step 1 -->
+              <div class="proto-step is-active">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">STEP 1</span>
+                  <span class="proto-icon ok">✓</span>
+                </div>
+                <div class="proto-step-title">후보 탐색</div>
+                <div class="proto-step-api">KCI articleSearch</div>
+                <span class="proto-status live">LIVE · TESTED</span>
+              </div>
+              <span class="proto-arrow">➔</span>
+
+              <!-- Step 2 -->
+              <div class="proto-step is-active">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">STEP 2</span>
+                  <span class="proto-icon ok">✓</span>
+                </div>
+                <div class="proto-step-title">실제 레코드 고정</div>
+                <div class="proto-step-api">KCI articleDetail</div>
+                <span class="proto-status live">LIVE · TESTED</span>
+              </div>
+              <span class="proto-arrow">➔</span>
+
+              <!-- Step 3 -->
+              <div class="proto-step is-active is-warn">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">STEP 3</span>
+                  <span class="proto-icon warn">!</span>
+                </div>
+                <div class="proto-step-title">필드 정합성 검증</div>
+                <div class="proto-step-api">Title · Author · Year · DOI</div>
+                <span class="proto-status live">LIVE · TESTED</span>
+              </div>
+              <span class="proto-arrow">➔</span>
+
+              <!-- Outcome -->
+              <div class="proto-step is-outcome">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">판정 도출</span>
+                  <span class="outcome-badge-drift">METADATA_DRIFT</span>
+                </div>
+                <div class="proto-step-title">정보 불일치</div>
+                <div class="proto-step-api">Rule: REF-META-002</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Depth: Stages 4-5 -->
+          <div class="proto-group optional-group">
+            <div class="proto-group-label">
+              <span class="group-tag optional">선택적 근거 확장</span>
+              <span class="group-desc">더 깊은 근거가 필요할 때 추가되는 확장 단계 (이번 판정 미사용)</span>
+            </div>
+            <div class="proto-steps-row">
+              <!-- Step 4 -->
+              <div class="proto-step is-optional">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">STAGE 4</span>
+                  <span class="proto-icon optional">○</span>
+                </div>
+                <div class="proto-step-title">참고문헌 근거</div>
+                <div class="proto-step-api">Reference Evidence</div>
+                <span class="proto-status optional">선택적 · 미실행</span>
+              </div>
+              <span class="proto-arrow muted">➔</span>
+
+              <!-- Step 5 -->
+              <div class="proto-step is-optional">
+                <div class="proto-step-top">
+                  <span class="proto-step-num">STAGE 5</span>
+                  <span class="proto-icon optional">○</span>
+                </div>
+                <div class="proto-step-title">외부 교차확인</div>
+                <div class="proto-step-api">Crossref DOI Lookup</div>
+                <span class="proto-status optional">선택적 · 불필요</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -259,9 +317,9 @@
           </div>
         </div>
 
-        <!-- Console Right: Verification Path & Live Evidence -->
+        <!-- Console Right: RESULT FIRST (Result ➔ Field Comparison ➔ Verdict & Why? ➔ Verification Path) -->
         <div class="kci-result-panel" id="kciResultPanel">
-          <!-- Dynamically populated by app.js -->
+          <!-- Dynamically populated by app.js: RESULT FIRST -->
         </div>
       </div>
 

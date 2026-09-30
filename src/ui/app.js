@@ -3,11 +3,12 @@
  * NAIS 2026 Hackathon Final Presentation
  *
  * MENTOR ALIGNMENT:
- * - Core Evidence Verification (Visually Dominant) vs Expansion Layers
- * - Compact Staged Protocol (STEP 1 실재 확인 ➔ STEP 2 레코드 고정 ➔ STEP 3 필드 정합성)
- * - Verification Path (검증 경로: articleSearch ➔ articleDetail ➔ comparison ➔ Reference Evidence ➔ Crossref)
- * - Reference Evidence (QUALIFIED, 참고문헌 메타데이터 근거 / 인용관계 증명 아님)
- * - Crossref Corroboration (QUALIFIED, 독립 DOI 교차확인 / NOT_FOUND ≠ fake paper)
+ * - RESULT FIRST: Result ➔ Field Comparison ➔ Verdict & Why? ➔ Verification Path
+ * - Core Evidence Verification (Visually Dominant, Steps 1-3) vs Expansion Layers (Stages 4-5)
+ * - Compact Staged Protocol (STEP 1 후보 탐색 ➔ STEP 2 레코드 고정 ➔ STEP 3 필드 정합성)
+ * - Verification Path (Active Steps 1-3 vs Optional Stages 4-5)
+ * - Reference Evidence (선택적 · 이번 판정에는 미사용)
+ * - Crossref Corroboration (선택적 · 독립 DOI 교차확인 / NOT_FOUND ≠ fake paper)
  * - OAI-PMH Snapshot (Frozen Evidence Snapshot / 라이브 실패와 명시적 분리)
  * - Translation Fidelity Expansion (TR-CIT-001 reuses KCI evidence, TR-CAUS-001 semantic shift)
  * - Finance-20 Reference Context (Small disclaimer: not a quality standard)
@@ -57,11 +58,11 @@ const CANONICAL_KCI_DRIFT = {
   human_review_badge: '서지정보 확인 권장',
   human_review_callout: 'KCI 공식 레코드(ART003062835)에 정식 수록된 출판연도는 2024년입니다. 학술대회 발표/선공개 연도(2023)와 정식 학술지 수록 연도 간 차이인지 서지정보를 확인하세요.',
   verification_path: [
-    { step: 1, name: 'KCI articleSearch', status: 'ok', detail: '후보 레코드 1건 발견 (컴퓨터 비전 농구 훈련 시스템)' },
-    { step: 2, name: 'KCI articleDetail', status: 'ok', detail: 'ART003062835 canonical 레코드 고정' },
-    { step: 3, name: 'Field Comparison', status: 'warn', detail: 'Publication Year 불일치 (입력 2023 → KCI 2024)' },
-    { step: 4, name: 'Reference Evidence', status: 'info', detail: 'KCI Reference Evidence [QUALIFIED] (17건 서지 메타데이터 확보 / 인용관계 증명 아님)' },
-    { step: 5, name: 'External Corroboration', status: 'ok', detail: 'Crossref 독립 DOI 교차확인 [QUALIFIED] (DOI 일치: 10.9728/dcs.2024.25.3.595)' },
+    { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'ok', detail: '✓ 후보 레코드 발견' },
+    { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'ok', detail: '✓ ART003062835' },
+    { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'warn', detail: '! Year 2023 → 2024' },
+    { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
+    { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
   ],
 };
 
@@ -87,11 +88,11 @@ const PRESET_NOT_FOUND = {
   human_review_badge: '색인 범위 확인 권장',
   human_review_callout: 'KCI에서 검색되지 않았으나 가짜 논문이 아닙니다. 해외 학술지(NeurIPS 등)는 독립 DOI(Crossref)를 통해 실재성을 별도 교차확인해야 합니다.',
   verification_path: [
-    { step: 1, name: 'KCI articleSearch', status: 'notfound', detail: 'KCI 검색 결과 0건 (No Data, 국내 학술색인 범위 외)' },
-    { step: 2, name: 'KCI articleDetail', status: 'skip', detail: '실행 불가 (후보 식별자 부재)' },
-    { step: 3, name: 'Field Comparison', status: 'skip', detail: '대상 KCI 레코드 부재' },
-    { step: 4, name: 'Reference Evidence', status: 'skip', detail: 'KCI 수록 외 문헌으로 미실행' },
-    { step: 5, name: 'External Corroboration', status: 'corroborated', detail: 'Crossref 독립 DOI 확인됨 [QUALIFIED] (국제 실재 레코드 존재 확인)' },
+    { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'notfound', detail: '! 후보 레코드 0건 (No Data)' },
+    { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'skip', detail: '- 대상 식별자 부재' },
+    { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 필드 대조 미실행' },
+    { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
+    { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'corroborated', detail: '✓ Crossref 독립 DOI 확인됨' },
   ],
   crossref_corroboration: {
     status: 'FOUND_IN_CROSSREF',
@@ -112,11 +113,11 @@ const PRESET_SYSTEM_FAILURE = {
   retry_recommended: true,
   research_finding_emitted: false,
   verification_path: [
-    { step: 1, name: 'KCI articleSearch', status: 'fail', detail: 'KCI_UNAVAILABLE (HTTP 503 통신 장애)' },
-    { step: 2, name: 'KCI articleDetail', status: 'skip', detail: '조회 중단 (통신 장애로 후보 미확보)' },
-    { step: 3, name: 'Field Comparison', status: 'skip', detail: '판정 보류 (인용 결함 아님)' },
-    { step: 4, name: 'Reference Evidence', status: 'skip', detail: '미실행' },
-    { step: 5, name: 'Fallback Snapshot', status: 'oai', detail: '사전 저장 Evidence Snapshot (OAI-PMH 확보본) 전환 대기' },
+    { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'fail', detail: '✕ KCI_UNAVAILABLE (HTTP 503 통신 장애)' },
+    { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'skip', detail: '- 통신 장애로 중단' },
+    { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 판정 보류 (인용 결함 아님)' },
+    { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 미실행' },
+    { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 미실행' },
   ],
 };
 
@@ -252,8 +253,15 @@ function initScrollTracking() {
   });
 }
 
-/* ------------------------------------------------------------------ SECTION 2: LIVE KCI DEMO */
+/* ------------------------------------------------------------------ SECTION 2: LIVE KCI DEMO (RESULT FIRST) */
 
+/**
+ * Renders the KCI Result using the STRICT RESULT FIRST hierarchy:
+ * 1. What was found? (Status Header)
+ * 2. Which field differs? (Field Comparison Table)
+ * 3. Why was that verdict produced? (Rule, Source Record, Reason, Human Review)
+ * 4. How was the evidence obtained? (Verification Path: Active Steps 1-3 vs Optional Stages 4-5)
+ */
 function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
   if (!finding) return;
 
@@ -267,11 +275,10 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
   const recordId = finding.evidence?.[0]?.source_record_id || (isDrift ? 'ART003062835' : null);
   const kciUrl = recordId ? `https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=${encodeURIComponent(recordId)}` : null;
 
-  // 1. Verification Path List
   const path = finding.verification_path || CANONICAL_KCI_DRIFT.verification_path;
 
   let html = `
-    <!-- Top Result Status Header -->
+    <!-- 1. WHAT WAS FOUND? (Result Status Header) -->
     <div class="result-status-card tone-${tone}">
       <div class="status-badge-row">
         <div class="status-left">
@@ -283,57 +290,13 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
         <span class="rule-tag">규칙: ${escapeHtml(finding.rule_id || finding.operation || 'REF-META-002')} (v${escapeHtml(finding.rule_version || '1.0')})</span>
       </div>
       <p class="status-summary-text">${escapeHtml(finding.reason || '')}</p>
-    </div>
-
-    <!-- MENTOR REQUEST: 검증 경로 (VERIFICATION PATH) -->
-    <div class="verification-path-box">
-      <div class="vpath-header">
-        <span class="vpath-title">검증 경로 (Verification Path)</span>
-        <span class="vpath-sub">단계별 근거 확인 추적</span>
-      </div>
-      <div class="vpath-list">
-        ${path.map(p => {
-          let icon = '✓';
-          let cls = 'is-ok';
-          if (p.status === 'warn') { icon = '!'; cls = 'is-warn'; }
-          else if (p.status === 'fail') { icon = '✕'; cls = 'is-fail'; }
-          else if (p.status === 'notfound') { icon = '○'; cls = 'is-notfound'; }
-          else if (p.status === 'corroborated') { icon = '✓'; cls = 'is-corroborated'; }
-          else if (p.status === 'info') { icon = '○'; cls = 'is-info'; }
-          else if (p.status === 'skip') { icon = '-'; cls = 'is-skip'; }
-          else if (p.status === 'oai') { icon = '📦'; cls = 'is-oai'; }
-
-          return `
-            <div class="vpath-item ${cls}">
-              <div class="vpath-item-step">
-                <span class="vpath-icon">${icon}</span>
-                <span class="vpath-name">${escapeHtml(p.name)}</span>
-              </div>
-              <div class="vpath-item-detail">${escapeHtml(p.detail)}</div>
-            </div>`;
-        }).join('')}
-      </div>
     </div>`;
 
-  // 2. KCI External Evidence Link (if record exists)
-  if (recordId) {
-    html += `
-      <div class="kci-evidence-box">
-        <div class="evidence-box-head">
-          <span class="ev-source-title">KCI 실제 공식 레코드 근거</span>
-          <a class="kci-portal-link" href="${escapeHtml(kciUrl)}" target="_blank" rel="noopener">
-            KCI 식별: ${escapeHtml(recordId)} <span class="ext-arrow">↗</span>
-          </a>
-        </div>
-        <div class="ev-citation-title">${escapeHtml(finding.input?.title || CANONICAL_KCI_DRIFT.input.title)}</div>
-      </div>`;
-  }
-
-  // 3. Deterministic Field Comparison Table (if fields exist)
+  // 2. WHICH FIELD DIFFERS? (Field Comparison Table)
   if (finding.field_comparisons?.length) {
     html += `
       <div class="field-table-container">
-        <div class="field-table-caption">결정론적 필드 대조 (Deterministic Field Comparison)</div>
+        <div class="field-table-caption">항목별 서지 대조 (Which field differs?)</div>
         <div class="field-rows-list">
           ${finding.field_comparisons.map(row => {
             const isMismatch = row.result === 'MISMATCH';
@@ -342,7 +305,7 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
                 <span class="col-field">${escapeHtml(row.label || row.field)}</span>
                 <div class="col-result">
                   ${isMismatch
-                    ? `<span class="val-pill mismatch">${escapeHtml(row.input_value)} <span class="arr">→</span> ${escapeHtml(row.evidence_value)}</span>`
+                    ? `<span class="val-pill mismatch">${escapeHtml(row.input_value)} <span class="arr">→</span> ${escapeHtml(row.evidence_value)} (MISMATCH)</span>`
                     : `<span class="val-pill match"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 일치 (${escapeHtml(row.input_value)})</span>`}
                 </div>
               </div>`;
@@ -351,7 +314,21 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
       </div>`;
   }
 
-  // 4. Special Case: Crossref Corroboration for NOT_FOUND_IN_KCI
+  // 3. WHY WAS THAT VERDICT PRODUCED? (Record, Rule, Human Review)
+  if (recordId) {
+    html += `
+      <div class="kci-evidence-box">
+        <div class="evidence-box-head">
+          <span class="ev-source-title">식별된 KCI 공식 레코드</span>
+          <a class="kci-portal-link" href="${escapeHtml(kciUrl)}" target="_blank" rel="noopener">
+            KCI 식별: ${escapeHtml(recordId)} <span class="ext-arrow">↗</span>
+          </a>
+        </div>
+        <div class="ev-citation-title">${escapeHtml(finding.input?.title || CANONICAL_KCI_DRIFT.input.title)}</div>
+      </div>`;
+  }
+
+  // Crossref Corroboration for NOT_FOUND_IN_KCI
   if (finding.crossref_corroboration) {
     const cr = finding.crossref_corroboration;
     html += `
@@ -362,12 +339,12 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
         </div>
         <div class="cr-container">${escapeHtml(cr.container)}</div>
         <div class="cr-interpretation">
-          <strong>설계 원칙 확인:</strong> ${escapeHtml(cr.interpretation)}
+          <strong>설계 원칙:</strong> ${escapeHtml(cr.interpretation)}
         </div>
       </div>`;
   }
 
-  // 5. Human Review Signal Box
+  // Human Review Callout
   if (finding.human_review_badge) {
     html += `
       <div class="human-review-box tone-${tone}">
@@ -379,12 +356,55 @@ function renderKciResult(finding, { isFrozenSnapshot = false } = {}) {
       </div>`;
   }
 
-  // 6. Technical Details Accordion (SHA-256 snapshot and JSON)
+  // 4. HOW WAS THE EVIDENCE OBTAINED? (VERIFICATION PATH)
+  html += `
+    <div class="verification-path-box">
+      <div class="vpath-header">
+        <div class="vpath-title-group">
+          <span class="vpath-title">검증 경로 (Verification Path)</span>
+          <span class="vpath-active-tag">Steps 1–3 실제 판정 생성 경로</span>
+        </div>
+        <span class="vpath-sub">한국어 목적 중심 단계별 추적</span>
+      </div>
+
+      <div class="vpath-list">
+        ${path.map(p => {
+          const isOpt = p.is_optional;
+          let icon = '✓';
+          let cls = isOpt ? 'is-optional-item' : 'is-active-item';
+
+          if (p.status === 'warn') { icon = '!'; cls += ' is-warn'; }
+          else if (p.status === 'fail') { icon = '✕'; cls += ' is-fail'; }
+          else if (p.status === 'notfound') { icon = '!'; cls += ' is-notfound'; }
+          else if (p.status === 'corroborated') { icon = '✓'; cls += ' is-corroborated'; }
+          else if (p.status === 'unexecuted') { icon = '○'; cls += ' is-unexecuted'; }
+          else if (p.status === 'skip') { icon = '-'; cls += ' is-skip'; }
+          else { cls += ' is-ok'; }
+
+          return `
+            <div class="vpath-item ${cls}">
+              <div class="vpath-item-left">
+                <span class="vpath-icon">${icon}</span>
+                <div class="vpath-names">
+                  <span class="vpath-name">${escapeHtml(p.name)}</span>
+                  <span class="vpath-api">${escapeHtml(p.api)}</span>
+                </div>
+              </div>
+              <div class="vpath-item-right">
+                <span class="vpath-detail-badge ${cls}">${escapeHtml(p.detail)}</span>
+                ${isOpt ? '<span class="vpath-opt-tag">선택적</span>' : '<span class="vpath-core-tag">핵심</span>'}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // 5. Technical Details Accordion (SHA-256 snapshot and JSON)
   html += `
     <details class="tech-accordion">
       <summary>
         <span>상세 기술 근거 및 SHA-256 스냅샷 보기</span>
-        <span class="summary-hint">규칙 ID · 타임스탬프 · JSON</span>
+        <span class="summary-hint">규칙 ID · 해시 · 원본 JSON</span>
       </summary>
       <div class="accordion-content">
         <dl class="tech-kv-grid">
@@ -458,11 +478,11 @@ async function handleLiveAudit(event) {
       : (isVerified ? 'KCI 공식 서지정보와 직접 일치합니다.' : (isNotFound ? 'KCI에서 미발견되었습니다. 해외 논문은 Crossref 독립 DOI를 교차확인하세요.' : 'KCI 근거를 직접 확인하세요.'));
 
     result.verification_path = [
-      { step: 1, name: 'KCI articleSearch', status: isNotFound ? 'notfound' : 'ok', detail: isNotFound ? '0건 발견 (No Data)' : `후보 레코드 식별 성공 (${result.evidence?.length || 1}건)` },
-      { step: 2, name: 'KCI articleDetail', status: recordId ? 'ok' : 'skip', detail: recordId ? `${recordId} canonical 레코드 고정` : '레코드 ID 부재' },
-      { step: 3, name: 'Field Comparison', status: isDrift ? 'warn' : (isVerified ? 'ok' : 'skip'), detail: isDrift ? 'Publication Year 불일치' : (isVerified ? '제목·저자·연도 일치' : '필드 비교 미실행') },
-      { step: 4, name: 'Reference Evidence', status: 'info', detail: 'KCI Reference Evidence [QUALIFIED] (참고문헌 메타데이터 확보 / 인용관계 입증용 아님)' },
-      { step: 5, name: 'External Corroboration', status: 'ok', detail: 'Crossref 독립 DOI 교차확인 [QUALIFIED] (독립 DOI 정합성 검증 가능)' },
+      { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: isNotFound ? 'notfound' : 'ok', detail: isNotFound ? '! 후보 레코드 0건 (No Data)' : `✓ 후보 레코드 발견 (${result.evidence?.length || 1}건)` },
+      { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: recordId ? 'ok' : 'skip', detail: recordId ? `✓ ${recordId}` : '- 대상 식별자 부재' },
+      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: isDrift ? 'warn' : (isVerified ? 'ok' : 'skip'), detail: isDrift ? '! Year 불일치' : (isVerified ? '✓ 서지정보 일치' : '- 대조 미실행') },
+      { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
+      { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
     ];
 
     state.currentKciFinding = result;
