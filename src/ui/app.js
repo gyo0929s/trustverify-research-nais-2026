@@ -209,7 +209,7 @@ function updateActiveNav(targetId) {
 }
 
 function initScrollTracking() {
-  const sections = ['overview', 'kci-live', 'translation', 'architecture']
+  const sections = ['overview', 'kci-live', 'test-evidence', 'claim-evidence', 'architecture']
     .map(id => $(id))
     .filter(Boolean);
 
@@ -245,11 +245,18 @@ function initScrollTracking() {
     updateActiveNav('kci-live');
   });
 
+  $('btnGoClaimEvidence')?.addEventListener('click', e => {
+    e.preventDefault();
+    $('claim-evidence')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', '#claim-evidence');
+    updateActiveNav('claim-evidence');
+  });
+
   $('btnGoTranslation')?.addEventListener('click', e => {
     e.preventDefault();
-    $('translation')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.replaceState(null, '', '#translation');
-    updateActiveNav('translation');
+    $('claim-evidence')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', '#claim-evidence');
+    updateActiveNav('claim-evidence');
   });
 }
 
@@ -545,16 +552,18 @@ function selectTfFinding(findingId) {
   state.activeTfFindingId = findingId;
   const isCaus = findingId === 'TR-CAUS-001';
 
-  el.btnTfCaus.classList.toggle('is-active', isCaus);
-  el.btnTfCit.classList.toggle('is-active', !isCaus);
+  el.btnTfCaus?.classList.toggle('is-active', isCaus);
+  el.btnTfCit?.classList.toggle('is-active', !isCaus);
 
   // Update span highlighting in text
-  el.tfSpanCausKo.classList.toggle('is-selected', isCaus);
-  el.tfSpanCausEn.classList.toggle('is-selected', isCaus);
-  el.tfSpanCitKo.classList.toggle('is-selected', !isCaus);
-  el.tfSpanCitEn.classList.toggle('is-selected', !isCaus);
+  el.tfSpanCausKo?.classList.toggle('is-selected', isCaus);
+  el.tfSpanCausEn?.classList.toggle('is-selected', isCaus);
+  el.tfSpanCitKo?.classList.toggle('is-selected', !isCaus);
+  el.tfSpanCitEn?.classList.toggle('is-selected', !isCaus);
 
-  renderTfEvidence(findingId);
+  if (el.tfEvidencePanel) {
+    renderTfEvidence(findingId);
+  }
 }
 
 function renderTfEvidence(findingId) {

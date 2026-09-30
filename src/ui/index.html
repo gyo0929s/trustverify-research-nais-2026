@@ -31,15 +31,19 @@
       <a class="topnav-link highlight-kci" href="#kci-live" data-target="kci-live">
         <span class="time-tag">0:35</span>
         <span class="dot-live"></span>
-        <span>핵심 KCI 검증 (3분)</span>
+        <span>LIVE KCI 검증</span>
       </a>
-      <a class="topnav-link" href="#translation" data-target="translation">
-        <span class="time-tag">3:35</span>
-        <span>번역 충실도 확장 (2분)</span>
+      <a class="topnav-link" href="#test-evidence" data-target="test-evidence">
+        <span class="time-tag">3:20</span>
+        <span>Test Evidence</span>
+      </a>
+      <a class="topnav-link" href="#claim-evidence" data-target="claim-evidence">
+        <span class="time-tag">4:10</span>
+        <span>Claim–Evidence 확장</span>
       </a>
       <a class="topnav-link" href="#architecture" data-target="architecture">
-        <span class="time-tag">4:30</span>
-        <span>아키텍처</span>
+        <span class="time-tag">4:40</span>
+        <span>Architecture / Closing</span>
       </a>
     </nav>
 
@@ -54,11 +58,13 @@
     <!-- ============================== SECTION 1: PROBLEM DEFINITION (0:00–0:35) ============================== -->
     <section class="pres-section section-overview" id="overview">
       <div class="hero">
-        <p class="hero-kicker">TrustVerify Research · 핵심 검증 철학</p>
+        <p class="hero-kicker">TrustVerify Research · 핵심 검증 체계</p>
         <h1 class="hero-title">
-          "TrustVerify는 먼저 인용이 실제 근거와 일치하는지 확인하고,<br>
-          그다음 연구물이 영어로 발전하는 과정에서<br>
-          <span class="hero-highlight">그 근거와 의미가 그대로 보존되는지</span> 추적합니다."
+          "TrustVerify는 먼저 인용이 실제 학술 레코드에 존재하는지 확인하고,<br>
+          <span class="hero-highlight">제목 · 저자 · 연도 · DOI</span>가 그 레코드와 일치하는지 검증합니다.<br><br>
+          <span class="hero-subtext">다음 단계에서는 형식적으로 맞는 인용이
+          실제 원문의 주장까지 정확하게 반영하는지
+          검증 범위를 확장합니다.</span>"
         </h1>
 
         <div class="core-question-pill">
@@ -66,21 +72,13 @@
           <span class="pill-text">"이 인용은 실제로 존재하고, 하나의 실제 학술 레코드와 정합적인가?"</span>
         </div>
 
-        <div class="language-independent-quote">
-          <div class="quote-icon" aria-hidden="true">💡</div>
-          <p class="quote-text">
-            <strong>핵심 전제:</strong> 인용 무결성은 언어와 무관한 기본 검증층이며,
-            KO→EN 단계에서는 인용 mapping과 주장 의미가 동시에 바뀔 수 있어 복합적인 검토가 필요합니다.
-          </p>
-        </div>
-
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="#kci-live" id="btnGoLiveKci">
             <span class="btn-dot-live"></span>
-            LIVE KCI 레퍼런스 검증 [핵심 시연] ↓
+            LIVE KCI 레퍼런스 검증 시작 ↓
           </a>
-          <a class="btn-text-secondary" href="#translation" id="btnGoTranslation">
-            번역 충실도 확장 보기 →
+          <a class="btn-text-secondary" href="#claim-evidence" id="btnGoClaimEvidence">
+            NEXT LAYER: Claim–Evidence 확장 보기 →
           </a>
         </div>
       </div>
@@ -94,43 +92,72 @@
             <span class="tier-status-tag live">LIVE · 구현 완료</span>
           </div>
           <h2 class="tier-title">KCI Citation Integrity (레퍼런스 무결성)</h2>
-          <div class="tier-question">"Is the reference real and coherent?" (언어 무관 기본 검증층)</div>
+          <div class="tier-question">"Is the reference real and coherent?" (1. 실제 논문 존재 여부 · 2. 서지 정합성)</div>
           <p class="tier-desc">
-            생성형 AI의 의견이 아닌 한국연구재단(NRF) KCI 실제 공식 레코드와 3단계 결정론적 프로토콜(후보 탐색 ➔ 레코드 고정 ➔ 필드 정합성)로 검증합니다.
+            생성형 AI의 의견이 아닌 한국연구재단(NRF) KCI 실제 공식 레코드와 3단계 결정론적 프로토콜로 검증합니다:
           </p>
+          <div class="tier-protocol-flow">
+            <span class="tp-step">후보 탐색</span>
+            <span class="tp-arr">➔</span>
+            <span class="tp-step">실제 레코드 고정</span>
+            <span class="tp-arr">➔</span>
+            <span class="tp-step tp-strong">필드 정합성 검증</span>
+          </div>
+          <div class="tier-verified-fields-box">
+            <span class="vf-label">검증 필드:</span>
+            <span class="vf-fields">Title · Author · Year · DOI</span>
+          </div>
           <div class="tier-features-list">
             <span>✓ 실시간 KCI Open API 연동</span>
-            <span>✓ 결정론적 필드 일치 대조</span>
+            <span>✓ 결정론적 4대 서지 필드 대조</span>
             <span>✓ 검증 경로(Verification Path) 추적</span>
           </div>
         </article>
 
-        <!-- Level 2: EXPANSION & ROADMAP LAYERS (Visually Secondary) -->
+        <!-- Level 2: NEXT & FUTURE LAYERS (Visually Secondary) -->
         <div class="tier-sub-col">
-          <!-- Expansion: Translation Fidelity -->
-          <article class="tier-card tier-expansion">
+          <!-- Next Layer: Claim-Evidence Alignment -->
+          <article class="tier-card tier-claim-evidence">
             <div class="tier-badge-row">
-              <span class="tier-badge expansion">EXPANSION LAYER</span>
-              <span class="tier-status-tag">독창성 시연</span>
+              <span class="tier-badge next-layer">NEXT LAYER</span>
+              <span class="tier-status-tag not-yet">NEXT / NOT YET AUTOMATICALLY VERIFIED</span>
             </div>
-            <h3 class="tier-sub-title">KO ↔ EN Translation Fidelity</h3>
-            <div class="tier-question">"Did the reference and meaning survive translation?"</div>
-            <p class="tier-desc-sm">
-              한국어 연구물이 영어로 변환될 때 인용 번호 mapping이 왜곡되거나 상관성이 과장된 인과로 격상되는 신호를 Solar 시맨틱 옵저버로 감지합니다.
-            </p>
-          </article>
+            <h3 class="tier-sub-title">Claim–Evidence Alignment</h3>
+            <div class="tier-question">"형식적으로 맞는 인용이 실제 원문의 주장도 정확히 반영하는가?"</div>
+            
+            <!-- Short Example -->
+            <div class="ce-example-box">
+              <div class="ce-row">
+                <span class="ce-lbl">Source claim:</span>
+                <span class="ce-val">"X is associated with Y."</span>
+              </div>
+              <div class="ce-row">
+                <span class="ce-lbl">Citing claim:</span>
+                <span class="ce-val mismatch">"X causes Y."</span>
+              </div>
+              <div class="ce-signal-row">
+                <span class="ce-signal-tag">Potential signal: Claim-strength shift</span>
+                <span class="ce-review-pill">Human Review Required</span>
+              </div>
+            </div>
 
-          <!-- Context: Finance-20 Pilot -->
-          <article class="tier-card tier-context">
-            <div class="tier-badge-row">
-              <span class="tier-badge context">REFERENCE CONTEXT</span>
-              <span class="tier-status-tag muted">Roadmap / Pilot</span>
+            <!-- Small Secondary Extension Note: KO->EN -->
+            <div class="ce-sub-note">
+              <span class="sub-note-badge">향후 확장</span>
+              <strong class="sub-note-title">KO→EN Translation Fidelity:</strong>
+              <p class="sub-note-desc">
+                한국어 연구물이 영어로 재생성되는 과정에서 citation mapping과 주장 의미가 그대로 보존되는지 추적
+              </p>
             </div>
-            <h3 class="tier-sub-title">Finance-20 Pilot</h3>
-            <div class="tier-question">"Is the expression unusual relative to reference?"</div>
-            <p class="tier-desc-sm">
-              실제 영문 금융논문 코퍼스의 서술 경향성을 보조적으로 참고합니다. (정답표 · writing-quality score가 아님)
-            </p>
+
+            <!-- Small Footer/Context Note: Finance-20 Pilot -->
+            <div class="ce-sub-note context-note">
+              <span class="sub-note-badge context">Future Context</span>
+              <strong class="sub-note-title">Finance-20 Pilot:</strong>
+              <span class="sub-note-desc">
+                분야별 영문 표현의 참조 맥락 (정답표 · quality score가 아님)
+              </span>
+            </div>
           </article>
         </div>
       </div>
@@ -323,222 +350,273 @@
         </div>
       </div>
 
-      <!-- DELIBERATELY SELECTED EVIDENCE SOURCES DEPTH -->
-      <div class="evidence-sources-depth-card">
-        <div class="depth-head">
-          <div class="depth-title">신중히 선별된 외부 근거 레이어 (Deliberately Selected Evidence Depth)</div>
-          <span class="depth-badge">무분별한 기능 확장이 아닌 근거의 깊이 확보</span>
-        </div>
-        <p class="depth-sub">
-          모든 API를 얕게 나열하지 않고, 핵심 인용 무결성을 심화하는 공식 근거원만 실 구현 상태에 맞추어 엄격히 분류했습니다.
-        </p>
-
-        <div class="sources-status-grid">
-          <!-- 1. KCI Search -->
-          <div class="source-item">
-            <div class="source-top">
-              <span class="source-name">KCI articleSearch</span>
-              <span class="source-status live">LIVE · TESTED</span>
+      <!-- COLLAPSED TECHNICAL STRUCTURE ACCORDION (Requirement 7) -->
+      <details class="tech-sources-accordion">
+        <summary class="btn-tech-summary">
+          <span class="summary-left">
+            <span class="summary-icon">⚙️</span>
+            <strong>[ 상세 기술 구조 보기 ]</strong>
+            <span class="summary-label">선택적 근거원 및 외부 데이터 소스 상세</span>
+          </span>
+          <span class="summary-toggle-hint">클릭하여 펼치기 ▼</span>
+        </summary>
+        <div class="tech-sources-content">
+          <p class="depth-sub">
+            핵심 판정(Steps 1–3) 외에 필요 시 연계되는 보조 근거원 및 장애 복원력 소스입니다. (기본 시연 뷰포트에서는 축소)
+          </p>
+          <div class="sources-status-grid">
+            <!-- 1. KCI Reference Evidence -->
+            <div class="source-item">
+              <div class="source-top">
+                <span class="source-name">KCI referenceSearch</span>
+                <span class="source-status qualified">QUALIFIED</span>
+              </div>
+              <p class="source-detail">참고문헌 메타데이터 근거 (인용 관계 입증용으로 과장하지 않음)</p>
             </div>
-            <p class="source-detail">후보 검색 및 단일/복수 후보 식별 (실시간 API 검증 완료)</p>
-          </div>
 
-          <!-- 2. KCI Detail -->
-          <div class="source-item">
-            <div class="source-top">
-              <span class="source-name">KCI articleDetail</span>
-              <span class="source-status live">LIVE · TESTED</span>
+            <!-- 2. Crossref DOI Lookup -->
+            <div class="source-item">
+              <div class="source-top">
+                <span class="source-name">Crossref DOI Lookup</span>
+                <span class="source-status qualified">QUALIFIED</span>
+              </div>
+              <p class="source-detail">독립 DOI 메타데이터 교차확인 (KCI 대체가 아닌 실재성 보조)</p>
             </div>
-            <p class="source-detail">canonical 레코드 ID 고정 및 다국어·저자·연도 추출</p>
-          </div>
 
-          <!-- 3. KCI ReferenceSearch -->
-          <div class="source-item">
-            <div class="source-top">
-              <span class="source-name">KCI referenceSearch</span>
-              <span class="source-status qualified">QUALIFIED</span>
+            <!-- 3. KCI OAI-PMH Snapshot -->
+            <div class="source-item">
+              <div class="source-top">
+                <span class="source-name">KCI OAI-PMH Snapshot</span>
+                <span class="source-status progress">IN PROGRESS</span>
+              </div>
+              <p class="source-detail">Frozen Evidence Snapshot (장애 격리 및 데모 재현성 보장)</p>
             </div>
-            <p class="source-detail">참고문헌 메타데이터 근거 (인용 관계 입증용으로 과장하지 않음)</p>
-          </div>
 
-          <!-- 4. Crossref DOI -->
-          <div class="source-item">
-            <div class="source-top">
-              <span class="source-name">Crossref DOI Lookup</span>
-              <span class="source-status qualified">QUALIFIED</span>
+            <!-- 4. Future sources (OpenAlex, ORCID, Zotero) -->
+            <div class="source-item is-roadmap">
+              <div class="source-top">
+                <span class="source-name">Future Sources (OpenAlex · ORCID · Zotero)</span>
+                <span class="source-status roadmap">ROADMAP</span>
+              </div>
+              <p class="source-detail">글로벌 학술 DB 및 저자 식별자 연계 (현재 기본 시연 화면 제외)</p>
             </div>
-            <p class="source-detail">독립 DOI 메타데이터 교차확인 (KCI 대체가 아닌 실재성 보조)</p>
-          </div>
-
-          <!-- 5. KCI OAI-PMH -->
-          <div class="source-item">
-            <div class="source-top">
-              <span class="source-name">KCI OAI-PMH Snapshot</span>
-              <span class="source-status progress">IN PROGRESS</span>
-            </div>
-            <p class="source-detail">Frozen Evidence Snapshot (장애 격리 및 데모 재현성 보장)</p>
-          </div>
-
-          <!-- 6. Roadmap -->
-          <div class="source-item is-roadmap">
-            <div class="source-top">
-              <span class="source-name">OpenAlex · ORCID · Zotero</span>
-              <span class="source-status roadmap">ROADMAP</span>
-            </div>
-            <p class="source-detail">글로벌 학술 DB 및 저자 식별자 연계 (현재 데모 제외)</p>
           </div>
         </div>
-      </div>
+      </details>
     </section>
 
-    <!-- ============================== SECTION 3: TRANSLATION FIDELITY EXPANSION (3:35–4:30) ============================== -->
-    <section class="pres-section section-translation" id="translation">
+    <!-- ============================== SECTION 2B: TEST EVIDENCE (3:20–4:10) ============================== -->
+    <section class="pres-section section-test-evidence" id="test-evidence">
       <div class="section-header">
         <div class="section-title-wrap">
           <div class="section-num-tag">
-            <span class="num-time">3:35–4:30</span>
-            <span class="num-label">EXPANSION LAYER</span>
+            <span class="num-time">3:20–4:10</span>
+            <span class="num-label">TEST EVIDENCE</span>
           </div>
-          <h2 class="section-title">EXPANSION · KO ↔ EN 번역 충실도 확장</h2>
+          <h2 class="section-title">테스트 검증 근거 (Test Evidence)</h2>
         </div>
         <p class="section-sub">
-          <strong>핵심 질문:</strong> "실제 근거와 의미가 AI 영어화 과정에서도 보존되는가?"
+          <strong>검증 원칙:</strong> 실측 근거 없는 수치를 조작하지 않으며, 현재 통과된 자동화 계약 테스트와 실데이터 벤치마크 진행 현황을 투명하게 보고합니다.
         </p>
       </div>
 
-      <!-- Compact Transition Card -->
-      <div class="transition-banner">
-        <div class="transition-pill">핵심 문제 제기</div>
-        <div class="transition-text">
-          "근거가 맞아도, AI 영어화 과정에서 인용과 주장 의미가 함께 바뀔 수 있습니다."
-        </div>
-        <div class="transition-note">
-          Translation Fidelity does not replace KCI. It builds on the citation evidence layer.
-        </div>
-      </div>
-
-      <!-- Aligned KO ↔ EN Example with 2 Highlighted Findings -->
-      <div class="tf-demo-grid">
-        <!-- Left: Bilingual Example -->
-        <div class="tf-bilingual-card">
-          <div class="card-caption">연구 원고 단락 대조 (Simple KO ↔ EN Benchmark)</div>
-
-          <div class="bilingual-box">
-            <!-- KO text -->
-            <div class="tf-clause ko-clause">
-              <span class="clause-lang">한국어 원문 (KO)</span>
-              <p class="clause-text">
-                "X와 Y 사이에 유의한 관련성이 관찰되었다.
-                <mark class="span-tf tone-review is-selected" id="tfSpanCausKo" data-finding-id="TR-CAUS-001">직접적인 인과관계라고 단정할 수는 없다.</mark>
-                기존 연구 <mark class="span-tf tone-drift" id="tfSpanCitKo" data-finding-id="TR-CIT-001">[1], [2]</mark>를 참고하였다."
-              </p>
+      <div class="test-evidence-grid">
+        <div class="test-evidence-card passed">
+          <div class="te-top">
+            <div class="te-title-wrap">
+              <span class="te-icon">✔</span>
+              <strong class="te-title">결정론적 계약 테스트 스위트 (node:test)</strong>
             </div>
-
-            <div class="tf-arrow-sep">➔ AI 영어 번역 및 재생성 과정</div>
-
-            <!-- EN text -->
-            <div class="tf-clause en-clause">
-              <span class="clause-lang">AI 영어 결과 (EN)</span>
-              <p class="clause-text">
-                "<mark class="span-tf tone-review is-selected" id="tfSpanCausEn" data-finding-id="TR-CAUS-001">X causes Y.</mark>
-                Previous studies <mark class="span-tf tone-drift" id="tfSpanCitEn" data-finding-id="TR-CIT-001">[1], [3]</mark> prove this relationship."
-              </p>
-            </div>
+            <span class="te-badge passed">45 / 45 PASSED</span>
           </div>
-
-          <!-- Two Finding Switchers -->
-          <div class="tf-findings-selector">
-            <span class="selector-label">감지된 핵심 변화 (클릭하여 근거 전환):</span>
-            <div class="tf-btn-row">
-              <button class="btn-tf-finding is-active" id="btnTfCaus" data-finding-id="TR-CAUS-001" type="button">
-                <span class="tf-fid">TR-CAUS-001</span>
-                <span class="tf-fname">인과 표현 격상 (CAUSALITY_STRENGTHENED)</span>
-              </button>
-              <button class="btn-tf-finding" id="btnTfCit" data-finding-id="TR-CIT-001" type="button">
-                <span class="tf-fid">TR-CIT-001</span>
-                <span class="tf-fname">인용 레퍼런스 드리프트 (CITATION_REFERENCE_DRIFT)</span>
-              </button>
-            </div>
+          <p class="te-desc">
+            VERIFIED, METADATA_DRIFT, NOT_FOUND_IN_KCI, REVIEW_REQUIRED, SYSTEM_FAILURE 및 XML/API 파싱 안전성 계약 100% 통과
+          </p>
+          <div class="te-meta">
+            <span>✓ 45 assertions passed</span>
+            <span>✓ Fail-closed boundary checked</span>
+            <span>✓ Schema & Secret Redaction verified</span>
           </div>
         </div>
 
-        <!-- Right: Dynamic Evidence & Finding Card (Reusing KCI panel when TR-CIT-001 selected) -->
-        <div class="tf-evidence-card" id="tfEvidencePanel">
-          <!-- Dynamically rendered by app.js based on selected finding -->
+        <div class="test-evidence-card in-progress">
+          <div class="te-top">
+            <div class="te-title-wrap">
+              <span class="te-icon">⏳</span>
+              <strong class="te-title">S1–S5 실데이터 벤치마크 테스트</strong>
+            </div>
+            <span class="te-badge in-progress">검증 테스트 진행 중</span>
+          </div>
+          <p class="te-desc">
+            실제 KCI 논문 서지 레코드(ART003062835 등) 대상 단계별 검증 테스트 진행 중. 임의 통계를 조작하지 않고 실측 데이터 기반으로 확장합니다.
+          </p>
+          <div class="te-meta">
+            <span>⏳ S1–S5 Empirical Benchmark In Progress</span>
+            <span>⏳ Real-world KCI sample collection</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ============================== SECTION 4: ARCHITECTURE & ORIGINALITY (4:30–5:00) ============================== -->
+    <!-- ============================== SECTION 3: CLAIM-EVIDENCE ALIGNMENT NEXT LAYER (4:10–4:40) ============================== -->
+    <section class="pres-section section-claim-evidence" id="claim-evidence">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-num-tag">
+            <span class="num-time">4:10–4:40</span>
+            <span class="num-label">NEXT LAYER</span>
+          </div>
+          <h2 class="section-title">NEXT LAYER · Claim–Evidence Alignment (주장-근거 정합성)</h2>
+        </div>
+        <p class="section-sub">
+          <strong>핵심 질문:</strong> "형식적으로 맞는 인용이 실제 원문의 주장도 정확히 반영하는가?"
+        </p>
+      </div>
+
+      <!-- Clear Next / Not Yet Automatically Verified Notice -->
+      <div class="ce-status-banner">
+        <div class="ce-pill">NEXT RESEARCH LAYER</div>
+        <div class="ce-status-text">
+          NEXT / NOT YET AUTOMATICALLY VERIFIED
+        </div>
+        <p class="ce-status-desc">
+          서지정보가 일치하여 1단계(실재 여부)와 2단계(서지 정합성)를 통과하더라도,
+          인용한 문장이 원문의 주장을 과장하거나 왜곡하는 문제는 자동화된 최종 판정이 아닌
+          <strong>연구자 직접 검토(Human Review Required)</strong>를 위한 보조 신호로 감지합니다.
+        </p>
+      </div>
+
+      <!-- Short Concrete Example -->
+      <div class="ce-concrete-card">
+        <div class="card-caption">주장-근거 정합성 검증 예시 (Short Illustrative Example)</div>
+
+        <div class="ce-claims-comparison">
+          <div class="claim-box source-box">
+            <span class="claim-badge">Source claim (원문 주장)</span>
+            <p class="claim-text">
+              "X is associated with Y."
+              <span class="claim-ko-hint">(원문: "X와 Y 사이에 유의한 관련성이 관찰되었다. 직접적인 인과관계라고 단정할 수는 없다.")</span>
+            </p>
+          </div>
+
+          <div class="ce-arrow-down">➔ 논문 인용 및 영문화 서술 과정</div>
+
+          <div class="claim-box citing-box">
+            <span class="claim-badge alert">Citing claim (인용문 주장)</span>
+            <p class="claim-text">
+              <strong class="highlight-drift">"X causes Y."</strong>
+              <span class="claim-ko-hint">(인용문: "X causes Y. Previous studies prove this relationship." — 상관성을 절대적 인과로 단정)</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="ce-finding-summary-box">
+          <div class="ce-find-row">
+            <span class="ce-find-label">Potential signal:</span>
+            <strong class="ce-find-signal">Claim-strength shift (상관 ➔ 인과 격상 신호)</strong>
+          </div>
+          <div class="ce-find-row">
+            <span class="ce-find-label">Verification status:</span>
+            <span class="ce-human-review-badge">Human Review Required (연구자 직접 검토 대상)</span>
+          </div>
+          <p class="ce-caution-note">
+            ⚠️ 이 계층은 자동화된 결론이 아니며, Solar 시맨틱 옵저버가 포착한 의미 변화 신호를 연구자가 비판적으로 재검토하도록 안내합니다.
+          </p>
+        </div>
+
+        <!-- Small Secondary Extension Note: KO->EN -->
+        <div class="ce-footer-notes">
+          <div class="ce-footer-item">
+            <span class="c-fn-tag">향후 확장</span>
+            <div class="c-fn-content">
+              <strong>KO→EN Translation Fidelity:</strong>
+              <span>한국어 연구물이 영어로 재생성되는 과정에서 citation mapping과 주장 의미가 그대로 보존되는지 추적 (독창성 확장층)</span>
+            </div>
+          </div>
+          <div class="ce-footer-item">
+            <span class="c-fn-tag context">Future Context</span>
+            <div class="c-fn-content">
+              <strong>Finance-20 Pilot:</strong>
+              <span>분야별 영문 표현의 참조 맥락 (정답표 · quality score가 아님)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== SECTION 4: ARCHITECTURE & ORIGINALITY (4:40–5:00) ============================== -->
     <section class="pres-section section-architecture" id="architecture">
       <div class="section-header">
         <div class="section-title-wrap">
           <div class="section-num-tag">
-            <span class="num-time">4:30–5:00</span>
+            <span class="num-time">4:40–5:00</span>
             <span class="num-label">SYSTEM ARCHITECTURE</span>
           </div>
-          <h2 class="section-title">시스템 구현 아키텍처 및 독창성</h2>
+          <h2 class="section-title">시스템 구현 아키텍처 (Architecture)</h2>
         </div>
         <p class="section-sub">
-          설명 불가능한 AI 점수가 아닌, 명시적 규칙과 외부 근거가 사람의 최종 검토로 수렴하는 투명한 구조입니다.
+          설명 불가능한 AI 점수가 아닌, 공인된 외부 근거와 명시적 규칙이 사람의 최종 검토로 수렴하는 투명한 구조입니다.
         </p>
       </div>
 
-      <!-- 5-Block Model Visual -->
-      <div class="arch-model-grid">
-        <div class="arch-node node-kci">
-          <div class="node-icon">🏛️</div>
-          <div class="node-title">KCI Open API</div>
-          <div class="node-role">External Bibliographic Evidence</div>
-          <div class="node-desc">한국연구재단 공식 서지 데이터베이스 실시간 연동 (LIVE · TESTED)</div>
+      <!-- PRIMARY 4-STAGE PIPELINE (High Contrast, Prominent) -->
+      <div class="arch-primary-flow">
+        <div class="arch-flow-node">
+          <div class="af-icon">🏛️</div>
+          <div class="af-title">KCI Evidence</div>
+          <div class="af-sub">한국연구재단 공식 서지 API</div>
+          <div class="af-status">LIVE · TESTED</div>
         </div>
+        <span class="af-arrow">➔</span>
 
-        <div class="arch-node node-rules">
-          <div class="node-icon">⚙️</div>
-          <div class="node-title">Deterministic Rules</div>
-          <div class="node-role">Field-level Verification</div>
-          <div class="node-desc">제목·저자·연도·DOI 불변 규칙 (REF-META-002 등)</div>
+        <div class="arch-flow-node">
+          <div class="af-icon">⚙️</div>
+          <div class="af-title">Deterministic Verification</div>
+          <div class="af-sub">Title · Author · Year · DOI 불변 규칙</div>
+          <div class="af-status">Rule: REF-META-002</div>
         </div>
+        <span class="af-arrow">➔</span>
 
-        <div class="arch-node node-solar">
-          <div class="node-icon">☀️</div>
-          <div class="node-title">Solar LLM</div>
-          <div class="node-role">Semantic Observer</div>
-          <div class="node-desc">판정 주체가 아닌, 상관성/인과성 의미 변화를 관측·설명</div>
+        <div class="arch-flow-node">
+          <div class="af-icon">📋</div>
+          <div class="af-title">Explainable Finding</div>
+          <div class="af-sub">투명한 불일치 사유 및 출처 레코드 ID</div>
+          <div class="af-status">Audit Contract v1</div>
         </div>
+        <span class="af-arrow">➔</span>
 
-        <div class="arch-node node-finance">
-          <div class="node-icon">📊</div>
-          <div class="node-title">Finance-20 Pilot</div>
-          <div class="node-role">Reference Context (Roadmap)</div>
-          <div class="node-desc">실제 영문 금융논문 코퍼스 표현 분포를 보조 참고 (정답표 아님)</div>
-        </div>
-
-        <div class="arch-node node-human">
-          <div class="node-icon">👤</div>
-          <div class="node-title">Human Researcher</div>
-          <div class="node-role">Final Reviewer</div>
-          <div class="node-desc">연구자의 학술적 비판적 검토가 최종 판정을 결정</div>
+        <div class="arch-flow-node af-final">
+          <div class="af-icon">👤</div>
+          <div class="af-title">Human Review</div>
+          <div class="af-sub">연구자 최종 비판적 검토 및 서지 수정</div>
+          <div class="af-status final">최종 판단 주체</div>
         </div>
       </div>
 
-      <!-- Unified Convergence Pipeline Bar -->
-      <div class="convergence-bar">
-        <div class="c-step"><span class="c-badge">Evidence</span><span>외부 근거</span></div>
-        <span class="c-arrow">➔</span>
-        <div class="c-step"><span class="c-badge">Signal</span><span>변화 신호</span></div>
-        <span class="c-arrow">➔</span>
-        <div class="c-step"><span class="c-badge">Why?</span><span>투명한 이유</span></div>
-        <span class="c-arrow">➔</span>
-        <div class="c-step is-final"><span class="c-badge">Human Review</span><span>사람이 최종 검토</span></div>
+      <!-- SECONDARY EXTENSIONS (Smaller Secondary Text) -->
+      <div class="arch-secondary-notes">
+        <div class="sec-note-item next-layer">
+          <span class="sec-tag next">Next</span>
+          <div class="sec-note-body">
+            <strong>Claim–Evidence Alignment:</strong>
+            <span>인용된 서지가 실제 원문의 연구 주장 강도(상관 vs 인과)를 정확히 반영하는지 연구자 검토 신호 관측 (Not automatically verified)</span>
+          </div>
+        </div>
+        <div class="sec-note-item future-layer">
+          <span class="sec-tag future">Future</span>
+          <div class="sec-note-body">
+            <strong>KO→EN Fidelity & Domain Reference Context:</strong>
+            <span>한국어 연구물의 영문화 과정 중 인용 mapping 보존 및 Finance-20 Pilot을 통한 분야별 영문 표현 참조 맥락 지원 (정답표 아님)</span>
+          </div>
+        </div>
       </div>
 
       <!-- Final Prominent Product Positioning Statement -->
       <div class="closing-position-card">
         <p class="closing-statement">
-          "TrustVerify는 먼저 인용이 실제 근거와 일치하는지 확인하고,<br>
-          그다음 연구물이 영어로 발전하는 과정에서<br>
-          그 근거와 의미가 그대로 보존되는지 추적합니다."
+          "TrustVerify는 먼저 인용이 실제 학술 레코드에 존재하는지 확인하고,<br>
+          제목 · 저자 · 연도 · DOI가 그 레코드와 일치하는지 검증합니다.<br><br>
+          다음 단계에서는 형식적으로 맞는 인용이 실제 원문의 주장까지 정확하게 반영하는지 검증 범위를 확장합니다."
         </p>
       </div>
     </section>
