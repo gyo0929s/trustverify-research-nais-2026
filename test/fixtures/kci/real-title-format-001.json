@@ -1,0 +1,36 @@
+{
+  "case_id": "REAL-TITLE-FORMAT-001",
+  "fixture_kind": "static-offline-title-pair",
+  "notice": "Static regression data transcribed from a redacted KCI articleSearch response and the published PDF. Contains no API key, request URL, or public_url. The test must never call the live KCI API.",
+  "source_record_id": "ART001298965",
+  "observed_at": "2026-10-01",
+  "observed_search_state": "KCI_OK",
+  "observed_search_total": 1,
+  "pdf_title": "금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여",
+  "kci_titles": [
+    { "value": "금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위＂행동경제학＂적 관점을 반영하여", "lang": "original" },
+    { "value": "A Study on the Financial Consumer　s Behavioral Pattern in the Financial Market and A Design of Regulatory Scheme for the Protection of the Financial Consumers from Behavioral Economics Perspective", "lang": "foreign" },
+    { "value": "A Study on the Financial Consumer　s Behavioral Pattern in the Financial Market and A Design of Regulatory Scheme for the Protection of the Financial Consumers from Behavioral Economics Perspective", "lang": "english" }
+  ],
+  "kci_metadata": {
+    "authors": ["최승재"],
+    "publication_year": "2008",
+    "journal": "증권법연구",
+    "volume": "9",
+    "issue": "2",
+    "first_page": "227",
+    "last_page": "270",
+    "doi_raw": "",
+    "doi_normalized": null
+  },
+  "differences": [
+    "PDF uses U+2018/U+2019 single quotes; KCI uses U+FF02 fullwidth double quotes (NFKC folds U+FF02 to U+0022, not to U+2018/U+2019).",
+    "PDF has a space between 소위 and the opening quote; KCI has none."
+  ],
+  "expected_current": {
+    "kind": "RESEARCH_FINDING",
+    "status": "REVIEW_REQUIRED",
+    "rule_id": "REF-ID-002",
+    "detail_called": false
+  }
+}
