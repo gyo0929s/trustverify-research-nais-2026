@@ -1,228 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrustVerify Research — Explainable Research Integrity Auditor</title>
+  <title>TrustVerify Research</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <!-- TOP APP BAR -->
-  <header class="app-header">
-    <div class="brand-section">
-      <div class="brand-logo-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="m9 12 2 2 4-4"/>
-        </svg>
-      </div>
-      <div class="brand-text">
-        <div class="brand-title">TrustVerify Research</div>
-        <div class="brand-subtitle">Explainable Research Integrity Auditor</div>
-      </div>
-      <span class="track-badge">NAIS 2026 · Track A</span>
-    </div>
-
-    <!-- TRACK NAVIGATION TABS -->
-    <nav class="nav-tabs" aria-label="Audit Tracks">
-      <button class="nav-tab active" data-tab="citation-integrity">
-        <span class="tab-indicator"></span>
-        <span class="tab-label">Citation Integrity</span>
-        <span class="status-pill active-pill">Active</span>
-      </button>
-      <button class="nav-tab disabled" data-tab="academic-english" title="Track B: 50 finance papers reference profile via Upstage/Solar (Planned)">
-        <span class="tab-label">Academic English</span>
-        <span class="status-pill future-pill">Coming Next</span>
-      </button>
-      <button class="nav-tab disabled" data-tab="translation-fidelity" title="Track C: Aligned Korean original vs English output fidelity checks (Planned)">
-        <span class="tab-label">Translation Fidelity</span>
-        <span class="status-pill future-pill">Coming Next</span>
-      </button>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="TrustVerify Research 개요로 이동">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <span class="brand-name">TrustVerify Research</span>
+    </a>
+    <nav class="topnav" aria-label="주요 메뉴">
+      <a class="topnav-link" href="#/" data-route="overview">프로젝트 개요</a>
+      <a class="topnav-link" href="#/citation" data-route="citation">레퍼런스 검증</a>
+      <span class="topnav-link is-disabled" aria-disabled="true">번역 충실도 <span class="tag-dev">개발 중</span></span>
+      <span class="topnav-link is-disabled" aria-disabled="true">학술 문체 비교 <span class="tag-dev">개발 중</span></span>
     </nav>
-
-    <div class="header-actions">
-      <div class="audit-meta-chip">
-        <span class="meta-dot"></span>
-        <span class="meta-label">Audit Run:</span>
-        <span class="meta-val" id="auditRunTimestamp">2026-09-30 10:14 UTC</span>
-      </div>
-      <div class="manuscript-file-chip">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span id="headerDocName">manuscript_korean_macro_debt_spillover.docx</span>
-      </div>
-    </div>
+    <span class="event-tag">NAIS 2026</span>
   </header>
 
-  <!-- 5-SECOND EXPLAINABILITY PIPELINE BANNER -->
-  <div class="pipeline-explainer-banner">
-    <div class="explainer-inner">
-      <div class="chain-step">
-        <span class="step-num">1</span>
-        <span class="step-title">Research Sentence</span>
-        <span class="step-desc">Target claim & in-text citation</span>
-      </div>
-      <div class="chain-arrow">➔</div>
-      <div class="chain-step">
-        <span class="step-num">2</span>
-        <span class="step-title">Integrity Finding</span>
-        <span class="step-desc">Deterministic comparison verdict</span>
-      </div>
-      <div class="chain-arrow">➔</div>
-      <div class="chain-step">
-        <span class="step-num">3</span>
-        <span class="step-title">Canonical KCI Evidence</span>
-        <span class="step-desc">Pinned record & SHA-256 snapshot</span>
-      </div>
-      <div class="chain-arrow">➔</div>
-      <div class="chain-step">
-        <span class="step-num">4</span>
-        <span class="step-title">Public Rule</span>
-        <span class="step-desc">Transparent versioned specification</span>
-      </div>
-    </div>
-    <div class="explainer-callout">
-      <span class="callout-tag">JUDGE QUICK TIP</span>
-      Click any inline reference <code class="mini-cite">[1]</code>–<code class="mini-cite">[5]</code> or finding card to trace deterministic evidence.
-    </div>
-  </div>
-
-  <section class="live-audit-bar" aria-labelledby="liveAuditTitle">
-    <div class="live-audit-heading">
-      <div>
-        <div class="live-audit-kicker">LIVE KCI EVIDENCE</div>
-        <h2 id="liveAuditTitle">Verify one citation with KCI</h2>
-      </div>
-      <button class="btn-secondary" id="btnLoadDemo" type="button">Load Demo Cases</button>
-    </div>
-    <form id="citationAuditForm" class="citation-audit-form">
-      <label class="audit-field audit-field-title">
-        <span>Title *</span>
-        <input id="auditTitle" name="title" type="text" maxlength="2000" required autocomplete="off" placeholder="Exact article title">
-      </label>
-      <label class="audit-field">
-        <span>Authors</span>
-        <input id="auditAuthors" name="authors" type="text" maxlength="2000" autocomplete="off" placeholder="Comma-separated, source order">
-      </label>
-      <label class="audit-field audit-field-small">
-        <span>Year</span>
-        <input id="auditYear" name="publication_year" type="text" maxlength="20" autocomplete="off" placeholder="2024">
-      </label>
-      <label class="audit-field">
-        <span>DOI</span>
-        <input id="auditDoi" name="doi" type="text" maxlength="500" autocomplete="off" placeholder="10.xxxx/…">
-      </label>
-      <button class="btn-primary audit-submit" id="auditSubmit" type="submit">Verify with KCI</button>
-    </form>
-    <div class="audit-feedback demo" id="auditFeedback" aria-live="polite">DEMO FIXTURE mode loaded. Live results remain visually separate.</div>
-  </section>
-
-  <!-- MAIN 3-PANEL WORKSPACE -->
-  <main class="workspace-grid">
-    <!-- PANEL 1: RESEARCH DRAFT (LEFT) -->
-    <section class="panel panel-draft" id="draftPanel">
-      <div class="panel-header">
-        <div class="panel-title-group">
-          <div class="panel-title-row">
-            <h2 class="panel-title">Research Draft</h2>
-            <span class="badge-neutral" id="citationCountBadge">5 Citations Evaluated</span>
-          </div>
-          <p class="panel-desc">Believable AI-generated academic manuscript. Click highlighted citations to inspect evidence.</p>
-        </div>
-        <div class="draft-actions">
-          <button class="btn-icon" id="btnResetSelection" title="Reset selection">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            Reset
-          </button>
-        </div>
-      </div>
-
-      <div class="panel-content scrollable manuscript-view" id="draftContentContainer">
-        <!-- Draft manuscript injected here dynamically -->
-        <div class="loading-state">Loading academic draft...</div>
-      </div>
+  <!-- ============================== OVERVIEW ============================== -->
+  <main class="view view-overview" id="viewOverview" data-view="overview">
+    <section class="hero">
+      <p class="hero-kicker">Research Auditor</p>
+      <h1 class="hero-title">TrustVerify Research</h1>
+      <p class="hero-subtitle">AI 연구물의 레퍼런스 오류와 학술 표현 문제를<br>근거 기반으로 검증하는 Research Auditor</p>
     </section>
 
-    <!-- PANEL 2: INTEGRITY FINDINGS (CENTER) -->
-    <section class="panel panel-findings" id="findingsPanel">
-      <div class="panel-header">
-        <div class="panel-title-group">
-          <div class="panel-title-row">
-            <h2 class="panel-title">Findings Ledger</h2>
-            <span class="badge-accent">Deterministic Verdicts</span>
-          </div>
-          <p class="panel-desc">Evidence-backed classification. System failures strictly segregated from research findings.</p>
+    <section class="track-cards" aria-label="검증 트랙">
+      <article class="track-card is-live">
+        <div class="track-card-head">
+          <span class="track-num">01</span>
+          <span class="track-state state-live">현재 구현됨</span>
         </div>
+        <h2 class="track-title">레퍼런스 검증</h2>
+        <p class="track-problem">AI가 생성한 참고문헌의 제목·저자·연도·DOI가 실제 논문과 다르거나, 여러 논문의 정보가 하나의 인용처럼 섞일 수 있습니다.</p>
+        <dl class="track-facts">
+          <div><dt>근거</dt><dd>KCI Open API</dd></div>
+          <div><dt>결과</dt><dd class="code-list">
+            <span class="code-chip c-verified">VERIFIED</span>
+            <span class="code-chip c-drift">METADATA_DRIFT</span>
+            <span class="code-chip c-review">REVIEW_REQUIRED</span>
+            <span class="code-chip c-notfound">NOT_FOUND_IN_KCI</span>
+          </dd></div>
+        </dl>
+        <a class="btn btn-primary btn-block" href="#/citation">KCI 레퍼런스 검증 시작 →</a>
+      </article>
 
-        <!-- Filter chips -->
-        <div class="filter-strip" role="tablist" aria-label="Filter Findings">
-          <button class="filter-chip active" data-filter="all">All <span class="chip-count" id="countAll">5</span></button>
-          <button class="filter-chip" data-filter="VERIFIED">Verified <span class="chip-count" id="countVerified">1</span></button>
-          <button class="filter-chip" data-filter="METADATA_DRIFT">Drift <span class="chip-count" id="countDrift">1</span></button>
-          <button class="filter-chip" data-filter="CHIMERA">Chimera <span class="chip-count" id="countChimera">1</span></button>
-          <button class="filter-chip" data-filter="NOT_FOUND_IN_KCI">Not in Index <span class="chip-count" id="countNotFound">1</span></button>
-          <button class="filter-chip filter-sys" data-filter="SYSTEM_FAILURE">System Failure <span class="chip-count" id="countSysFail">1</span></button>
+      <article class="track-card is-dev">
+        <div class="track-card-head">
+          <span class="track-num">02</span>
+          <span class="track-state state-dev">개발 중</span>
         </div>
-      </div>
+        <h2 class="track-title">번역 충실도</h2>
+        <p class="track-problem">한국어 연구내용을 영어 논문으로 옮길 때 숫자·인용·부정·불확실성·인과관계·주장 강도가 달라질 수 있습니다.</p>
+        <dl class="track-facts">
+          <div><dt>방법</dt><dd>한국어 원문 ↔ 영어 결과 직접 비교</dd></div>
+          <div><dt>예정 결과</dt><dd>modality · causality · uncertainty · claim-strength 변화 신호</dd></div>
+        </dl>
+        <div class="dev-note">아직 결과를 생성하지 않습니다.</div>
+      </article>
 
-      <div class="panel-content scrollable findings-list" id="findingsListContainer">
-        <!-- Findings cards injected here dynamically -->
-      </div>
+      <article class="track-card is-dev">
+        <div class="track-card-head">
+          <span class="track-num">03</span>
+          <span class="track-state state-dev">개발 중</span>
+        </div>
+        <h2 class="track-title">학술 문체 비교</h2>
+        <p class="track-problem">영문 학술 표현이 실제 분야의 논문 관행과 크게 다를 수 있습니다.</p>
+        <dl class="track-facts">
+          <div><dt>방법</dt><dd>Finance-50 Reference Profile<br><span class="muted">정답 기준이 아니라 실제 영문 금융논문 50편의 참조 분포</span></dd></div>
+          <div><dt>예정 결과</dt><dd>대상 문서와 참조 분포 사이의 기술적(descriptive) 차이</dd></div>
+        </dl>
+        <div class="dev-note">아직 결과를 생성하지 않습니다.</div>
+      </article>
     </section>
 
-    <!-- PANEL 3: EVIDENCE / WHY THIS RESULT (RIGHT) -->
-    <section class="panel panel-evidence" id="evidencePanel">
-      <div class="panel-header">
-        <div class="panel-title-group">
-          <div class="panel-title-row">
-            <h2 class="panel-title">Why This Result?</h2>
-            <span class="evidence-status-pill" id="evidenceStatusPill">Select a Finding</span>
-          </div>
-          <p class="panel-desc">Deterministic field comparison, rule provenance, and cryptographic snapshot hashes.</p>
+    <section class="architecture" aria-labelledby="archTitle">
+      <h2 class="section-label" id="archTitle">시스템 구성</h2>
+      <div class="arch-row">
+        <div class="arch-block is-live">
+          <div class="arch-name">KCI</div>
+          <div class="arch-role">Citation Evidence</div>
+          <div class="arch-state">구현됨</div>
         </div>
-        <div class="evidence-actions">
-          <button class="btn-secondary" id="btnViewRawJson" title="Inspect Pinned Evidence JSON">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
-            Evidence Snapshot
-          </button>
+        <div class="arch-block">
+          <div class="arch-name">KO ↔ EN</div>
+          <div class="arch-role">Translation Fidelity Evidence</div>
+          <div class="arch-state">개발 중</div>
+        </div>
+        <div class="arch-block">
+          <div class="arch-name">Finance-50</div>
+          <div class="arch-role">Academic-language Reference Profile</div>
+          <div class="arch-state">개발 중</div>
+        </div>
+        <div class="arch-block">
+          <div class="arch-name">Solar API</div>
+          <div class="arch-role">Semantic Observer</div>
+          <div class="arch-state">개발 중</div>
         </div>
       </div>
-
-      <div class="panel-content scrollable evidence-detail" id="evidenceDetailContainer">
-        <!-- Evidence details injected here dynamically -->
-      </div>
+      <div class="arch-merge" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="arch-output">근거 기반 판정 · 사람이 최종 검토</div>
     </section>
+
+    <p class="boundary-note">KCI Open API는 인용 서지정보의 일치 여부만 확인하는 근거입니다. 연구 내용의 진위나 논문의 학술적 가치를 판정하지 않습니다.</p>
   </main>
 
-  <!-- FOOTER DISCLAIMER -->
-  <footer class="app-footer">
-    <div class="footer-left">
-      <span class="footer-badge">EVIDENCE BOUNDARY</span>
-      <span class="footer-text">KCI Open API is the primary canonical bibliographic evidence source. It certifies citation metadata coherence only; it does not determine scientific truth, peer review validity, or manuscript acceptance.</span>
+  <!-- ============================== CITATION WORKSPACE ============================== -->
+  <main class="view view-citation" id="viewCitation" data-view="citation" hidden>
+    <div class="ws-bar">
+      <div class="ws-title-group">
+        <h1 class="ws-title">레퍼런스 검증</h1>
+        <p class="ws-sub">인용 정보를 KCI 실제 레코드와 비교하고, 판정 이유와 근거를 함께 보여줍니다.</p>
+      </div>
+      <div class="mode-switch" role="tablist" aria-label="데이터 모드">
+        <button class="mode-btn" role="tab" data-mode="LIVE" id="modeLive"><span class="mode-dot live"></span>LIVE KCI · 실제 조회</button>
+        <button class="mode-btn" role="tab" data-mode="DEMO" id="modeDemo"><span class="mode-dot demo"></span>DEMO · 예시 데이터</button>
+      </div>
     </div>
-    <div class="footer-right">
-      <span class="footer-note">TrustVerify Research · Fail-Closed Audit Architecture</span>
-    </div>
-  </footer>
 
-  <!-- RAW EVIDENCE JSON MODAL / DRAWER -->
-  <div class="modal-overlay hidden" id="rawEvidenceModal">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <div class="modal-title">Pinned Evidence Snapshot & Ledger Record</div>
-          <div class="modal-subtitle" id="modalSnapshotHash">SHA-256: ...</div>
+    <div class="ws-grid">
+      <!-- LEFT: 연구 초안 / 입력 인용 -->
+      <section class="panel" aria-labelledby="leftTitle">
+        <header class="panel-head">
+          <h2 class="panel-title" id="leftTitle">연구 초안</h2>
+          <span class="panel-hint" id="leftHint"></span>
+        </header>
+        <div class="panel-body">
+          <!-- LIVE: compact form -->
+          <div id="liveInputArea">
+            <form id="citationAuditForm" class="audit-form" autocomplete="off">
+              <label class="field">
+                <span class="field-label">논문 제목 <em>*</em></span>
+                <input id="auditTitle" name="title" type="text" maxlength="2000" required placeholder="검증할 논문 제목을 입력하세요">
+              </label>
+              <label class="field">
+                <span class="field-label">저자</span>
+                <input id="auditAuthors" name="authors" type="text" maxlength="2000" placeholder="쉼표로 구분 (예: 홍길동, 김철수)">
+              </label>
+              <div class="field-row">
+                <label class="field">
+                  <span class="field-label">연도</span>
+                  <input id="auditYear" name="publication_year" type="text" maxlength="20" inputmode="numeric" placeholder="2024">
+                </label>
+                <label class="field">
+                  <span class="field-label">DOI</span>
+                  <input id="auditDoi" name="doi" type="text" maxlength="500" placeholder="10.xxxx/…">
+                </label>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-primary" id="auditSubmit" type="submit">KCI에서 검증</button>
+                <button class="btn btn-ghost" id="btnLoadDemo" type="button">데모 보기</button>
+              </div>
+              <button class="link-btn" id="btnFillExample" type="button">예시 인용 채우기</button>
+            </form>
+            <div class="audit-feedback" id="auditFeedback" aria-live="polite"></div>
+            <div class="submitted-list" id="submittedList"></div>
+          </div>
+          <!-- DEMO: draft manuscript -->
+          <div id="draftContentContainer" class="manuscript" hidden></div>
         </div>
-        <button class="btn-close" id="btnCloseModal" aria-label="Close modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <pre class="json-viewer"><code id="modalJsonContent">// Select a finding to view snapshot</code></pre>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary" id="btnCopyJson">Copy Snapshot JSON</button>
-        <button class="btn-secondary" id="btnCloseModalFooter">Close</button>
-      </div>
+      </section>
+
+      <!-- CENTER: 검증 결과 -->
+      <section class="panel" aria-labelledby="centerTitle">
+        <header class="panel-head">
+          <h2 class="panel-title" id="centerTitle">검증 결과</h2>
+          <span class="origin-badge" id="resultsOriginBadge"></span>
+        </header>
+        <div class="summary-strip" id="summaryStrip" role="tablist" aria-label="결과 필터"></div>
+        <div class="panel-body" id="findingsListContainer"></div>
+      </section>
+
+      <!-- RIGHT: 왜 이렇게 판정했나요? -->
+      <section class="panel" aria-labelledby="rightTitle">
+        <header class="panel-head">
+          <h2 class="panel-title" id="rightTitle">왜 이렇게 판정했나요?</h2>
+        </header>
+        <div class="panel-body" id="evidenceDetailContainer"></div>
+      </section>
     </div>
-  </div>
+  </main>
 
   <script src="/app.js" type="module"></script>
 </body>
