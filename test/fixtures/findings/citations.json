@@ -1,0 +1,328 @@
+{
+  "$schema": "trustverify-findings-collection-v1",
+  "mock_data_notice": "FRONTEND TEMPORARY MOCK FIXTURE — NAIS 2026 Hackathon Track A UI Prototype",
+  "is_mock_data": true,
+  "audit_run_id": "audit-run-20260930-kci-01",
+  "pipeline_track": "TRACK_A_CITATION_INTEGRITY",
+  "created_at": "2026-09-30T10:14:30Z",
+  "count": 5,
+  "findings": [
+    {
+      "id": "find-cit-001",
+      "citation_marker": "[1]",
+      "citation_key": "KimPark2022",
+      "status": "VERIFIED",
+      "status_label": "Verified in KCI",
+      "status_theme": "verified",
+      "short_reason": "Single coherent KCI record identity established; title, authors, year (2022), and DOI match exactly.",
+      "reason_detail": "Deterministic identity verification established via exact DOI match (10.21138/jkfs.2022.51.3.301). Title normalization confirms 100% token correspondence across multilingual title groups. Publication year (2022) and author sequence match indexed metadata.",
+      "rule": {
+        "rule_id": "RULE-CIT-001",
+        "version": "cit-rules-v1.0.0",
+        "description": "Deterministic Bibliographic Identity: All core bibliographic fields (Title, Author, Publication Year, DOI) match a single confirmed KCI record."
+      },
+      "in_text_location": {
+        "section": "1. Introduction",
+        "paragraph": 2,
+        "sentence": "Earlier econometric investigations into Korean Treasury Bond (KTB) volatility regimes emphasize that foreign capital flow shocks propagate disproportionately across the 3-year and 10-year yield curve segments [1]."
+      },
+      "affected_citation": {
+        "raw_text": "[1] Kim, S. & Park, J. (2022). High-Frequency Dynamics and Volatility Spillovers in Korean Sovereign Debt Markets. Journal of Korean Financial Studies, 51(3), 301-328. https://doi.org/10.21138/jkfs.2022.51.3.301",
+        "supplied_fields": {
+          "title": "High-Frequency Dynamics and Volatility Spillovers in Korean Sovereign Debt Markets",
+          "authors": "Kim, S. & Park, J.",
+          "year": "2022",
+          "journal": "Journal of Korean Financial Studies",
+          "volume_issue": "51(3), pp. 301-328",
+          "doi": "10.21138/jkfs.2022.51.3.301"
+        }
+      },
+      "evidence": {
+        "source_system": "KCI",
+        "source_record_id": "ART002849182",
+        "retrieved_at": "2026-09-30T10:14:22Z",
+        "normalizer_version": "kci-normalizer-v1",
+        "normalized_content_sha256": "4f8a91b2c6e3d7a8b9c0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+        "redacted_snapshot_sha256": "8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d",
+        "public_url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002849182",
+        "kci_fields": {
+          "title": "High-Frequency Dynamics and Volatility Spillovers in Korean Sovereign Debt Markets",
+          "authors": "김선우 (Kim, Sunwoo), 박정훈 (Park, Junghoon)",
+          "year": "2022",
+          "journal": "한국증권학회지 (Journal of Korean Financial Studies)",
+          "volume_issue": "Vol. 51 No. 3, pp. 301-328",
+          "doi": "10.21138/jkfs.2022.51.3.301"
+        }
+      },
+      "field_comparison": [
+        { "field": "Title", "supplied": "High-Frequency Dynamics and Volatility Spillovers in Korean Sovereign Debt Markets", "evidence": "High-Frequency Dynamics and Volatility Spillovers in Korean Sovereign Debt Markets", "status": "MATCH", "diff": null },
+        { "field": "Author(s)", "supplied": "Kim, S. & Park, J.", "evidence": "김선우 (Kim, Sunwoo), 박정훈 (Park, Junghoon)", "status": "MATCH", "diff": null },
+        { "field": "Publication Year", "supplied": "2022", "evidence": "2022", "status": "MATCH", "diff": null },
+        { "field": "Journal / Venue", "supplied": "Journal of Korean Financial Studies", "evidence": "한국증권학회지 (Journal of Korean Financial Studies)", "status": "MATCH", "diff": null },
+        { "field": "Volume & Issue", "supplied": "51(3), 301-328", "evidence": "Vol. 51 No. 3, 301-328", "status": "MATCH", "diff": null },
+        { "field": "DOI", "supplied": "10.21138/jkfs.2022.51.3.301", "evidence": "10.21138/jkfs.2022.51.3.301", "status": "MATCH", "diff": null }
+      ],
+      "human_review": {
+        "level": "OPTIONAL",
+        "badge": "Completed (Verified)",
+        "recommendation": "Optional. The reference metadata matches the canonical KCI record. Standard reviewer inspection applies.",
+        "color": "green"
+      },
+      "limitations": "KCI bibliographic verification certifies citation identity and metadata coherence only; it does not attest to empirical findings or scientific truth."
+    },
+    {
+      "id": "find-cit-002",
+      "citation_marker": "[2]",
+      "citation_key": "LeeEtAl2023",
+      "status": "METADATA_DRIFT",
+      "status_label": "Metadata Drift Detected",
+      "status_theme": "drift",
+      "short_reason": "Coherent KCI record identity was established, but publication year differs (2023 in draft → 2024 in KCI).",
+      "reason_detail": "Unambiguous KCI record ART002956104 was identified via title and DOI match. While Title, Authors, Journal, and DOI correspond to the canonical index, the formal publication date recorded in KCI is 2024 (Volume 23 Issue 1), whereas the draft cites 2023 (consistent with working paper / advance online distribution).",
+      "rule": {
+        "rule_id": "RULE-CIT-002",
+        "version": "cit-rules-v1.0.0",
+        "description": "Temporal / Attribute Drift: Coherent record identity established via title/author cluster, but publication year or volume differs from canonical registration."
+      },
+      "in_text_location": {
+        "section": "1. Introduction",
+        "paragraph": 3,
+        "sentence": "Complementary macroprudential analyses suggest that countercyclical capital buffer announcements mitigate spillover velocity during episodes of sudden capital retrenchment [2]."
+      },
+      "affected_citation": {
+        "raw_text": "[2] Lee, H., Choi, M., & Song, K. (2023). Macroprudential Policy Transmission and Bank Liquidity Buffers in South Korea. Asian Economic Papers, 22(1), 45-68. https://doi.org/10.1162/asep_a_00892",
+        "supplied_fields": {
+          "title": "Macroprudential Policy Transmission and Bank Liquidity Buffers in South Korea",
+          "authors": "Lee, H., Choi, M., & Song, K.",
+          "year": "2023",
+          "journal": "Asian Economic Papers",
+          "volume_issue": "22(1), 45-68",
+          "doi": "10.1162/asep_a_00892"
+        }
+      },
+      "evidence": {
+        "source_system": "KCI",
+        "source_record_id": "ART002956104",
+        "retrieved_at": "2026-09-30T10:14:23Z",
+        "normalizer_version": "kci-normalizer-v1",
+        "normalized_content_sha256": "b1a2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e",
+        "redacted_snapshot_sha256": "3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e",
+        "public_url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002956104",
+        "kci_fields": {
+          "title": "Macroprudential Policy Transmission and Bank Liquidity Buffers in South Korea",
+          "authors": "이현우 (Lee, Hyunwoo), 최민석 (Choi, Minseok), 송경환 (Song, Kyunghwan)",
+          "year": "2024",
+          "journal": "Asian Economic Papers",
+          "volume_issue": "Vol. 23 No. 1, pp. 45-68",
+          "doi": "10.1162/asep_a_00892"
+        }
+      },
+      "field_comparison": [
+        { "field": "Title", "supplied": "Macroprudential Policy Transmission and Bank Liquidity Buffers in South Korea", "evidence": "Macroprudential Policy Transmission and Bank Liquidity Buffers in South Korea", "status": "MATCH", "diff": null },
+        { "field": "Author(s)", "supplied": "Lee, H., Choi, M., & Song, K.", "evidence": "이현우 (Lee, Hyunwoo), 최민석 (Choi, Minseok), 송경환 (Song, Kyunghwan)", "status": "MATCH", "diff": null },
+        { "field": "Publication Year", "supplied": "2023", "evidence": "2024", "status": "MISMATCH", "diff": "2023 → 2024" },
+        { "field": "Journal / Venue", "supplied": "Asian Economic Papers", "evidence": "Asian Economic Papers", "status": "MATCH", "diff": null },
+        { "field": "Volume & Issue", "supplied": "22(1), 45-68", "evidence": "Vol. 23 No. 1, 45-68", "status": "MISMATCH", "diff": "Vol 22 → Vol 23" },
+        { "field": "DOI", "supplied": "10.1162/asep_a_00892", "evidence": "10.1162/asep_a_00892", "status": "MATCH", "diff": null }
+      ],
+      "human_review": {
+        "level": "RECOMMENDED",
+        "badge": "Human Review Recommended",
+        "recommendation": "Recommended. Target article verified, but year/volume drifted. Verify whether the author intended the 2024 archival volume or a 2023 working paper.",
+        "color": "amber"
+      },
+      "limitations": "Differences between advance online dissemination year and bound volume publication year frequently appear in AI-assisted citation synthesis."
+    },
+    {
+      "id": "find-cit-003",
+      "citation_marker": "[3]",
+      "citation_key": "ChoiYoon2021",
+      "status": "CHIMERA",
+      "status_label": "Chimera Reference Detected",
+      "status_theme": "chimera",
+      "short_reason": "Supplied citation synthesizes title from Record A (ART002715421) and authors/journal from Record B (ART002518902).",
+      "reason_detail": "High-confidence multi-source collision detected. The exact title corresponds to KCI record ART002715421 ('Neural Network Modeling of Exchange Rate Pass-Through...'), but that work was authored by Jung & Kang (2021) in Journal of Money & Finance. Conversely, the authors Choi & Yoon and the journal Korean Economic Review match a different paper (ART002518902, 2019). The citation is a hybrid synthetic chimera.",
+      "rule": {
+        "rule_id": "RULE-CIT-CHIMERA-001",
+        "version": "cit-rules-v1.0.0",
+        "description": "Synthetic Chimera Detection: High-confidence field collisions spanning multiple distinct records; title belongs to Record A while authors and venue belong to Record B."
+      },
+      "in_text_location": {
+        "section": "2. Empirical Framework & Hypotheses",
+        "paragraph": 1,
+        "sentence": "To capture non-linear transmission dynamics, we follow the neural network parameterization proposed by Choi & Yoon [3], which accounts for asymmetric threshold effects under heightened global uncertainty."
+      },
+      "affected_citation": {
+        "raw_text": "[3] Choi, Y. & Yoon, D. (2021). Neural Network Modeling of Exchange Rate Pass-Through into Domestic Inflation. Korean Economic Review, 37(2), 155-184. https://doi.org/10.22841/ker.2021.37.2.155",
+        "supplied_fields": {
+          "title": "Neural Network Modeling of Exchange Rate Pass-Through into Domestic Inflation",
+          "authors": "Choi, Y. & Yoon, D.",
+          "year": "2021",
+          "journal": "Korean Economic Review",
+          "volume_issue": "37(2), 155-184",
+          "doi": "10.22841/ker.2021.37.2.155"
+        }
+      },
+      "evidence": {
+        "source_system": "KCI",
+        "source_record_id": "COLLISION_MULTI_RECORD",
+        "retrieved_at": "2026-09-30T10:14:23Z",
+        "normalizer_version": "kci-normalizer-v1",
+        "normalized_content_sha256": "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9",
+        "redacted_snapshot_sha256": "5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f",
+        "collision_records": [
+          {
+            "role": "Source of Title",
+            "record_id": "ART002715421",
+            "title": "Neural Network Modeling of Exchange Rate Pass-Through into Domestic Inflation",
+            "authors": "정우진 (Jung, Woojin), 강태석 (Kang, Taeseok)",
+            "year": "2021",
+            "journal": "금융연구 (Journal of Money & Finance)",
+            "public_url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002715421"
+          },
+          {
+            "role": "Source of Authors & Journal",
+            "record_id": "ART002518902",
+            "title": "Time-Varying Parameter Estimation of Monetary Policy Shock Transmission",
+            "authors": "최영민 (Choi, Youngmin), 윤대현 (Yoon, Daehyun)",
+            "year": "2019",
+            "journal": "한국경제학보 (Korean Economic Review)",
+            "public_url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002518902"
+          }
+        ]
+      },
+      "field_comparison": [
+        { "field": "Title", "supplied": "Neural Network Modeling of Exchange Rate Pass-Through...", "evidence": "Matches Record A: ART002715421", "status": "SPLIT_MATCH", "diff": "Belongs to Jung & Kang (2021)" },
+        { "field": "Author(s)", "supplied": "Choi, Y. & Yoon, D.", "evidence": "Matches Record B: ART002518902", "status": "SPLIT_MATCH", "diff": "From paper: 'Time-Varying Parameter...'" },
+        { "field": "Publication Year", "supplied": "2021", "evidence": "Record A: 2021 / Record B: 2019", "status": "CONFLICT", "diff": "Contradictory sources" },
+        { "field": "Journal / Venue", "supplied": "Korean Economic Review", "evidence": "Record B: Korean Economic Review (Record A is Journal of Money & Finance)", "status": "SPLIT_MATCH", "diff": "Venue from Record B" },
+        { "field": "DOI", "supplied": "10.22841/ker.2021.37.2.155", "evidence": "Prefix belongs to KER, but specific article suffix does not resolve", "status": "INVALID", "diff": "Synthesized non-resolving DOI" }
+      ],
+      "human_review": {
+        "level": "REQUIRED",
+        "badge": "Human Review Required",
+        "recommendation": "Critical Review Required. This reference appears to be an AI-generated hybrid assembling real fragments from two unrelated publications. Clarify which paper was intended.",
+        "color": "purple"
+      },
+      "limitations": "The automated engine establishes the existence of both real sources and documents their partial overlap with the supplied text. Reviewer must determine intended scholarly attribution."
+    },
+    {
+      "id": "find-cit-004",
+      "citation_marker": "[4]",
+      "citation_key": "ShinEtAl2022",
+      "status": "NOT_FOUND_IN_KCI",
+      "status_label": "Not Found in KCI Index",
+      "status_theme": "not-found",
+      "short_reason": "Zero records returned by KCI search API (resultMsg='No Data'). Scope limited to KCI database.",
+      "reason_detail": "A validated successful search against KCI Open API returned the canonical zero-result envelope (resultMsg='No Data', total=0). The title and author queries yielded no indexed record. Note: This indicates absence from the KCI repository only and does not establish that the paper is nonexistent or fabricated.",
+      "rule": {
+        "rule_id": "RULE-CIT-004",
+        "version": "cit-rules-v1.0.0",
+        "description": "Deterministic Zero-Result: Validated zero-record response returned by KCI search API under title and author queries."
+      },
+      "in_text_location": {
+        "section": "2. Empirical Framework & Hypotheses",
+        "paragraph": 2,
+        "sentence": "Consistent with localized volatility surface calibration techniques [4], our model accounts for implied volatility skew across out-of-the-money put contracts."
+      },
+      "affected_citation": {
+        "raw_text": "[4] Shin, T., Hwang, B., & Ahn, S. (2022). Deep Learning Approaches to Volatility Surface Calibration in KOSPI 200 Options. Journal of Financial Technology, 14(4), 112-135.",
+        "supplied_fields": {
+          "title": "Deep Learning Approaches to Volatility Surface Calibration in KOSPI 200 Options",
+          "authors": "Shin, T., Hwang, B., & Ahn, S.",
+          "year": "2022",
+          "journal": "Journal of Financial Technology",
+          "volume_issue": "14(4), 112-135",
+          "doi": null
+        }
+      },
+      "evidence": {
+        "source_system": "KCI",
+        "source_record_id": null,
+        "query_state": "KCI_ZERO_RESULTS",
+        "query_executed": "title='Deep Learning Approaches to Volatility Surface Calibration in KOSPI 200 Options'",
+        "retrieved_at": "2026-09-30T10:14:24Z",
+        "normalizer_version": "kci-normalizer-v1",
+        "redacted_snapshot_sha256": "9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a",
+        "public_url": null,
+        "envelope_summary": {
+          "resultMsg": "No Data",
+          "total": 0,
+          "records_count": 0,
+          "eligible_for_not_found_in_kci": true,
+          "eligible_for_citation_comparison": false
+        }
+      },
+      "field_comparison": [
+        { "field": "Title", "supplied": "Deep Learning Approaches to Volatility Surface Calibration in KOSPI 200 Options", "evidence": "No matching record found in KCI index", "status": "NOT_FOUND", "diff": "Search returned 0 records" },
+        { "field": "Author(s)", "supplied": "Shin, T., Hwang, B., & Ahn, S.", "evidence": "Unindexed in KCI author catalog", "status": "NOT_FOUND", "diff": null },
+        { "field": "Publication Year", "supplied": "2022", "evidence": "Unconfirmed", "status": "NOT_FOUND", "diff": null },
+        { "field": "Journal / Venue", "supplied": "Journal of Financial Technology", "evidence": "Journal title not registered in KCI database", "status": "NOT_FOUND", "diff": null },
+        { "field": "DOI", "supplied": "(None provided in draft)", "evidence": "No DOI record available", "status": "UNAVAILABLE", "diff": null }
+      ],
+      "human_review": {
+        "level": "RECOMMENDED",
+        "badge": "Human Review Recommended",
+        "recommendation": "Recommended. Paper not found within KCI index. Reviewer should determine if source is an international publication (e.g., IEEE, ACM, SSRN, arXiv) or a domestic journal not indexed by NRF.",
+        "color": "indigo"
+      },
+      "limitations": "Absence in KCI proves only lack of indexing in KCI. It does not prove the paper is fictional. Multi-registry resolution (ScienceON / Crossref) is planned for future stages."
+    },
+    {
+      "id": "find-cit-005",
+      "citation_marker": "[5]",
+      "citation_key": "KwonKang2023",
+      "status": "SYSTEM_FAILURE",
+      "substate": "KCI_UNAVAILABLE",
+      "status_label": "System Failure (KCI Unavailable)",
+      "status_theme": "system-failure",
+      "short_reason": "Upstream KCI Open API gateway timed out (503 / deadline exceeded). Audit blocked; not a citation defect.",
+      "reason_detail": "A transport-level deadline (10,000ms) or HTTP 503 Service Unavailable occurred while querying KCI Open API. Under TrustVerify fail-closed architecture, system failures are strictly segregated from citation findings. This incident MUST NOT be interpreted as a hallucination, fake reference, or zero result.",
+      "rule": {
+        "rule_id": "RULE-SYS-001",
+        "version": "sys-rules-v1.0.0",
+        "description": "System Boundary Isolation: Transport exceptions, timeouts, or invalid HTTP envelopes fail closed and produce SYSTEM_FAILURE signals without assigning research verdict."
+      },
+      "in_text_location": {
+        "section": "2. Empirical Framework & Hypotheses",
+        "paragraph": 3,
+        "sentence": "Furthermore, institutional liquidity supply during market turmoil reflects asymmetric information structures and order flow toxicity dynamics [5]."
+      },
+      "affected_citation": {
+        "raw_text": "[5] Kwon, O. & Kang, P. (2023). Asymmetric Information and Order Flow Toxicity during Financial Crises. Journal of Futures and Options, 31(1), 77-105. https://doi.org/10.18342/jfo.2023.31.1.77",
+        "supplied_fields": {
+          "title": "Asymmetric Information and Order Flow Toxicity during Financial Crises",
+          "authors": "Kwon, O. & Kang, P.",
+          "year": "2023",
+          "journal": "Journal of Futures and Options",
+          "volume_issue": "31(1), 77-105",
+          "doi": "10.18342/jfo.2023.31.1.77"
+        }
+      },
+      "evidence": {
+        "source_system": "KCI",
+        "source_record_id": null,
+        "state": "KCI_UNAVAILABLE",
+        "http_status": 503,
+        "transport_failure": true,
+        "deadline_ms": 10000,
+        "retrieved_at": "2026-09-30T10:14:25Z",
+        "messages": [
+          "Upstream KCI Open API gateway timed out after 10000ms deadline",
+          "HTTP 503 Service Unavailable returned by upstream proxy"
+        ],
+        "eligible_for_citation_comparison": false,
+        "eligible_for_not_found_in_kci": false,
+        "redacted_snapshot_sha256": null
+      },
+      "field_comparison": null,
+      "human_review": {
+        "level": "SYSTEM_BLOCKED",
+        "badge": "System Retry Required",
+        "recommendation": "System Retry Required. External evidence provider (KCI) was unavailable. Automated audit could not be executed. Do not score or evaluate citation until upstream connectivity is restored.",
+        "color": "rose"
+      },
+      "limitations": "Infrastructure and network reachability constraint. The citation has not been evaluated against any bibliographic ledger."
+    }
+  ]
+}

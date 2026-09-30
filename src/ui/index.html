@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustVerify Research — Explainable Research Integrity Auditor</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- TOP APP BAR -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">TrustVerify Research</div>
+        <div class="brand-subtitle">Explainable Research Integrity Auditor</div>
+      </div>
+      <span class="track-badge">NAIS 2026 · Track A</span>
+    </div>
+
+    <!-- TRACK NAVIGATION TABS -->
+    <nav class="nav-tabs" aria-label="Audit Tracks">
+      <button class="nav-tab active" data-tab="citation-integrity">
+        <span class="tab-indicator"></span>
+        <span class="tab-label">Citation Integrity</span>
+        <span class="status-pill active-pill">Active</span>
+      </button>
+      <button class="nav-tab disabled" data-tab="academic-english" title="Track B: 50 finance papers reference profile via Upstage/Solar (Planned)">
+        <span class="tab-label">Academic English</span>
+        <span class="status-pill future-pill">Coming Next</span>
+      </button>
+      <button class="nav-tab disabled" data-tab="translation-fidelity" title="Track C: Aligned Korean original vs English output fidelity checks (Planned)">
+        <span class="tab-label">Translation Fidelity</span>
+        <span class="status-pill future-pill">Coming Next</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="audit-meta-chip">
+        <span class="meta-dot"></span>
+        <span class="meta-label">Audit Run:</span>
+        <span class="meta-val" id="auditRunTimestamp">2026-09-30 10:14 UTC</span>
+      </div>
+      <div class="manuscript-file-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span id="headerDocName">manuscript_korean_macro_debt_spillover.docx</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 5-SECOND EXPLAINABILITY PIPELINE BANNER -->
+  <div class="pipeline-explainer-banner">
+    <div class="explainer-inner">
+      <div class="chain-step">
+        <span class="step-num">1</span>
+        <span class="step-title">Research Sentence</span>
+        <span class="step-desc">Target claim & in-text citation</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-step">
+        <span class="step-num">2</span>
+        <span class="step-title">Integrity Finding</span>
+        <span class="step-desc">Deterministic comparison verdict</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-step">
+        <span class="step-num">3</span>
+        <span class="step-title">Canonical KCI Evidence</span>
+        <span class="step-desc">Pinned record & SHA-256 snapshot</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-step">
+        <span class="step-num">4</span>
+        <span class="step-title">Public Rule</span>
+        <span class="step-desc">Transparent versioned specification</span>
+      </div>
+    </div>
+    <div class="explainer-callout">
+      <span class="callout-tag">JUDGE QUICK TIP</span>
+      Click any inline reference <code class="mini-cite">[1]</code>–<code class="mini-cite">[5]</code> or finding card to trace deterministic evidence.
+    </div>
+  </div>
+
+  <!-- MAIN 3-PANEL WORKSPACE -->
+  <main class="workspace-grid">
+    <!-- PANEL 1: RESEARCH DRAFT (LEFT) -->
+    <section class="panel panel-draft" id="draftPanel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-title-row">
+            <h2 class="panel-title">Research Draft</h2>
+            <span class="badge-neutral" id="citationCountBadge">5 Citations Evaluated</span>
+          </div>
+          <p class="panel-desc">Believable AI-generated academic manuscript. Click highlighted citations to inspect evidence.</p>
+        </div>
+        <div class="draft-actions">
+          <button class="btn-icon" id="btnResetSelection" title="Reset selection">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-content scrollable manuscript-view" id="draftContentContainer">
+        <!-- Draft manuscript injected here dynamically -->
+        <div class="loading-state">Loading academic draft...</div>
+      </div>
+    </section>
+
+    <!-- PANEL 2: INTEGRITY FINDINGS (CENTER) -->
+    <section class="panel panel-findings" id="findingsPanel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-title-row">
+            <h2 class="panel-title">Findings Ledger</h2>
+            <span class="badge-accent">Deterministic Verdicts</span>
+          </div>
+          <p class="panel-desc">Evidence-backed classification. System failures strictly segregated from research findings.</p>
+        </div>
+
+        <!-- Filter chips -->
+        <div class="filter-strip" role="tablist" aria-label="Filter Findings">
+          <button class="filter-chip active" data-filter="all">All <span class="chip-count" id="countAll">5</span></button>
+          <button class="filter-chip" data-filter="VERIFIED">Verified <span class="chip-count" id="countVerified">1</span></button>
+          <button class="filter-chip" data-filter="METADATA_DRIFT">Drift <span class="chip-count" id="countDrift">1</span></button>
+          <button class="filter-chip" data-filter="CHIMERA">Chimera <span class="chip-count" id="countChimera">1</span></button>
+          <button class="filter-chip" data-filter="NOT_FOUND_IN_KCI">Not in Index <span class="chip-count" id="countNotFound">1</span></button>
+          <button class="filter-chip filter-sys" data-filter="SYSTEM_FAILURE">System Failure <span class="chip-count" id="countSysFail">1</span></button>
+        </div>
+      </div>
+
+      <div class="panel-content scrollable findings-list" id="findingsListContainer">
+        <!-- Findings cards injected here dynamically -->
+      </div>
+    </section>
+
+    <!-- PANEL 3: EVIDENCE / WHY THIS RESULT (RIGHT) -->
+    <section class="panel panel-evidence" id="evidencePanel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-title-row">
+            <h2 class="panel-title">Why This Result?</h2>
+            <span class="evidence-status-pill" id="evidenceStatusPill">Select a Finding</span>
+          </div>
+          <p class="panel-desc">Deterministic field comparison, rule provenance, and cryptographic snapshot hashes.</p>
+        </div>
+        <div class="evidence-actions">
+          <button class="btn-secondary" id="btnViewRawJson" title="Inspect Pinned Evidence JSON">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
+            Evidence Snapshot
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-content scrollable evidence-detail" id="evidenceDetailContainer">
+        <!-- Evidence details injected here dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER DISCLAIMER -->
+  <footer class="app-footer">
+    <div class="footer-left">
+      <span class="footer-badge">EVIDENCE BOUNDARY</span>
+      <span class="footer-text">KCI Open API is the primary canonical bibliographic evidence source. It certifies citation metadata coherence only; it does not determine scientific truth, peer review validity, or manuscript acceptance.</span>
+    </div>
+    <div class="footer-right">
+      <span class="footer-note">TrustVerify Research · Fail-Closed Audit Architecture</span>
+    </div>
+  </footer>
+
+  <!-- RAW EVIDENCE JSON MODAL / DRAWER -->
+  <div class="modal-overlay hidden" id="rawEvidenceModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-title">Pinned Evidence Snapshot & Ledger Record</div>
+          <div class="modal-subtitle" id="modalSnapshotHash">SHA-256: ...</div>
+        </div>
+        <button class="btn-close" id="btnCloseModal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre class="json-viewer"><code id="modalJsonContent">// Select a finding to view snapshot</code></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btnCopyJson">Copy Snapshot JSON</button>
+        <button class="btn-secondary" id="btnCloseModalFooter">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

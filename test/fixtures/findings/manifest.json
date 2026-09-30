@@ -1,0 +1,34 @@
+{
+  "$schema": "trustverify-findings-manifest-v1",
+  "mock_data_notice": "FRONTEND TEMPORARY MOCK FIXTURE — NAIS 2026 Hackathon Track A UI Prototype",
+  "is_mock_data": true,
+  "audit_run_id": "audit-run-20260930-kci-01",
+  "pipeline_track": "TRACK_A_CITATION_INTEGRITY",
+  "created_at": "2026-09-30T10:14:30Z",
+  "document": {
+    "id": "doc-finance-draft-2026",
+    "filename": "manuscript_korean_macro_debt_spillover.docx",
+    "title": "High-Frequency Dynamics and Sovereign Bond Yield Spillovers: A Korean Macro-Financial Perspective",
+    "authors": ["AI Co-Researcher (Draft v2.4)", "Prof. H. S. Min (Reviewer)"],
+    "target_discipline": "Financial Economics / Korean Capital Markets",
+    "total_citations": 5
+  },
+  "summary": {
+    "total_checked": 5,
+    "verified": 1,
+    "metadata_drift": 1,
+    "chimera_or_conflict": 1,
+    "not_found_in_kci": 1,
+    "system_failures": 1,
+    "human_review_recommended": 2,
+    "human_review_required": 1,
+    "system_retry_required": 1
+  },
+  "finding_ids": [
+    "find-cit-001",
+    "find-cit-002",
+    "find-cit-003",
+    "find-cit-004",
+    "find-cit-005"
+  ]
+}

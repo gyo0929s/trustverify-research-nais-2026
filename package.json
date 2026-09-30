@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=24" },
-  "scripts": { "test": "node --test" },
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
   "dependencies": { "saxes": "6.0.0" }
 }

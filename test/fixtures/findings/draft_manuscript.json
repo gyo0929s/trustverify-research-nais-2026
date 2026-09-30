@@ -1,0 +1,99 @@
+{
+  "$schema": "trustverify-draft-manuscript-v1",
+  "mock_data_notice": "FRONTEND TEMPORARY MOCK FIXTURE — NAIS 2026 Hackathon Track A UI Prototype",
+  "is_mock_data": true,
+  "id": "draft-2026-academic-sample-01",
+  "meta": {
+    "title": "Machine Perception and Algorithmic Video Analysis in Sports Analytics: Methodological Evaluation and Macroeconomic Impacts",
+    "authors": "AI Academic Co-Researcher (Draft v2.4), Peer Review Auditor",
+    "institution": "Department of Computer Science & Quantitative Analytics",
+    "target_venue": "Journal of Digital Convergence / Korean Academic Computing",
+    "date": "September 2026",
+    "discipline": "Computer Vision & Sports Information Systems",
+    "abstract": "This simulated academic manuscript examines high-precision player tracking frameworks, pose estimation pipelines, and real-time trajectory classification in competitive athletics. We review recent empirical benchmarks in domestic computer vision systems and examine how automated motion analysis scales across collegiate training environments. Furthermore, we evaluate algorithmic robustness against occlusions and domain shifts. In accordance with the TrustVerify citation integrity protocol, all bibliographic references are audited against the canonical Korea Citation Index (KCI) Open API ledger."
+  },
+  "sections": [
+    {
+      "id": "sec-intro",
+      "heading": "1. Introduction & Background",
+      "paragraphs": [
+        {
+          "id": "p1",
+          "text": "Automated motion analysis and video-based athlete assessment have transformed sports science and performance optimization over the past decade. Recent advances in deep neural architectures allow markerless pose estimation directly from consumer-grade optical feeds, reducing hardware costs while providing high-frequency kinematic feedback."
+        },
+        {
+          "id": "p2",
+          "text": "In domestic athletic research, computer vision methodologies have demonstrated remarkable accuracy in classifying shooting mechanics and tactical trajectories in team sports ",
+          "citation_ref": "fixture-finding-verified",
+          "marker": "[1]",
+          "text_after": ". By isolating coordinate movements across consecutive frames, coaches can benchmark shooting posture against biomechanical ideals with minimal latency."
+        },
+        {
+          "id": "p3",
+          "text": "Subsequent longitudinal evaluations of automated training feedback systems examined player trajectory consistency across competitive tournament cycles ",
+          "citation_ref": "fixture-finding-metadata-drift",
+          "marker": "[2]",
+          "text_after": ". The authors reported significant improvements in spatial court awareness, although temporal attribution across published versions exhibits documented index variance."
+        }
+      ]
+    },
+    {
+      "id": "sec-methods",
+      "heading": "2. Methodological Framework & Integrity Boundaries",
+      "paragraphs": [
+        {
+          "id": "p4",
+          "text": "To extend these architectures to multi-agent tracking, comparative literature often incorporates hybrid convolutional-recurrent pipelines as outlined in synthetic reference models ",
+          "citation_ref": "fixture-finding-chimera",
+          "marker": "[3]",
+          "text_after": ". However, rigorous bibliographic provenance indicates that such multi-component citations frequently synthesize fragments from disjoint published works."
+        },
+        {
+          "id": "p5",
+          "text": "Furthermore, alternative non-linear calibration frameworks have been proposed for high-dimensional feature spaces ",
+          "citation_ref": "fixture-finding-not-found",
+          "marker": "[4]",
+          "text_after": ", although automated database queries against the primary national index return zero matching entries, illustrating source coverage boundaries."
+        },
+        {
+          "id": "p6",
+          "text": "Finally, institutional performance metrics during high-stress tournament conditions reflect acute real-time decision constraints ",
+          "citation_ref": "fixture-system-failure-1",
+          "marker": "[5]",
+          "text_after": ". During our live audit pass, external gateway connectivity experienced transport latency, requiring transparent operational isolation from citation verdicts."
+        }
+      ]
+    },
+    {
+      "id": "sec-refs",
+      "heading": "3. Bibliographic References Cited in Draft",
+      "reference_items": [
+        {
+          "finding_id": "fixture-finding-verified",
+          "marker": "[1]",
+          "text": "Computer Vision-based Basketball Player Training System (2024). Journal of Digital Convergence. https://doi.org/10.9728/dcs.2024.25.3.595 [KCI: ART003062835]"
+        },
+        {
+          "finding_id": "fixture-finding-metadata-drift",
+          "marker": "[2]",
+          "text": "Computer Vision-based Basketball Player Training System (2023). Journal of Digital Convergence. [Cited as 2023; Canonical KCI: 2024]"
+        },
+        {
+          "finding_id": "fixture-finding-chimera",
+          "marker": "[3]",
+          "text": "Synthetic Mixed Citation Title (2024). https://doi.org/10.0000/synthetic-fixture [Collides with ART_FIXTURE_A and ART_FIXTURE_B]"
+        },
+        {
+          "finding_id": "fixture-finding-not-found",
+          "marker": "[4]",
+          "text": "Intentionally Improbable Synthetic Fixture Title (2024). [NRF KCI Open API: resultMsg='No Data', 0 records]"
+        },
+        {
+          "finding_id": "fixture-system-failure-1",
+          "marker": "[5]",
+          "text": "Advanced Sovereign Order Flow Dynamics (2023). [KCI_UNAVAILABLE: HTTP 503 Transport Failure]"
+        }
+      ]
+    }
+  ]
+}
