@@ -134,3 +134,36 @@ test('Layer 3 exposes no falsity, hallucination, or score verdicts', async () =>
     assert.ok(Object.hasOwn(finding, key), key);
   }
 });
+
+test('Claim–Evidence UI shows only the evaluated P0 cases, labeled as frozen evaluation evidence', async () => {
+  const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
+  const decode = text => text.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  const section = (start, end) => {
+    const from = html.indexOf(start);
+    const to = html.indexOf(end, from);
+    assert.ok(from >= 0 && to > from, `section ${start}`);
+    return html.slice(from, to);
+  };
+  const workspace = section('WORKSPACE: CLAIM–EVIDENCE ALIGNMENT', 'END WORKSPACE CLAIM–EVIDENCE');
+  const methodCard = section('<!-- Layer 2A: Claim-Evidence Alignment', '<!-- Layer 2B:');
+  const text = decode(workspace);
+  const c1 = caseById('C1');
+  const c2 = caseById('C2');
+  for (const value of [c1.citing_claim, c2.citing_claim, c1.evidence_span.text, c1.finding_id, c2.finding_id,
+    c1.rule_id, c2.rule_id, caseById('I1').rule_id, c2.signal, evidence.record_id, evidence.title]) {
+    assert.ok(text.includes(value), `workspace shows ${value}`);
+  }
+  assert.ok(text.includes(`Abstract sentence #${c1.evidence_span.sentence_index}`));
+  assert.ok(text.includes(`${evidence.evidence_hash.slice(0, 8)}…${evidence.evidence_hash.slice(-4)}`));
+  assert.ok(text.includes('P0 · FROZEN EVALUATION EVIDENCE'));
+  assert.ok(text.includes('UNASSESSED'));
+  assert.ok(decode(methodCard).includes(c1.evidence_span.text) && decode(methodCard).includes(c2.citing_claim));
+  for (const block of [workspace, methodCard]) {
+    assert.equal(/X is associated with Y|X causes Y|tactical performance|Solar|Backend integration pending|7f83b165|\bLIVE\b|HALLUCINATION|WRONG_CLAIM/.test(block), false);
+  }
+  // The only result statuses shown are the evaluated ones (definitions in the status banner aside).
+  const results = section('<!-- P0 two-case comparison.', '<!-- Monitored Dimensions');
+  assert.deepEqual([...new Set(results.match(/(CONSISTENT_WITH_EVIDENCE|POTENTIAL_CLAIM_SHIFT|INSUFFICIENT_EVIDENCE)/g))].sort(),
+    [c1.observed_status, c2.observed_status, caseById('I1').observed_status].sort());
+  assert.equal(results.includes('CAUSALITY_STRENGTHENED'), false);
+});

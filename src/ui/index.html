@@ -572,46 +572,40 @@
           서지 무결성 검증을 통과한 후, 논문의 주장 내용과 영문화 서술 과정에서 발생할 수 있는 의미 변화를 추적하는 연구 확장층입니다.
         </p>
 
-        <!-- Layer 2A: Claim-Evidence Alignment -->
+        <!-- Layer 2A: Claim-Evidence Alignment (values from artifacts/evaluation/claim-evidence-p0) -->
         <article class="method-card">
           <div class="method-card-head">
-            <span class="method-layer-pill">NEXT LAYER</span>
+            <span class="method-layer-pill">EXPANSION / P0</span>
             <h4>Claim–Evidence Alignment (주장-근거 정합성)</h4>
           </div>
           <p class="method-card-desc">
-            "형식적으로 맞는 인용이 실제 원문의 주장도 정확히 반영하는가?" — 인용문이 원문의 통계적 상관성 유보 표현을 인과 단정으로 과장하는 현상을 감지합니다.
+            "형식적으로 맞는 인용이 실제 논문의 공개 근거와도 정합적인가?" — KCI 초록에서 특정한 근거 문장과 인용 문장의 표현 강도 차이를 결정론적 규칙으로 관측합니다. (P0 · 검증된 Frozen Evidence 재현)
           </p>
 
           <div class="ce-concrete-card">
             <div class="ce-claims-comparison">
               <div class="claim-box source-box">
-                <span class="claim-badge">Source claim (원문 주장)</span>
-                <p class="claim-text">
-                  "X is associated with Y."
-                  <span class="claim-ko-hint">(원문: "X와 Y 사이에 유의한 관련성이 관찰되었다. 직접적인 인과관계라고 단정할 수는 없다.")</span>
-                </p>
+                <span class="claim-badge">KCI 초록 근거 · ART003267604 · 문장 #9</span>
+                <p class="claim-text">"These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, <mark class="mark-grounded">suggesting</mark> a limit in the load-sharing capacity of interproximal contacts."</p>
               </div>
-              <div class="ce-arrow-down">➔ 논문 인용 및 영문화 서술 과정</div>
+              <div class="ce-arrow-down">➔ 한 단어만 변경: suggest → prove</div>
               <div class="claim-box citing-box">
-                <span class="claim-badge alert">Citing claim (인용문 주장)</span>
-                <p class="claim-text">
-                  <strong class="highlight-drift">"X causes Y."</strong>
-                  <span class="claim-ko-hint">(인용문: "X causes Y. Previous studies prove this relationship." — 상관성을 절대적 인과로 단정)</span>
-                </p>
+                <span class="claim-badge alert">C2 인용 문장</span>
+                <p class="claim-text">"The simulation results <mark class="highlight-drift">prove</mark> a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar."</p>
               </div>
             </div>
 
             <div class="ce-finding-summary-box">
               <div class="ce-find-row">
-                <span class="ce-find-label">Potential signal:</span>
-                <strong class="ce-find-signal">Claim-strength shift (상관 ➔ 인과 격상 신호)</strong>
+                <span class="ce-find-label">Observed signal:</span>
+                <strong class="ce-find-signal">CERTAINTY_STRENGTHENED (POTENTIAL_CLAIM_SHIFT · CE-SHIFT-001)</strong>
               </div>
               <div class="ce-find-row">
                 <span class="ce-find-label">Verification status:</span>
                 <span class="ce-human-review-badge">Human Review Required (연구자 직접 검토 대상)</span>
               </div>
               <p class="ce-caution-note">
-                ⚠️ 이 계층은 자동화된 결론이 아니며, Solar 시맨틱 옵저버가 포착한 의미 변화 신호를 연구자가 비판적으로 재검토하도록 안내합니다.
+                ⚠️ 진위 판정이 아닙니다. 결정론적 표현 규칙이 관측한 차이를 연구자가 원문 맥락에서 검토하도록 안내합니다. 의미 관측기(Semantic Observer)는 사용하지 않으며 UNASSESSED 상태입니다.
               </p>
             </div>
           </div>
@@ -819,6 +813,7 @@
           <div class="ext-hero-top">
             <div class="ce-method-badges">
               <span class="rail-badge badge-expansion">EXPANSION / P0</span>
+              <span class="ce-tag-pill">P0 · FROZEN EVALUATION EVIDENCE</span>
               <span class="ce-tag-pill">ABSTRACT-ONLY</span>
               <span class="ce-tag-pill">DETERMINISTIC-FIRST</span>
               <span class="ce-tag-pill">HUMAN REVIEW</span>
@@ -876,90 +871,95 @@
           </div>
         </div>
 
-        <!-- 3-Part Layout: Input / Evidence / Observation Card (Case A: Grounded Span - Potential Claim Shift) -->
+        <!-- P0 two-case comparison. All values copied from artifacts/evaluation/claim-evidence-p0 (cases.json, abstract-evidence.json). -->
         <div class="batch-card">
           <div class="batch-card-header">
             <div class="batch-title-wrap">
-              <span class="batch-step-pill">OBSERVATION DEMO</span>
-              <h3 class="batch-title">정합성 관측 사례 1: 상관 ➔ 인과 서술 격상 (Potential Claim Shift)</h3>
+              <span class="batch-step-pill">P0 EVALUATED CASES</span>
+              <h3 class="batch-title">동일 근거 문장 · 한 단어 변화: suggest → prove</h3>
             </div>
-            <span class="ce-integration-badge">EXPANSION / P0 · Backend integration pending</span>
+            <span class="ce-integration-badge">EXPANSION / P0 · Frozen evaluation replay</span>
           </div>
+          <p class="batch-helper-text">동일한 KCI 근거 문장에 대해 한 단어의 확신 강도 변화만 관측합니다.</p>
 
           <div class="ce-three-col-layout">
-            <!-- Left: Citing Statement -->
+            <!-- Left: the two citing statements -->
             <div class="ce-col ce-col-citing">
               <div class="ce-col-label">
                 <span class="ce-col-tag">인용 문장</span>
-                <span class="ce-col-sub">Citing Statement</span>
+                <span class="ce-col-sub">Citing Statements</span>
               </div>
               <div class="ce-statement-box">
-                <p class="ce-statement-text">"Computer vision-based basketball player tracking directly <mark class="mark-shift">causes</mark> significant tactical performance improvements."</p>
-                <div class="ce-statement-meta">
-                  <span>출처 문맥: 연구 결과 단락 본문 인용</span>
-                </div>
+                <p class="ce-statement-text">"The simulation results <mark class="mark-grounded">suggest</mark> a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar."</p>
+                <div class="ce-statement-meta"><span>C1 · Controlled preservation</span></div>
+              </div>
+              <div class="ce-statement-box">
+                <p class="ce-statement-text">"The simulation results <mark class="mark-shift">prove</mark> a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar."</p>
+                <div class="ce-statement-meta"><span>C2 · One-word strengthening</span></div>
               </div>
             </div>
 
-            <!-- Center: KCI Abstract Evidence Span -->
+            <!-- Center: real KCI abstract evidence span -->
             <div class="ce-col ce-col-evidence">
               <div class="ce-col-label">
-                <span class="ce-col-tag">KCI 공개 근거</span>
-                <span class="ce-col-sub">Abstract Evidence Span</span>
+                <span class="ce-col-tag">REAL KCI EVIDENCE</span>
+                <span class="ce-col-sub">Abstract sentence #9</span>
               </div>
               <div class="ce-evidence-box">
                 <div class="ce-paper-info">
-                  <span class="ce-paper-id">KCI ID: ART003062835</span>
-                  <span class="ce-paper-title">Computer Vision-based Basketball Player Training System</span>
+                  <span class="ce-paper-id">KCI ID: ART003267604</span>
+                  <span class="ce-paper-title">Computer simulation on the role of interproximal contacts in occlusal force transmission</span>
                 </div>
                 <div class="ce-grounded-span">
-                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span)</span>
-                  <p class="ce-span-text">"The experimental results <mark class="mark-grounded">are associated with</mark> tactical training support, while correlation does not establish direct causation."</p>
+                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span) · C1·C2 공통</span>
+                  <p class="ce-span-text">"These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, <mark class="mark-grounded">suggesting</mark> a limit in the load-sharing capacity of interproximal contacts."</p>
                 </div>
-                <!-- Collapsible Full Abstract -->
                 <details class="ce-full-abstract-details">
                   <summary class="ce-full-abstract-summary">
-                    <span>전체 abstract 보기</span>
+                    <span>전체 abstract 보기 (KCI articleDetail · Frozen Evidence)</span>
                   </summary>
-                  <div class="ce-full-abstract-body">
-                    [KCI 공식 수록 초록]<br>
-                    In this paper, we propose a computer vision-based basketball player training system that analyzes motion trajectories. The experimental results are associated with tactical training support, while correlation does not establish direct causation. Future studies need to examine player cognitive load and long-term tactical retention.
-                  </div>
+                  <div class="ce-full-abstract-body">Purpose: This study aimed to investigate how interproximal contacts influence occlusal force transmission in the posterior maxilla using computer simulation. Materials and Methods: A three-dimensional model of the right maxillary second premolar, first molar, and second molar was constructed from patient CT data. Teeth and bone were defined as rigid bodies, and periodontal ligaments were represented by axial springs. Dynamic simulations were performed with occlusal forces of 100 N and 200 N applied at three points on the occlusal surface of the first molar for 0.1 s. Displacements of each tooth and the summed ligament forces were recorded and compared. Results: The first molar exhibited the greatest displacement and ligament forces, while the second premolar showed smaller secondary responses. Changes at the second molar were negligible. The peak displacement occurred on the mesial crown of the first molar, directed toward the second premolar. Increasing occlusal force from 100 N to 200 N markedly elevated the ligament forces at the first molar, whereas changes at the second premolar remained relatively small. These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts. Conclusion: Occlusal forces applied to a single molar can be transmitted to adjacent teeth through interproximal contacts, and the extent depends on loading direction and contact geometry. Clinically, establishing proper proximal contacts is essential for controlled distribution of occlusal loads and the long-term stability of the dentition.</div>
                 </details>
               </div>
             </div>
 
-            <!-- Right: Observed Result -->
+            <!-- Right: observed results from the deterministic engine -->
             <div class="ce-col ce-col-result">
               <div class="ce-col-label">
                 <span class="ce-col-tag">관측 결과</span>
-                <span class="ce-col-sub">Observation & Verdict</span>
+                <span class="ce-col-sub">Observed Results</span>
               </div>
               <div class="ce-result-box">
+                <div class="ce-obs-summary">
+                  <span class="ce-obs-label">C1:</span>
+                  <span class="ce-obs-val">규칙 CE-CONSIST-001 (v1.0) · 신호 없음</span>
+                </div>
+                <div class="ce-result-status-row">
+                  <span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+                </div>
+                <div class="ce-obs-summary">
+                  <span class="ce-obs-label">C2:</span>
+                  <span class="ce-obs-val">규칙 CE-SHIFT-001 (v1.0) · Certainty: HEDGE → STRONG</span>
+                </div>
                 <div class="ce-result-status-row">
                   <span class="ce-status-badge badge-shift">POTENTIAL_CLAIM_SHIFT</span>
                   <span class="ce-action-badge">사람 검토 필요</span>
                 </div>
                 <div class="ce-signals-list">
-                  <span class="ce-signal-badge">CAUSALITY_STRENGTHENED</span>
-                </div>
-                <div class="ce-obs-summary">
-                  <span class="ce-obs-label">Observed:</span>
-                  <span class="ce-obs-val">Association → explicit causation (상관 ➔ 직접 인과 표현)</span>
+                  <span class="ce-signal-badge">CERTAINTY_STRENGTHENED</span>
                 </div>
                 <div class="ce-why-box">
                   <strong>Why?</strong>
-                  <p>"인용 문장이 현재 확보된 abstract evidence보다 더 강한 인과 표현을 사용합니다."</p>
+                  <p>"근거 문장은 'suggesting'으로 유보하지만, C2 인용 문장은 'prove'로 단정합니다. 다른 차원(인과·양태·부정·방향)은 C1과 동일합니다."</p>
                 </div>
                 <div class="ce-observer-row">
-                  <span class="ce-observer-lbl">Semantic Observer:</span>
-                  <span class="ce-observer-badge">NON-CANONICAL (UNASSESSED)</span>
+                  <span class="ce-observer-lbl">Observer:</span>
+                  <span class="ce-observer-badge">UNASSESSED (결정론적 규칙만 사용)</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Secondary Technical Provenance -->
           <details class="ce-provenance-details">
             <summary class="ce-provenance-summary">
               <span>⚙️ 상세 근거 및 규칙 메타데이터 (Technical Provenance)</span>
@@ -968,72 +968,36 @@
               <div class="ce-prov-grid">
                 <div class="ce-prov-item">
                   <span class="cp-k">KCI Article ID</span>
-                  <code class="cp-v">ART003062835</code>
+                  <code class="cp-v">ART003267604</code>
                 </div>
                 <div class="ce-prov-item">
-                  <span class="cp-k">Evidence Span Hash</span>
-                  <code class="cp-v">sha256:7f83b165...4b2d</code>
+                  <span class="cp-k">Evidence Hash</span>
+                  <code class="cp-v" title="90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7">sha256:90686b8b…68f7</code>
                 </div>
                 <div class="ce-prov-item">
-                  <span class="cp-k">Rule ID & Version</span>
-                  <code class="cp-v">CE-SHIFT-001 (v1.0)</code>
+                  <span class="cp-k">Finding IDs</span>
+                  <code class="cp-v">C1 claim-4ea2a838ec1d26e7 · C2 claim-d3f92311ba4fa806</code>
                 </div>
                 <div class="ce-prov-item">
                   <span class="cp-k">Processing Version</span>
                   <code class="cp-v">claim-evidence-p0-1.0</code>
                 </div>
                 <div class="ce-prov-item full-width">
-                  <span class="cp-k">Human Review Reason</span>
-                  <span class="cp-v">인용문의 인과 단정 표현("directly causes")과 KCI 공개 초록의 상관 유보 표현("associated with") 간 강도 차이에 대한 연구자 비판적 검토 권장</span>
+                  <span class="cp-k">Grounding (C1·C2)</span>
+                  <span class="cp-v">공유 앵커 11/12 · coverage 0.917 (기준: 앵커 ≥ 3, coverage ≥ 0.6)</span>
+                </div>
+                <div class="ce-prov-item full-width">
+                  <span class="cp-k">Human Review Reason (C2)</span>
+                  <span class="cp-v">인용 문장에서 CERTAINTY_STRENGTHENED 신호가 관측되었습니다. 원문 표현 강도와 비교하세요.</span>
                 </div>
               </div>
             </div>
           </details>
         </div>
 
-        <!-- Evidence Sufficiency UX (Case B: Insufficient Evidence) -->
-        <div class="batch-card ce-insuff-card">
-          <div class="batch-card-header">
-            <div class="batch-title-wrap">
-              <span class="batch-step-pill">EVIDENCE SUFFICIENCY</span>
-              <h3 class="batch-title">정합성 관측 사례 2: 근거 불충분 상태 (Evidence Sufficiency Gate)</h3>
-            </div>
-            <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
-          </div>
-
-          <div class="ce-two-col-insuff">
-            <div class="ce-col-left">
-              <div class="ce-col-label">
-                <span class="ce-col-tag">인용 문장</span>
-                <span class="ce-col-sub">Citing Statement</span>
-              </div>
-              <div class="ce-statement-box">
-                <p class="ce-statement-text">"이 시스템은 초당 120프레임 전력 소모량을 15% 감축시켰다."</p>
-                <div class="ce-statement-meta">
-                  <span>세부 하드웨어 측정 수치 인용</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="ce-col-right">
-              <div class="ce-col-label">
-                <span class="ce-col-tag">KCI 초록 접지 확인 결과</span>
-                <span class="ce-col-sub">Grounding Verification</span>
-              </div>
-              <div class="ce-insuff-message-box">
-                <div class="ce-insuff-msg-head">
-                  <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
-                  <span class="ce-status-ko">현재 근거만으로 판단 불충분</span>
-                </div>
-                <p class="ce-insuff-text">
-                  "현재 확보된 KCI 공개 근거만으로 이 인용 문장을 충분히 확인할 수 없습니다."
-                </p>
-                <div class="ce-insuff-reason">
-                  <strong>안내:</strong> 해당 논문의 공개 초록에 전력 소모량이나 프레임 속도에 관한 접지 문장(Grounded span)이 포함되어 있지 않습니다. 이는 내용의 오류나 결함이 아니며, 전체 본문(Full text) 확인이 필요한 공개 근거 범위의 한계입니다.
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Boundary principle (I1 boundary test; not a demo card) -->
+        <div class="ext-footer-note">
+          <span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span> 현재 확보된 KCI 초록에서 충분한 근거 span을 찾지 못하면 틀렸다고 판정하지 않고 확인 불가로 남깁니다. (규칙 CE-GROUND-001)</span>
         </div>
 
         <!-- Monitored Dimensions & Signal Badges Catalog -->
