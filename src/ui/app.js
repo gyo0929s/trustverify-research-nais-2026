@@ -164,12 +164,11 @@ const TF_FINDINGS = {
 };
 
 // Fallback example (same real KCI-based list as GET /api/references/example; used only if that request fails)
-const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595
-2. 대운해 (2024). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385
-3. 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267
-4. 대운해 (2023). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385
-5. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.596
-6. 최승재 (2008). 금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여. 증권법연구, 9(2), 227-270.`;
+const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 대운해 (2024). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385
+2. 김미엘, 김미선, 최은숙, 권호범, 박영석 (2024). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267
+3. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.21740/jas.2024.11.30.2.385
+4. 김미엘, 김미선, 최은숙, 신승수, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267
+5. 최승재 (2008). 금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여. 증권법연구, 9(2), 227-270.`;
 
 // UI State
 const state = {
@@ -1000,7 +999,7 @@ function renderBatchSummary() {
   const sysErrors = summary.system_failure;
   const notAudited = summary.not_audited.UNPARSED + summary.not_audited.NEEDS_REVIEW + summary.not_audited.NO_FROZEN_EVIDENCE;
   const audited = total - notAudited - summary.row_errors;
-  const modeLabel = state.batchExecMode === 'FROZEN_EVIDENCE' ? 'FROZEN EVIDENCE 재현' : 'LIVE KCI';
+  const modeLabel = state.batchExecMode === 'FROZEN_EVIDENCE' ? 'FROZEN EVIDENCE 재생' : 'LIVE KCI';
 
   if (el.summaryTotalTitle) el.summaryTotalTitle.textContent = `총 ${total}개 참고문헌 · ${modeLabel} 조회 ${audited}건`;
   if (el.countVerified) el.countVerified.textContent = String(verified);

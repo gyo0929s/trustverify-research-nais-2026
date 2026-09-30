@@ -9,6 +9,7 @@ import { createTrustVerifyServer } from '../src/server.js';
 
 // Fully offline: replays the sanitized evidence frozen from the live demo run (2026-10-01).
 const frozen = JSON.parse(await readFile(new URL('../artifacts/evaluation/batch-demo/demo-batch-results.json', import.meta.url), 'utf8'));
+// demoRows: [0]=H1 VERIFIED control, [1]=H2 year drift, [2]=H3 real DOI swap, [3]=H4 author chimera, [4]=H5 title identity.
 const demoRows = parseReferenceList(await readFile(new URL('./fixtures/batch/demo-bibliography.txt', import.meta.url), 'utf8')).rows;
 const toRecord = record => ({ source_record_id: record.article_id, ...record });
 const ZERO = { state: 'KCI_ZERO_RESULTS', messages: ['No Data'], records: [], total: 0 };
@@ -84,15 +85,15 @@ function assertSummaryMatchesItems(result) {
   assert.equal(result.summary.total, result.items.length);
 }
 
-test('B1 valid-only batch: three real records are VERIFIED and counts come from results', async () => {
-  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: demoRows.slice(0, 3) }));
-  assert.deepEqual(statuses(result), ['VERIFIED', 'VERIFIED', 'VERIFIED']);
-  assert.equal(result.summary.status_counts.VERIFIED, 3);
+test('B1 valid-only batch: the H1 control is VERIFIED and counts come from results', async () => {
+  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: [demoRows[0]] }));
+  assert.deepEqual(statuses(result), ['VERIFIED']);
+  assert.equal(result.summary.status_counts.VERIFIED, 1);
   assertSummaryMatchesItems(result);
 });
 
 test('B2 valid + METADATA_DRIFT: only the mutated row drifts, on the mutated field', async () => {
-  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: [demoRows[1], demoRows[3]] }));
+  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: [demoRows[0], demoRows[1]] }));
   assert.deepEqual(statuses(result), ['VERIFIED', 'METADATA_DRIFT']);
   const mismatched = result.items[1].finding.field_comparisons.filter(item => item.result === 'MISMATCH').map(item => item.field);
   assert.deepEqual(mismatched, ['publication_year']);
@@ -125,7 +126,7 @@ test('B4 NOT_FOUND_IN_KCI row comes only from a validated zero-result search', a
 test('B5 citation-level SYSTEM FAILURE is isolated and never counted as a citation defect', async () => {
   const adapter = frozenAdapter({ overrides: { [demoRows[1].title]: UNAVAILABLE } });
   const result = await withNetworkBlocked(() => batchWith(adapter).auditBatch({ references: demoRows.slice(0, 3) }));
-  assert.deepEqual(statuses(result), ['VERIFIED', 'KCI_UNAVAILABLE', 'VERIFIED']);
+  assert.deepEqual(statuses(result), ['VERIFIED', 'KCI_UNAVAILABLE', 'METADATA_DRIFT']);
   assert.equal(result.items[1].finding.kind, 'SYSTEM_FAILURE');
   assert.equal(Object.hasOwn(result.items[1].finding, 'status'), false);
   assert.equal(result.summary.system_failure, 1);
@@ -135,7 +136,7 @@ test('B5 citation-level SYSTEM FAILURE is isolated and never counted as a citati
 
 test('B6 mixed demo batch replays offline to the observed live results, in order', async () => {
   const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: demoRows }));
-  assert.deepEqual(result.items.map(item => item.index), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(result.items.map(item => item.index), [1, 2, 3, 4, 5]);
   assert.deepEqual(result.items.map(item => item.row_id), demoRows.map(row => row.row_id));
   for (const [position, observed] of frozen.items.entries()) {
     const item = result.items[position];
@@ -151,9 +152,9 @@ test('B6 mixed demo batch replays offline to the observed live results, in order
 test('batch findings are the unchanged single-citation contract', async () => {
   const adapter = frozenAdapter();
   const single = await createCitationAuditService({ kciAdapter: adapter }).auditCitation(
-    { title: demoRows[3].title, authors: demoRows[3].authors, publication_year: demoRows[3].publication_year, doi: demoRows[3].doi },
+    { title: demoRows[1].title, authors: demoRows[1].authors, publication_year: demoRows[1].publication_year, doi: demoRows[1].doi },
   );
-  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: [demoRows[3]] }));
+  const result = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: [demoRows[1]] }));
   assert.deepEqual(result.items[0].finding, single);
 });
 
@@ -162,14 +163,14 @@ test('one row failure does not fail the whole batch', async () => {
   const invalid = { row_id: 'ref-x', parse_status: 'READY', title: '   ' };
   const result = await withNetworkBlocked(() => batchWith(adapter).auditBatch({ references: [demoRows[0], invalid, demoRows[1]] }));
   assert.deepEqual(result.items.map(item => item.outcome), ['ROW_ERROR', 'INVALID_INPUT', 'AUDITED']);
-  assert.equal(result.items[2].finding.status, 'VERIFIED');
+  assert.equal(result.items[2].finding.status, 'METADATA_DRIFT');
   assert.equal(result.summary.row_errors, 2);
   assertSummaryMatchesItems(result);
 });
 
 test('B7 max batch size: 20 rows run sequentially; 21 rows are rejected', async () => {
   const adapter = frozenAdapter();
-  const twenty = Array.from({ length: MAX_BATCH_SIZE }, (_, position) => ({ ...demoRows[position % 3], row_id: `ref-${position + 1}` }));
+  const twenty = Array.from({ length: MAX_BATCH_SIZE }, (_, position) => ({ ...demoRows[0], row_id: `ref-${position + 1}` }));
   const result = await withNetworkBlocked(() => batchWith(adapter).auditBatch({ references: twenty }));
   assert.equal(result.count, 20);
   assert.equal(adapter.calls.maxInFlight, 1);
@@ -216,7 +217,7 @@ test('HTTP flow: example -> parse -> batch keeps order, counts, and leaks no sec
     const example = await (await fetch(`${base}/api/references/example`)).json();
     assert.equal(example.is_demo, true);
     const parsed = await (await post(base, '/api/references/parse', { text: example.text })).json();
-    assert.equal(parsed.count, 6);
+    assert.equal(parsed.count, 5);
     assert.equal(parsed.max_batch_size, 20);
     const response = await post(base, '/api/audit/citations', { references: parsed.rows });
     assert.equal(response.status, 200);
@@ -254,8 +255,8 @@ test('FROZEN_EVIDENCE mode replays the observed demo through the real engine and
       assert.equal(result.items[position].finding.status, observed.observed_status);
       assert.equal(result.items[position].finding.finding_id, observed.finding_id);
     }
-    assert.equal(result.items[6].outcome, 'NO_FROZEN_EVIDENCE');
-    assert.equal(result.items[6].finding, null);
+    assert.equal(result.items[5].outcome, 'NO_FROZEN_EVIDENCE');
+    assert.equal(result.items[5].finding, null);
     assert.equal(result.summary.not_audited.NO_FROZEN_EVIDENCE, 1);
     assert.deepEqual(result.summary.status_counts, frozen.observed_summary.status_counts);
 
@@ -285,4 +286,24 @@ test('batch UI has no synthetic verdict path and uses the real batch endpoint', 
   const executeBody = source.slice(source.indexOf('async function executeBatchAudit()'), source.indexOf('function renderBatchSummary()'));
   assert.equal(executeBody.includes("fetch('/api/audit/citation'"), false, 'batch does not loop the single endpoint');
   assert.equal(executeBody.includes("system_state: 'KCI_UNAVAILABLE'"), false, 'request errors are never turned into KCI outages');
+});
+
+test('reordering H1–H5 rows does not change any citation verdict (evidence is looked up by citation, never by row)', async () => {
+  const byRowId = result => Object.fromEntries(result.items.map(item => [item.row_id, {
+    status: item.finding.status, rule_id: item.finding.rule_id, finding_id: item.finding.finding_id,
+    fields: item.finding.field_comparisons.map(({ field, result: outcome }) => `${field}:${outcome}`),
+  }]));
+  const inOrder = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: demoRows }));
+  for (const permutation of [[4, 3, 2, 1, 0], [2, 0, 4, 1, 3], [3, 4, 0, 2, 1]]) {
+    const reordered = await withNetworkBlocked(() => batchWith(frozenAdapter()).auditBatch({ references: permutation.map(index => demoRows[index]) }));
+    assert.deepEqual(byRowId(reordered), byRowId(inOrder));
+    assert.deepEqual(reordered.summary.status_counts, inOrder.summary.status_counts);
+  }
+  // Same check through the production FROZEN_EVIDENCE path on the server.
+  await withServer(async base => {
+    const forward = await (await post(base, '/api/audit/citations', { evidence_mode: 'FROZEN_EVIDENCE', references: demoRows })).json();
+    const reversed = await (await post(base, '/api/audit/citations', { evidence_mode: 'FROZEN_EVIDENCE', references: [...demoRows].reverse() })).json();
+    assert.deepEqual(byRowId(reversed), byRowId(forward));
+    assert.deepEqual(reversed.items.map(item => item.row_id), [...demoRows].reverse().map(row => row.row_id));
+  });
 });

@@ -5,27 +5,20 @@ import { MAX_REFERENCE_TEXT_LENGTH, parseReference, parseReferenceList } from '.
 
 const demoText = await readFile(new URL('./fixtures/batch/demo-bibliography.txt', import.meta.url), 'utf8');
 
-test('demo bibliography parses into six READY rows with the expected fields', () => {
+test('demo bibliography is exactly the five H1–H5 references, all READY', async () => {
+  const evaluation = JSON.parse(await readFile(new URL('../artifacts/evaluation/kci-adversarial-h1-h5/H1-H5-results.json', import.meta.url), 'utf8'));
   const { rows, truncated } = parseReferenceList(demoText);
   assert.equal(truncated, false);
-  assert.equal(rows.length, 6);
-  assert.ok(rows.every(row => row.parse_status === 'READY'));
-  assert.deepEqual(rows.map(row => row.index), [1, 2, 3, 4, 5, 6]);
-  assert.deepEqual(rows[0], {
-    row_id: 'ref-1',
-    index: 1,
-    raw: rows[0].raw,
-    title: 'Computer Vision-based Basketball Player Training System',
-    authors: ['장만', '신승수'],
-    publication_year: '2024',
-    doi: '10.9728/dcs.2024.25.3.595',
-    parse_status: 'READY',
-    issues: [],
-  });
-  assert.equal(rows[3].publication_year, '2023');
-  assert.equal(rows[4].doi, '10.9728/dcs.2024.25.3.596');
-  assert.equal(rows[5].doi, null);
-  assert.ok(rows[5].title.includes('‘행동경제학’'));
+  assert.equal(rows.length, 5);
+  assert.deepEqual(rows.map(row => row.index), [1, 2, 3, 4, 5]);
+  assert.ok(rows.every(row => row.parse_status === 'READY' && row.issues.length === 0));
+  // Each parsed row must equal the evaluated H1–H5 input, field for field (absent fields stay absent).
+  for (const [position, row] of rows.entries()) {
+    const parsed = Object.fromEntries(Object.entries({
+      title: row.title, authors: row.authors, publication_year: row.publication_year, doi: row.doi,
+    }).filter(([, value]) => value !== null));
+    assert.deepEqual(parsed, evaluation.items[position].input, `H${position + 1}`);
+  }
 });
 
 test('text without a recoverable title is UNPARSED, never a KCI status', () => {
