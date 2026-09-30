@@ -122,6 +122,17 @@ A qualification experiment asked whether the D4 contrast reproduces with two fin
 
 The insufficiency reason differs from the original D4 (`NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD`): two generic shared anchors meet the existing record-relevance minimum of 2, so the engine treats SOURCE B as topically related. No threshold was changed. Artifact: `artifacts/evaluation/claim-evidence-finance-d4/finance-d4.json`. Offline test: `test/claim-evidence-finance-d4.test.js`.
 
+### Korean qualification cases (K1, K2)
+
+Two real KCI papers, qualified live, both `VERIFIED` with exact canonical metadata, evaluated on their actual Korean abstracts with the unchanged engine (trace scenario `KOREAN_P0`). Control claims are controlled preservations; perturbations add "반드시".
+
+| Case | Record | Control | Perturbation | Qualification |
+| --- | --- | --- | --- | --- |
+| K2 ESG disclosure | ART003117733 (이형기 2024) | `CONSISTENT_WITH_EVIDENCE` · sentence #1 | `POTENTIAL_CLAIM_SHIFT` · `MODALITY_STRENGTHENED` (NONE → NECESSITY "반드시") | Clean pair; used as a UI preset |
+| K1 behavioral finance | ART001298965 (최승재 2008) | `POTENTIAL_CLAIM_SHIFT` · `MODALITY_STRENGTHENED` (POSSIBILITY → NONE) | `POTENTIAL_CLAIM_SHIFT` · `MODALITY_STRENGTHENED` (POSSIBILITY → NECESSITY) | Not discriminating; not a preset |
+
+K1 shows a real limitation: modality is read over the whole grounded sentence. K1's sentence #3 is long and multi-clause, and a later clause contains "수 있" ("주장될 수 있는"), so the source is rated POSSIBILITY and even the faithful control is flagged. This was recorded, not tuned. Korean grounding itself worked for all four claims despite no particle stripping, because the claims reuse the abstract's word forms. Artifact: `artifacts/evaluation/claim-evidence-korean/korean-cases.json`. Test: `test/claim-evidence-korean.test.js`.
+
 ## Test provenance
 
 - **Controlled perturbation.** C1, C2, I1, D4, and D4-CONTRAST use citing sentences deliberately constructed by the evaluator. They test rule sensitivity. They are not observed AI hallucinations and must not be described as such.

@@ -18,6 +18,7 @@ const DEFAULT_BATCH_DEMO_PATH = join(ROOT_DIR, 'test', 'fixtures', 'batch', 'dem
 const DEFAULT_FROZEN_EVIDENCE_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'batch-demo', 'demo-batch-results.json');
 const DEFAULT_CLAIM_EVIDENCE_DIR = join(ROOT_DIR, 'artifacts', 'evaluation', 'claim-evidence-p0');
 const DEFAULT_FINANCE_D4_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'claim-evidence-finance-d4', 'finance-d4.json');
+const DEFAULT_KOREAN_P0_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'claim-evidence-korean', 'korean-cases.json');
 export const MAX_CITING_CLAIM_LENGTH = 2000;
 export const MAX_JSON_BODY_BYTES = 16 * 1024;
 export const MAX_BATCH_BODY_BYTES = 128 * 1024;
@@ -139,6 +140,7 @@ export function createTrustVerifyServer({
   frozenEvidencePath = DEFAULT_FROZEN_EVIDENCE_PATH,
   claimEvidenceDir = DEFAULT_CLAIM_EVIDENCE_DIR,
   financeD4Path = DEFAULT_FINANCE_D4_PATH,
+  koreanP0Path = DEFAULT_KOREAN_P0_PATH,
 } = {}) {
   // Layer 3 P0: the unchanged engine over the frozen, sanitized KCI abstract (no live Layer 3 path exists).
   let claimEvidenceP0 = null;
@@ -156,6 +158,7 @@ export function createTrustVerifyServer({
   const traceScenarioPaths = {
     ORIGINAL_D4: join(claimEvidenceDir, 'd4-unrelated-reference.json'),
     FINANCE_D4: financeD4Path,
+    KOREAN_P0: koreanP0Path,
   };
   const traceDeps = new Map();
   async function loadTraceDeps(scenario) {
