@@ -222,9 +222,9 @@ test('Claim–Evidence verify panel and preset code hold no hardcoded verdicts o
 test('Finance D4 preset interaction regression: btnLoadCeD4 and btnLoadCeD4Contrast trigger trace with scenario FINANCE_D4 and live server responds with non-hardcoded findings', async () => {
   const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
   assert.ok(html.includes('id="btnLoadCeD4"'));
-  assert.ok(html.includes('★ D4 핵심 사례 실행'));
+  assert.ok(html.includes('▶ 대표 사례 실행'));
   assert.ok(html.includes('id="btnLoadCeD4Contrast"'));
-  assert.ok(html.includes('↔ 올바른 근거로 대조 실행'));
+  assert.ok(html.includes('↔ 같은 문장 · 올바른 근거로 비교'));
 
   const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
   // 1. btnLoadCeD4 wires to executeCeTrace with scenario: 'FINANCE_D4'

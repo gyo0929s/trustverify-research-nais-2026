@@ -35,9 +35,23 @@ test('K2 presets use the committed artifact values and the KOREAN_P0 scenario', 
   // K1 is not a presentation preset (observed NOT_DISCRIMINATING).
   assert.equal(korean.cases.find(item => item.case_id === 'K1').presentation_preset, false);
   assert.equal(/ART001298965|행동경제학 · 과잉 단정/.test(html.slice(html.indexOf('검증 프리셋'), html.indexOf('검증 프리셋') + 3000)), false);
-  // D4 stays first and primary.
-  const presets = html.slice(html.indexOf('검증 프리셋'), html.indexOf('검증 프리셋') + 3000);
-  assert.ok(presets.indexOf('btnLoadCeD4"') < presets.indexOf('btnLoadCeK2"'));
+  // K2 is preserved but lives in the collapsed "다른 검증 예시 보기" section, after the result.
+  const more = html.slice(html.indexOf('class="ce-more-examples"'), html.indexOf('id="ceViewExamples"'));
+  assert.ok(more.includes('id="btnLoadCeK2"') && more.includes('id="btnLoadCeK2Control"'));
+});
+
+test('first screen shows only the two primary presets without internal case labels', () => {
+  const panel = html.slice(html.indexOf('id="ceViewVerify"'), html.indexOf('id="ceViewExamples"'));
+  const first = panel.slice(0, panel.indexOf('class="ce-more-examples"'));
+  assert.deepEqual([...first.matchAll(/id="(btnLoadCe\w+)"/g)].map(m => m[1]), ['btnLoadCeD4', 'btnLoadCeD4Contrast']);
+  assert.ok(first.includes('대표 사례 실행') && first.includes('실제 KCI 논문이지만 현재 인용문을 뒷받침하는 근거가 부족한 사례'));
+  assert.ok(first.includes('같은 문장 · 올바른 근거로 비교') && first.includes('인용 문장은 그대로 두고, 연결된 논문만 올바른 source로 변경'));
+  const visible = first.replace(/<!--[\s\S]*?-->/g, '').replace(/\sid="[^"]*"/g, '');
+  assert.equal(/D4|K2|CONTROLLED|PERTURBATION/.test(visible), false);
+  const more = panel.slice(panel.indexOf('class="ce-more-examples"'));
+  assert.ok(more.includes('<summary class="ce-more-examples-summary">다른 검증 예시 보기</summary>'));
+  for (const id of ['btnLoadCeK2', 'btnLoadCeK2Control', 'btnLoadCeExample', 'btnLoadCeInsufficient']) assert.ok(more.includes(`id="${id}"`), id);
+  assert.equal(fnBody('renderCeTraceResult').includes("검증된 KCI 근거 재생 (${escapeHtml(data.scenario"), false, 'scenario name only in technical details');
 });
 
 test('trace results render the returned status three ways; no hardcoded verdict or rule', () => {

@@ -903,73 +903,40 @@
             </p>
           </section>
 
-          <!-- Input Card: Selected Paper & Citing Sentence -->
+          <!-- Input Card: user input only (citing sentence + bibliography). System resolution is shown only after a run, in the result area. -->
           <div class="batch-card ce-verify-input-card">
-            <div class="batch-card-header">
-              <div class="batch-title-wrap">
-                <span class="batch-step-pill">INPUT</span>
-                <h3 class="batch-title">인용 문장 검증 입력</h3>
-              </div>
-              <span class="ce-integration-badge">P0 · FROZEN EVALUATION EVIDENCE (KCI 초록 고정본)</span>
+            <!-- Quick Presets: small controls; results always come from the backend. -->
+            <div class="ce-preset-row">
+              <span class="preset-label">예시 불러오기</span>
+              <button class="btn btn-preset btn-sm ce-primary-preset is-active" id="btnLoadCeD4" type="button">
+                <span class="ce-primary-preset-title">▶ 대표 사례 실행</span>
+                <span class="ce-primary-preset-desc">실제 KCI 논문이지만 현재 인용문을 뒷받침하는 근거가 부족한 사례</span>
+              </button>
+              <button class="btn btn-preset btn-sm ce-primary-preset" id="btnLoadCeD4Contrast" type="button">
+                <span class="ce-primary-preset-title">↔ 같은 문장 · 올바른 근거로 비교</span>
+                <span class="ce-primary-preset-desc">인용 문장은 그대로 두고, 연결된 논문만 올바른 source로 변경</span>
+              </button>
             </div>
 
-            <!-- Persistent Frozen Evidence Badge & Notice -->
-            <div class="ce-frozen-persistent-banner">
-              <div class="ce-frozen-badge-row">
-                <span class="ce-frozen-pill">FROZEN EVIDENCE</span>
-                <span class="ce-frozen-pill-sub">검증된 KCI 근거 재생</span>
-              </div>
-              <p class="ce-frozen-banner-desc">"실제 KCI에서 확보·정제한 근거를 동일 엔진으로 재현합니다."</p>
+            <!-- 1. Citing Sentence Input (primary visual element) -->
+            <div class="ce-verify-field-group ce-input-primary">
+              <label class="ce-field-label ce-field-label-lg" for="ceVerifyInputText">1. 내가 실제로 작성한 인용 문장 <span class="ce-field-label-en">Citing Statement with Marker</span></label>
+              <textarea class="ce-verify-textarea ce-verify-textarea-lg" id="ceVerifyInputText" rows="4" placeholder="검증할 인용 문장을 입력하세요. (예: The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].)" spellcheck="false"></textarea>
+              <p class="ce-field-help" id="ceInputSentenceNote">발표용 통제 인용 문장(영문) · 실제 KCI 공개 초록 기반 검증</p>
             </div>
 
-            <!-- Quick Presets -->
-            <div class="preset-buttons-group">
-              <span class="preset-label">검증 프리셋:</span>
-              <div class="preset-btns">
-                <button class="btn btn-preset is-active" id="btnLoadCeD4" type="button">
-                  ★ D4 핵심 사례 실행
-                </button>
-                <button class="btn btn-preset" id="btnLoadCeD4Contrast" type="button">
-                  ↔ 올바른 근거로 대조 실행
-                </button>
-                <button class="btn btn-preset" id="btnLoadCeK2" type="button" title="통제된 변형 (Controlled Perturbation) · 실제 KCI 초록 기반">
-                  🇰🇷 ESG 공시 · 사례→필연 과잉 일반화 (통제된 변형)
-                </button>
-                <button class="btn btn-preset" id="btnLoadCeK2Control" type="button" title="통제된 보존 문장 (Controlled Preservation)" style="font-size:12px;">
-                  ESG 보존형 보기
-                </button>
-                <button class="btn btn-preset" id="btnLoadCeExample" type="button">
-                  보존된 인용 예시
-                </button>
-                <button class="btn btn-preset" id="btnLoadCeInsufficient" type="button">
-                  현재 초록으로 확인 어려운 예시
-                </button>
-              </div>
-            </div>
-
-            <!-- 1. Citing Sentence Input -->
+            <!-- 2. Bibliography Input (editable; never shows a record or verdict before a run) -->
             <div class="ce-verify-field-group">
-              <label class="ce-field-label" for="ceVerifyInputText">내가 실제로 작성한 인용 문장 (Citing Statement with Marker)</label>
-              <textarea class="ce-verify-textarea" id="ceVerifyInputText" rows="3" placeholder="검증할 인용 문장을 입력하세요. (예: The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].)" spellcheck="false"></textarea>
-            </div>
-
-            <!-- 2. Selected Paper / Reference Context Display -->
-            <div class="ce-verify-field-group">
-              <label class="ce-field-label">참고문헌 및 KCI 레코드 연결 (Reference &amp; KCI Record)</label>
-              <div class="ce-selected-paper-card">
-                <div class="ce-paper-badge-row">
-                  <span class="ce-paper-id" id="ceSelectedPaperId">KCI ID: 불러오는 중…</span>
-                  <span id="ceSelectedPaperStatus"><span class="source-status roadmap">검증 전</span></span>
-                </div>
-                <div class="ce-paper-title" id="ceSelectedPaperTitle"></div>
-                <div class="ce-paper-meta-sub" id="ceSelectedPaperMeta"></div>
-              </div>
+              <label class="ce-field-label ce-field-label-md" for="ceVerifyReferences">2. 참고문헌 목록 <span class="ce-field-label-en">References</span></label>
+              <textarea class="ce-verify-textarea ce-verify-references" id="ceVerifyReferences" rows="4" placeholder="[1] 저자 (연도). 제목. 학술지, 권(호), 쪽. DOI" spellcheck="false"></textarea>
+              <p class="ce-field-help ce-frozen-boundary">현재 발표 모드는 검증된 Frozen KCI Evidence를 재현합니다. 고정 근거에 없는 참고문헌은 자동 판정하지 않습니다.</p>
             </div>
 
             <div class="ce-verify-actions">
               <button class="btn btn-primary btn-lg" id="btnExecuteCeVerify" type="button">
                 <span class="btn-icon">🔍</span> 인용 내용 검증
               </button>
+              <span class="ce-mode-note">검증 모드: Frozen KCI Evidence · 발표 재현용</span>
             </div>
           </div>
 
@@ -979,8 +946,39 @@
               <h3 class="ce-results-title">검증 결과</h3>
               <span class="ce-pending-tag" id="ceResultModeTag">인용 문장을 입력하고 [인용 내용 검증]을 누르거나 프리셋을 선택하세요</span>
             </div>
+            <!-- System resolution: filled only from the trace response (marker → reference row → KCI record → Citation Integrity). -->
+            <div class="ce-resolution-card" id="ceResolutionCard" hidden>
+              <span class="ce-field-label">시스템 연결 결과 <span class="ce-field-label-en">System Resolution</span></span>
+              <div class="ce-selected-paper-card">
+                <div class="ce-paper-badge-row">
+                  <span class="ce-paper-id" id="ceSelectedPaperId">검증 대기</span>
+                  <span id="ceSelectedPaperStatus"><span class="source-status roadmap">검증 전</span></span>
+                </div>
+                <div class="ce-paper-title" id="ceSelectedPaperTitle"></div>
+                <div class="ce-paper-meta-sub" id="ceSelectedPaperMeta"></div>
+              </div>
+            </div>
             <div id="ceVerifyResultBody"></div>
           </div>
+
+          <!-- Other verification examples: preserved, collapsed off the first screen. -->
+          <details class="ce-more-examples">
+            <summary class="ce-more-examples-summary">다른 검증 예시 보기</summary>
+            <div class="preset-btns ce-more-examples-btns">
+              <button class="btn btn-preset" id="btnLoadCeK2" type="button" title="통제된 변형 (Controlled Perturbation) · 실제 KCI 초록 기반">
+                ESG 공시 · 사례→필연 과잉 일반화 (통제된 변형)
+              </button>
+              <button class="btn btn-preset" id="btnLoadCeK2Control" type="button" title="통제된 보존 문장 (Controlled Preservation)">
+                ESG 보존형 보기
+              </button>
+              <button class="btn btn-preset" id="btnLoadCeExample" type="button">
+                보존된 인용 예시
+              </button>
+              <button class="btn btn-preset" id="btnLoadCeInsufficient" type="button">
+                현재 초록으로 확인 어려운 예시
+              </button>
+            </div>
+          </details>
         </div>
 
         <!-- =========================================================================
