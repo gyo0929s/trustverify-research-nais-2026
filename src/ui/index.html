@@ -270,83 +270,324 @@
         </div>
       </div>
 
-      <!-- KCI LIVE CONSOLE -->
-      <div class="kci-console-grid">
-        <!-- Console Left: Citation Input & Presets -->
-        <div class="kci-input-panel">
-          <div class="panel-header-row">
-            <h3 class="panel-box-title">인용 서지정보 입력 (Citation Input)</h3>
-            <span class="live-pill">실제 KCI Open API 연동</span>
+      <!-- PRIMARY ENTRY: MODE SELECTOR BAR (Requirement 1) -->
+      <div class="audit-mode-selector-bar">
+        <div class="mode-tabs-wrapper" role="tablist">
+          <button class="btn-mode-tab is-active" id="tabModeBatch" type="button" role="tab" aria-selected="true">
+            <span class="tab-icon">📚</span>
+            <span class="tab-label">참고문헌 목록 검증</span>
+            <span class="tab-badge primary">기본 연구자 워크플로우</span>
+          </button>
+          <button class="btn-mode-tab" id="tabModeSingle" type="button" role="tab" aria-selected="false">
+            <span class="tab-icon">🔍</span>
+            <span class="tab-label">단일 인용 상세 검증</span>
+            <span class="tab-badge">심층 분석 모드</span>
+          </button>
+        </div>
+        <div class="mode-desc-text" id="modeDescText">
+          논문 전체의 참고문헌 목록을 한 번에 붙여넣어 구문 분석 및 KCI 다중 서지 무결성을 일괄 검증합니다.
+        </div>
+      </div>
+
+      <!-- WORKSPACE 1: PRIMARY BATCH REFERENCE AUDIT (Default Active) -->
+      <div class="kci-batch-workspace" id="batchWorkspace">
+        <!-- STEP 1: PASTE REFERENCES -->
+        <div class="batch-card batch-input-card" id="batchInputCard">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">STEP 1</span>
+              <h3 class="batch-title">참고문헌 목록 붙여넣기 (Paste Bibliography)</h3>
+            </div>
+            <span class="batch-helper-text">"한 줄 또는 번호가 붙은 참고문헌 목록을 그대로 붙여넣으세요."</span>
           </div>
 
-          <!-- Quick Presets for Mentor Demonstration -->
-          <div class="preset-buttons-group">
-            <span class="preset-label">30초 시연 프리셋:</span>
-            <div class="preset-btns">
-              <button class="btn btn-preset is-active" id="presetDrift" type="button">
-                ① 2023 연도 불일치 (METADATA_DRIFT)
-              </button>
-              <button class="btn btn-preset" id="presetNotFound" type="button">
-                ② 색인 경계 (NOT_FOUND + Crossref)
-              </button>
-              <button class="btn btn-preset" id="presetSysFail" type="button">
-                ③ 통신 장애 ➔ OAI 스냅샷 백업
-              </button>
-            </div>
+          <div class="batch-textarea-wrap">
+            <textarea id="batchInputText" class="batch-textarea" rows="6" placeholder="[1] 문현철, &quot;Computer Vision-based Basketball Player Training System&quot;, 2024, 10.9728/dcs.2024.25.3.595.&#10;[2] 문현철, &quot;Computer Vision-based Basketball Player Training System&quot;, 2023, 10.9728/dcs.2024.25.3.595.&#10;[3] Vaswani, A., &quot;Attention Is All You Need&quot;, 2017, 10.5555/3295222.3295349.&#10;..."></textarea>
           </div>
 
-          <form id="liveAuditForm" class="kci-audit-form" autocomplete="off">
-            <label class="field">
-              <span class="field-label">논문 제목 <em>*</em></span>
-              <input id="liveTitle" name="title" type="text" maxlength="2000" required value="Computer Vision-based Basketball Player Training System">
-            </label>
-
-            <div class="field-row">
-              <label class="field">
-                <span class="field-label">저자</span>
-                <input id="liveAuthors" name="authors" type="text" maxlength="2000" value="문현철">
-              </label>
-              <label class="field">
-                <span class="field-label">출판연도</span>
-                <input id="liveYear" name="publication_year" type="text" maxlength="20" inputmode="numeric" value="2023">
-              </label>
-            </div>
-
-            <label class="field">
-              <span class="field-label">DOI</span>
-              <input id="liveDoi" name="doi" type="text" maxlength="500" value="10.9728/dcs.2024.25.3.595">
-            </label>
-
-            <div class="kci-action-bar">
-              <button class="btn btn-primary" id="btnExecuteLiveAudit" type="submit">
-                <span class="btn-icon">⚡</span> KCI 실시간 검증 실행
-              </button>
-            </div>
-          </form>
-
-          <div class="live-api-status" id="liveApiStatus" aria-live="polite">
-            <span class="status-indicator-dot"></span>
-            <span class="status-msg" id="liveStatusMsg">준비 완료 — 버튼을 누르면 KCI Open API를 실시간 조회합니다.</span>
-          </div>
-
-          <!-- OAI-PMH Frozen Snapshot Fallback Trigger -->
-          <div class="oai-fallback-box" id="oaiFallbackBox" hidden>
-            <div class="oai-fallback-head">
-              <span class="oai-icon">📦</span>
-              <strong>LIVE 장애 대응: 사전에 고정된 Evidence Snapshot (OAI-PMH)</strong>
-            </div>
-            <p class="oai-fallback-desc">
-              KCI 통신 장애 발생 시, 가짜 성공이 아닌 사전 고정 스냅샷임을 명시하고 재현성을 확보합니다.
-            </p>
-            <button class="btn btn-secondary btn-sm" id="btnLoadOaiSnapshot" type="button">
-              사전 저장 Evidence Snapshot 열기
+          <div class="batch-input-actions">
+            <button class="btn btn-primary" id="btnAnalyzeBatch" type="button">
+              <span class="btn-icon">📋</span> 참고문헌 분석
+            </button>
+            <button class="btn btn-secondary" id="btnLoadExampleBatch" type="button">
+              <span class="btn-icon">💡</span> 예시 목록 불러오기 (6편)
+            </button>
+            <button class="btn btn-ghost" id="btnClearBatch" type="button">
+              지우기
             </button>
           </div>
         </div>
 
-        <!-- Console Right: RESULT FIRST (Result ➔ Field Comparison ➔ Verdict & Why? ➔ Verification Path) -->
-        <div class="kci-result-panel" id="kciResultPanel">
-          <!-- Dynamically populated by app.js: RESULT FIRST -->
+        <!-- STEP 2: PARSE PREVIEW -->
+        <div class="batch-card batch-parse-card" id="batchParseCard" hidden>
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">STEP 2</span>
+              <h3 class="batch-title">추출된 서지 필드 검토 (Parse Preview)</h3>
+            </div>
+            <div class="parse-status-summary" id="parseStatusSummary">
+              <!-- e.g. READY 5건 · NEEDS_REVIEW 1건 · UNPARSED 0건 -->
+            </div>
+          </div>
+
+          <p class="batch-caution-note">
+            ⚠️ <strong>원칙:</strong> UNPARSED는 절대 NOT_FOUND_IN_KCI로 취급되지 않습니다. 구문 분석 실패와 서지 실재성 검증은 완전히 별개 단계입니다.
+          </p>
+
+          <div class="parse-table-wrapper">
+            <table class="parse-table" id="parseTable">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">#</th>
+                  <th>논문 제목 (Title) *</th>
+                  <th style="width: 140px;">저자 (Author)</th>
+                  <th style="width: 90px;">연도 (Year)</th>
+                  <th style="width: 180px;">DOI</th>
+                  <th style="width: 120px;">파싱 상태</th>
+                </tr>
+              </thead>
+              <tbody id="parseTableBody">
+                <!-- Dynamically rendered rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="parse-action-bar">
+            <div class="execution-mode-toggle">
+              <span class="mode-label">검증 모드:</span>
+              <label class="radio-label">
+                <input type="radio" name="batchExecMode" value="LIVE" checked id="radioLiveKci">
+                <span class="radio-pill live">⚡ LIVE KCI (실제 API 조회)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="batchExecMode" value="DEMO" id="radioDemoKci">
+                <span class="radio-pill demo">🧪 DEMO (예시 데이터)</span>
+              </label>
+            </div>
+            <button class="btn btn-primary btn-lg" id="btnExecuteBatchAudit" type="button">
+              <span class="btn-icon">⚡</span> KCI에서 검증 실행
+            </button>
+          </div>
+        </div>
+
+        <!-- BATCH PROGRESS BAR -->
+        <div class="batch-progress-card" id="batchProgressCard" hidden>
+          <div class="progress-header">
+            <div class="progress-title-row">
+              <span class="progress-spinner"></span>
+              <strong class="progress-title">KCI 서지 무결성 일괄 검증 진행 중...</strong>
+            </div>
+            <span class="progress-count-text" id="progressCountText">KCI 검증 중 0 / 6</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- STEP 3, 4, 5: BATCH RESULTS & DETAIL VIEW -->
+        <div class="batch-results-wrapper" id="batchResultsWrapper" hidden>
+          <!-- STEP 3: BATCH SUMMARY COUNTS -->
+          <div class="batch-summary-card">
+            <div class="summary-card-header">
+              <div class="summary-title-wrap">
+                <span class="batch-step-pill">STEP 3</span>
+                <h3 class="summary-main-title" id="summaryTotalTitle">총 6개 참고문헌 검증 완료</h3>
+              </div>
+              <span class="summary-disclaimer">※ 건수 및 비율 중심 보고 (종합 점수·Trust Score는 생성하지 않음)</span>
+            </div>
+
+            <div class="summary-metrics-grid">
+              <!-- VERIFIED -->
+              <div class="metric-card tone-verified" data-filter="VERIFIED">
+                <div class="metric-top">
+                  <span class="metric-count" id="countVerified">0</span>
+                  <span class="metric-badge verified">정상</span>
+                </div>
+                <div class="metric-label">검증됨 (VERIFIED)</div>
+                <div class="metric-sub">KCI 공식 레코드와 4대 필드 일치</div>
+              </div>
+
+              <!-- METADATA_DRIFT -->
+              <div class="metric-card tone-drift" data-filter="METADATA_DRIFT">
+                <div class="metric-top">
+                  <span class="metric-count" id="countDrift">0</span>
+                  <span class="metric-badge drift">불일치</span>
+                </div>
+                <div class="metric-label">정보 불일치 (METADATA_DRIFT)</div>
+                <div class="metric-sub">레코드는 존재하나 연도/저자 등 차이</div>
+              </div>
+
+              <!-- REVIEW_REQUIRED -->
+              <div class="metric-card tone-review" data-filter="REVIEW_REQUIRED">
+                <div class="metric-top">
+                  <span class="metric-count" id="countReview">0</span>
+                  <span class="metric-badge review">검토 필요</span>
+                </div>
+                <div class="metric-label">추가 검토 필요 (REVIEW_REQUIRED)</div>
+                <div class="metric-sub">복수 후보 또는 제목 유사도 미달</div>
+              </div>
+
+              <!-- NOT_FOUND_IN_KCI -->
+              <div class="metric-card tone-notfound" data-filter="NOT_FOUND_IN_KCI">
+                <div class="metric-top">
+                  <span class="metric-count" id="countNotFound">0</span>
+                  <span class="metric-badge notfound">색인 경계</span>
+                </div>
+                <div class="metric-label">KCI에서 미발견 (NOT_FOUND)</div>
+                <div class="metric-sub">해외 학술지 등 수록 범위 밖 실존 논문</div>
+              </div>
+            </div>
+
+            <!-- SEPARATE SYSTEM STATUS COUNTER -->
+            <div class="system-status-box">
+              <div class="sys-status-left">
+                <span class="sys-dot"></span>
+                <strong>시스템 상태:</strong>
+                <span id="sysStatusText">시스템 오류 0건 (NRF KCI API 정상 통신)</span>
+              </div>
+              <span class="sys-note">※ 시스템 연결 오류는 논문의 인용 결함과 분리하여 독립 표시합니다.</span>
+            </div>
+          </div>
+
+          <!-- STEP 4 & 5: RESULTS TABLE (LEFT) + DETAIL PANEL (RIGHT) -->
+          <div class="batch-master-detail-grid">
+            <!-- Left: Results Table -->
+            <div class="batch-table-panel">
+              <div class="table-panel-header">
+                <div class="table-header-top">
+                  <span class="batch-step-pill">STEP 4</span>
+                  <h4 class="table-panel-title">참고문헌 검증 결과 목록 (Results Table)</h4>
+                </div>
+                <div class="table-filter-bar">
+                  <div class="filter-pills" id="batchFilterPills">
+                    <button class="btn-filter is-active" data-filter="ALL" type="button">전체 (<span id="filterCountAll">0</span>)</button>
+                    <button class="btn-filter" data-filter="VERIFIED" type="button">검증됨 (<span id="filterCountVerified">0</span>)</button>
+                    <button class="btn-filter" data-filter="METADATA_DRIFT" type="button">정보 불일치 (<span id="filterCountDrift">0</span>)</button>
+                    <button class="btn-filter" data-filter="REVIEW_REQUIRED" type="button">추가 검토 (<span id="filterCountReview">0</span>)</button>
+                    <button class="btn-filter" data-filter="NOT_FOUND_IN_KCI" type="button">KCI 미발견 (<span id="filterCountNotFound">0</span>)</button>
+                    <button class="btn-filter" data-filter="SYSTEM_FAILURE" type="button">시스템 상태 (<span id="filterCountSystem">0</span>)</button>
+                  </div>
+                  <div class="search-input-wrap">
+                    <input type="text" id="batchSearchInput" class="batch-search-input" placeholder="🔍 제목 / 저자 / DOI 검색...">
+                  </div>
+                </div>
+              </div>
+
+              <div class="results-table-wrapper">
+                <table class="results-table" id="resultsTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 45px;">#</th>
+                      <th>Reference / Title</th>
+                      <th style="width: 130px;">Status</th>
+                      <th style="width: 140px;">Problem Field</th>
+                      <th style="width: 110px;">KCI Record</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resultsTableBody">
+                    <!-- Populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-panel-footer">
+                <span class="click-hint">💡 행을 클릭하면 우측 패널에서 상세 검증 근거와 KCI 공식 레코드를 확인합니다.</span>
+                <button class="btn btn-secondary btn-sm" id="btnReauditBatch" type="button">↺ 다른 목록 검증하기</button>
+              </div>
+            </div>
+
+            <!-- Right: STEP 5 Reused Detail Panel -->
+            <div class="batch-detail-panel" id="batchDetailPanelWrapper">
+              <div class="detail-panel-header">
+                <span class="batch-step-pill">STEP 5</span>
+                <h4 class="detail-panel-title">선택된 인용 상세 분석 (Citation Detail)</h4>
+              </div>
+              <div id="batchDetailPanel">
+                <!-- Reuses the exact renderKciResult() DOM -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORKSPACE 2: FOCUSED SINGLE CITATION WORKSPACE (Retained 100%) -->
+      <div class="kci-single-workspace" id="singleWorkspace" hidden>
+        <div class="kci-console-grid">
+          <!-- Console Left: Citation Input & Presets -->
+          <div class="kci-input-panel">
+            <div class="panel-header-row">
+              <h3 class="panel-box-title">인용 서지정보 입력 (Citation Input)</h3>
+              <span class="live-pill">실제 KCI Open API 연동</span>
+            </div>
+
+            <!-- Quick Presets for Mentor Demonstration -->
+            <div class="preset-buttons-group">
+              <span class="preset-label">30초 시연 프리셋:</span>
+              <div class="preset-btns">
+                <button class="btn btn-preset is-active" id="presetDrift" type="button">
+                  ① 2023 연도 불일치 (METADATA_DRIFT)
+                </button>
+                <button class="btn btn-preset" id="presetNotFound" type="button">
+                  ② 색인 경계 (NOT_FOUND + Crossref)
+                </button>
+                <button class="btn btn-preset" id="presetSysFail" type="button">
+                  ③ 통신 장애 ➔ OAI 스냅샷 백업
+                </button>
+              </div>
+            </div>
+
+            <form id="liveAuditForm" class="kci-audit-form" autocomplete="off">
+              <label class="field">
+                <span class="field-label">논문 제목 <em>*</em></span>
+                <input id="liveTitle" name="title" type="text" maxlength="2000" required value="Computer Vision-based Basketball Player Training System">
+              </label>
+
+              <div class="field-row">
+                <label class="field">
+                  <span class="field-label">저자</span>
+                  <input id="liveAuthors" name="authors" type="text" maxlength="2000" value="문현철">
+                </label>
+                <label class="field">
+                  <span class="field-label">출판연도</span>
+                  <input id="liveYear" name="publication_year" type="text" maxlength="20" inputmode="numeric" value="2023">
+                </label>
+              </div>
+
+              <label class="field">
+                <span class="field-label">DOI</span>
+                <input id="liveDoi" name="doi" type="text" maxlength="500" value="10.9728/dcs.2024.25.3.595">
+              </label>
+
+              <div class="kci-action-bar">
+                <button class="btn btn-primary" id="btnExecuteLiveAudit" type="submit">
+                  <span class="btn-icon">⚡</span> KCI 실시간 검증 실행
+                </button>
+              </div>
+            </form>
+
+            <div class="live-api-status" id="liveApiStatus" aria-live="polite">
+              <span class="status-indicator-dot"></span>
+              <span class="status-msg" id="liveStatusMsg">준비 완료 — 버튼을 누르면 KCI Open API를 실시간 조회합니다.</span>
+            </div>
+
+            <!-- OAI-PMH Frozen Snapshot Fallback Trigger -->
+            <div class="oai-fallback-box" id="oaiFallbackBox" hidden>
+              <div class="oai-fallback-head">
+                <span class="oai-icon">📦</span>
+                <strong>LIVE 장애 대응: 사전에 고정된 Evidence Snapshot (OAI-PMH)</strong>
+              </div>
+              <p class="oai-fallback-desc">
+                KCI 통신 장애 발생 시, 가짜 성공이 아닌 사전 고정 스냅샷임을 명시하고 재현성을 확보합니다.
+              </p>
+              <button class="btn btn-secondary btn-sm" id="btnLoadOaiSnapshot" type="button">
+                사전 저장 Evidence Snapshot 열기
+              </button>
+            </div>
+          </div>
+
+          <!-- Console Right: RESULT FIRST (Result ➔ Field Comparison ➔ Verdict & Why? ➔ Verification Path) -->
+          <div class="kci-result-panel" id="kciResultPanel">
+            <!-- Dynamically populated by app.js: RESULT FIRST -->
+          </div>
         </div>
       </div>
 
