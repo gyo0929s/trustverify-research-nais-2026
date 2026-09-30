@@ -3,13 +3,19 @@ import { readFile, stat } from 'node:fs/promises';
 import { dirname, extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createCitationAuditService } from './citation/audit.js';
+import { BatchRequestError, createCitationBatchService, MAX_BATCH_SIZE } from './citation/batch.js';
+import { createFrozenEvidenceAdapter } from './citation/frozen-evidence.js';
+import { parseReferenceList } from './citation/reference-parser.js';
 import { createKciAdapter } from './kci/adapter.js';
 
 const SRC_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = join(SRC_DIR, '..');
 const DEFAULT_UI_DIR = join(SRC_DIR, 'ui');
 const DEFAULT_FIXTURES_DIR = join(ROOT_DIR, 'test', 'fixtures', 'findings');
+const DEFAULT_BATCH_DEMO_PATH = join(ROOT_DIR, 'test', 'fixtures', 'batch', 'demo-bibliography.txt');
+const DEFAULT_FROZEN_EVIDENCE_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'batch-demo', 'demo-batch-results.json');
 export const MAX_JSON_BODY_BYTES = 16 * 1024;
+export const MAX_BATCH_BODY_BYTES = 128 * 1024;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -51,9 +57,9 @@ async function sendFile(res, filePath, contentType) {
   }
 }
 
-async function readJsonBody(req) {
+async function readJsonBody(req, maxBytes = MAX_JSON_BODY_BYTES) {
   const contentLength = Number(req.headers['content-length']);
-  if (Number.isFinite(contentLength) && contentLength > MAX_JSON_BODY_BYTES) {
+  if (Number.isFinite(contentLength) && contentLength > maxBytes) {
     const error = new Error('Request body too large');
     error.code = 'BODY_TOO_LARGE';
     throw error;
@@ -62,7 +68,7 @@ async function readJsonBody(req) {
   let size = 0;
   for await (const chunk of req) {
     size += chunk.byteLength;
-    if (size > MAX_JSON_BODY_BYTES) {
+    if (size > maxBytes) {
       const error = new Error('Request body too large');
       error.code = 'BODY_TOO_LARGE';
       throw error;
@@ -124,8 +130,53 @@ export function createTrustVerifyServer({
   kciAdapter,
   uiDir = DEFAULT_UI_DIR,
   fixturesDir = DEFAULT_FIXTURES_DIR,
+  batchDemoPath = DEFAULT_BATCH_DEMO_PATH,
+  frozenEvidencePath = DEFAULT_FROZEN_EVIDENCE_PATH,
 } = {}) {
   const auditService = createCitationAuditService({ kciAdapter: configuredAdapter(kciAdapter) });
+  const liveBatchService = createCitationBatchService({ auditService, evidenceMode: 'LIVE' });
+  let frozenBatchService = null;
+
+  // FROZEN_EVIDENCE replays observed evidence through the same audit engine; only when explicitly requested.
+  async function batchServiceFor(evidenceMode) {
+    if (evidenceMode === undefined || evidenceMode === 'LIVE') return liveBatchService;
+    if (evidenceMode !== 'FROZEN_EVIDENCE') throw new BatchRequestError('evidence_mode must be LIVE or FROZEN_EVIDENCE');
+    if (!frozenBatchService) {
+      const frozenAdapter = createFrozenEvidenceAdapter(JSON.parse(await readFile(frozenEvidencePath, 'utf8')));
+      frozenBatchService = createCitationBatchService({
+        auditService: createCitationAuditService({ kciAdapter: frozenAdapter }),
+        evidenceMode: 'FROZEN_EVIDENCE',
+        covers: citation => frozenAdapter.covers(citation),
+      });
+    }
+    return frozenBatchService;
+  }
+
+  // JSON POST routes. Batch routes only orchestrate; every verdict comes from auditService.
+  const postRoutes = {
+    '/api/audit/citation': {
+      maxBytes: MAX_JSON_BODY_BYTES,
+      invalidMessage: 'Invalid citation request',
+      failureMessage: 'Citation audit failed',
+      handle: body => auditService.auditCitation(body),
+    },
+    '/api/audit/citations': {
+      maxBytes: MAX_BATCH_BODY_BYTES,
+      invalidMessage: 'Invalid batch request',
+      failureMessage: 'Batch audit failed',
+      handle: async body => (await batchServiceFor(body?.evidence_mode)).auditBatch(body),
+    },
+    '/api/references/parse': {
+      maxBytes: MAX_BATCH_BODY_BYTES,
+      invalidMessage: 'Invalid reference text',
+      failureMessage: 'Reference parsing failed',
+      handle: body => {
+        if (!body || typeof body !== 'object' || Array.isArray(body)) throw new TypeError('Body must be an object');
+        const { rows, truncated } = parseReferenceList(body.text);
+        return { contract_version: 'trustverify-reference-parse-v1', count: rows.length, truncated, max_batch_size: MAX_BATCH_SIZE, rows };
+      },
+    },
+  };
 
   return createServer(async (req, res) => {
     let pathname;
@@ -142,7 +193,8 @@ export function createTrustVerifyServer({
       return;
     }
 
-    if (pathname === '/api/audit/citation') {
+    const postRoute = postRoutes[pathname];
+    if (postRoute) {
       if (req.method !== 'POST') {
         res.writeHead(405, { Allow: 'POST', 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('Method Not Allowed');
@@ -154,13 +206,12 @@ export function createTrustVerifyServer({
         return;
       }
       try {
-        const citation = await readJsonBody(req);
-        const result = await auditService.auditCitation(citation);
-        sendJson(res, 200, result);
+        const body = await readJsonBody(req, postRoute.maxBytes);
+        sendJson(res, 200, await postRoute.handle(body));
       } catch (error) {
         if (error?.code === 'BODY_TOO_LARGE') sendJson(res, 413, { error: 'Request body too large' });
-        else if (error?.code === 'INVALID_JSON' || error instanceof TypeError) sendJson(res, 400, { error: 'Invalid citation request' });
-        else sendJson(res, 500, { error: 'Citation audit failed' });
+        else if (error?.code === 'INVALID_JSON' || error instanceof TypeError || error instanceof BatchRequestError) sendJson(res, 400, { error: postRoute.invalidMessage });
+        else sendJson(res, 500, { error: postRoute.failureMessage });
       }
       return;
     }
@@ -173,6 +224,14 @@ export function createTrustVerifyServer({
 
     if (pathname === '/api/manifest') {
       await sendFile(res, join(fixturesDir, 'manifest.json'), 'application/json; charset=utf-8');
+      return;
+    }
+    if (pathname === '/api/references/example') {
+      try {
+        sendJson(res, 200, { is_demo: true, text: await readFile(batchDemoPath, 'utf8') });
+      } catch {
+        sendJson(res, 500, { error: 'Unable to load example references' });
+      }
       return;
     }
     if (pathname === '/api/draft') {

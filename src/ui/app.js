@@ -163,181 +163,13 @@ const TF_FINDINGS = {
   },
 };
 
-// Example Bibliography Text (6 citations representative of academic papers)
-const EXAMPLE_BIBLIOGRAPHY_TEXT = `[1] 문현철, "Computer Vision-based Basketball Player Training System", 2024, 10.9728/dcs.2024.25.3.595
-[2] 문현철, "Computer Vision-based Basketball Player Training System", 2023, 10.9728/dcs.2024.25.3.595
-[3] Vaswani, A., "Attention Is All You Need", 2017, 10.5555/3295222.3295349
-[4] Kim, S., "Synthetic Mixed Citation Title", 2024, 10.0000/synthetic-fixture
-[5] 박지훈, "딥러닝 기반 한국어 학술 논문 서지 분석", 2022
-[6] 이영수, "비정형 학술 텍스트의 서지 무결성 자동 검증 체계", 2023`;
-
-// Canonical Batch Fixtures for Instant & Deterministic Hackathon Demo
-const DEMO_BATCH_FIXTURES = [
-  {
-    contract_version: 'trustverify-citation-finding-v1',
-    kind: 'RESEARCH_FINDING',
-    finding_id: 'batch-finding-1-verified',
-    track: 'CITATION_INTEGRITY',
-    status: 'VERIFIED',
-    rule_id: 'REF-VERI-001',
-    rule_version: '1.0',
-    input: {
-      citation_id: 'batch-citation-1',
-      title: 'Computer Vision-based Basketball Player Training System',
-      authors: ['문현철'],
-      publication_year: '2024',
-      doi: '10.9728/dcs.2024.25.3.595',
-    },
-    evidence: [
-      {
-        evidence_id: 'batch-evidence-1',
-        evidence_type: 'KCI_RECORD',
-        source_system: 'KCI (한국연구재단 학술색인 Open API)',
-        source_record_id: 'ART003062835',
-        retrieved_at: '2026-09-30T00:00:00Z',
-        normalized_content_sha256: '2222222222222222222222222222222222222222222222222222222222222222',
-        data: {
-          title: 'Computer Vision-based Basketball Player Training System',
-          authors: ['문현철'],
-          publication_year: '2024',
-          doi: '10.9728/dcs.2024.25.3.595',
-        },
-      },
-    ],
-    field_comparisons: [
-      { field: 'title', label: '논문 제목', input_value: 'Computer Vision-based Basketball Player Training System', evidence_value: 'Computer Vision-based Basketball Player Training System', result: 'MATCH' },
-      { field: 'authors', label: '저자', input_value: '문현철', evidence_value: '문현철', result: 'MATCH' },
-      { field: 'publication_year', label: '출판연도', input_value: '2024', evidence_value: '2024', result: 'MATCH' },
-      { field: 'doi', label: 'DOI', input_value: '10.9728/dcs.2024.25.3.595', evidence_value: '10.9728/dcs.2024.25.3.595', result: 'MATCH' },
-    ],
-    reason: 'KCI 공식 레코드(ART003062835)와 4개 서지 필드(제목, 저자, 출판연도, DOI)가 완벽히 일치합니다.',
-    human_review_required: false,
-    human_review_badge: '원문 보존 확인',
-    human_review_callout: 'KCI 공식 서지정보와 직접 일치하므로 추가 조치가 필요하지 않습니다.',
-    verification_path: [
-      { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'ok', detail: '✓ 후보 레코드 발견' },
-      { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'ok', detail: '✓ ART003062835' },
-      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'ok', detail: '✓ 4대 서지필드 일치' },
-      { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
-      { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
-    ],
-  },
-  CANONICAL_KCI_DRIFT,
-  PRESET_NOT_FOUND,
-  {
-    contract_version: 'trustverify-citation-finding-v1',
-    kind: 'RESEARCH_FINDING',
-    finding_id: 'batch-finding-4-review',
-    track: 'CITATION_INTEGRITY',
-    status: 'REVIEW_REQUIRED',
-    rule_id: 'REF-ID-002',
-    rule_version: '1.0',
-    input: {
-      citation_id: 'batch-citation-4',
-      title: 'Synthetic Mixed Citation Title',
-      authors: ['Kim, S.'],
-      publication_year: '2024',
-      doi: '10.0000/synthetic-fixture',
-    },
-    evidence: [],
-    field_comparisons: [
-      { field: 'title', label: '논문 제목', input_value: 'Synthetic Mixed Citation Title', evidence_value: '유사 후보 3건 발견 (단일 식별 불가)', result: 'MISMATCH' },
-      { field: 'authors', label: '저자', input_value: 'Kim, S.', evidence_value: '(미확정)', result: 'MISMATCH' },
-      { field: 'publication_year', label: '출판연도', input_value: '2024', evidence_value: '2024', result: 'MATCH' },
-    ],
-    reason: '검색된 후보 레코드가 복수이며, 저자 및 식별자 정보가 불충분하여 단일 KCI 공식 레코드로 고정할 수 없습니다.',
-    human_review_required: true,
-    human_review_badge: '연구자 수동 확인 필요',
-    human_review_callout: 'KCI 내 검색된 복수 레코드 중 어느 논문을 의도한 인용인지 서지정보를 확인하세요.',
-    verification_path: [
-      { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'ok', detail: '✓ 복수 후보 3건' },
-      { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'warn', detail: '! 단일 식별자 고정 불가' },
-      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 대조 미실행' },
-      { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
-      { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
-    ],
-  },
-  {
-    contract_version: 'trustverify-citation-finding-v1',
-    kind: 'RESEARCH_FINDING',
-    finding_id: 'batch-finding-5-verified',
-    track: 'CITATION_INTEGRITY',
-    status: 'VERIFIED',
-    rule_id: 'REF-VERI-001',
-    rule_version: '1.0',
-    input: {
-      citation_id: 'batch-citation-5',
-      title: '딥러닝 기반 한국어 학술 논문 서지 분석',
-      authors: ['박지훈'],
-      publication_year: '2022',
-      doi: '',
-    },
-    evidence: [
-      {
-        evidence_id: 'batch-evidence-5',
-        evidence_type: 'KCI_RECORD',
-        source_system: 'KCI (한국연구재단 학술색인 Open API)',
-        source_record_id: 'ART002891234',
-        retrieved_at: '2026-09-30T00:00:00Z',
-        normalized_content_sha256: '4444444444444444444444444444444444444444444444444444444444444444',
-        data: {
-          title: '딥러닝 기반 한국어 학술 논문 서지 분석',
-          authors: ['박지훈'],
-          publication_year: '2022',
-        },
-      },
-    ],
-    field_comparisons: [
-      { field: 'title', label: '논문 제목', input_value: '딥러닝 기반 한국어 학술 논문 서지 분석', evidence_value: '딥러닝 기반 한국어 학술 논문 서지 분석', result: 'MATCH' },
-      { field: 'authors', label: '저자', input_value: '박지훈', evidence_value: '박지훈', result: 'MATCH' },
-      { field: 'publication_year', label: '출판연도', input_value: '2022', evidence_value: '2022', result: 'MATCH' },
-    ],
-    reason: 'KCI 등재학술지 공식 레코드(ART002891234)와 3개 서지 필드(제목, 저자, 출판연도)가 일치합니다.',
-    human_review_required: false,
-    human_review_badge: '원문 보존 확인',
-    human_review_callout: 'KCI 등재학술지 서지정보와 확인되었습니다.',
-    verification_path: [
-      { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'ok', detail: '✓ 단일 후보 발견' },
-      { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'ok', detail: '✓ ART002891234' },
-      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year', status: 'ok', detail: '✓ 서지필드 일치' },
-      { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
-      { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
-    ],
-  },
-  {
-    contract_version: 'trustverify-citation-finding-v1',
-    kind: 'RESEARCH_FINDING',
-    finding_id: 'batch-finding-6-review',
-    track: 'CITATION_INTEGRITY',
-    status: 'REVIEW_REQUIRED',
-    rule_id: 'REF-ID-002',
-    rule_version: '1.0',
-    input: {
-      citation_id: 'batch-citation-6',
-      title: '비정형 학술 텍스트의 서지 무결성 자동 검증 체계',
-      authors: ['이영수'],
-      publication_year: '2023',
-      doi: '',
-    },
-    evidence: [],
-    field_comparisons: [
-      { field: 'title', label: '논문 제목', input_value: '비정형 학술 텍스트의 서지 무결성 자동 검증 체계', evidence_value: '비정형 텍스트 기반 학술 서지 검증 체계 연구', result: 'MISMATCH' },
-      { field: 'authors', label: '저자', input_value: '이영수', evidence_value: '이영수, 박민우', result: 'MISMATCH' },
-      { field: 'publication_year', label: '출판연도', input_value: '2023', evidence_value: '2023', result: 'MATCH' },
-    ],
-    reason: '검색 후보 레코드와 제목 유사도(82%) 미달 및 공저자 정보 불일치로 연구자 확인이 필요합니다.',
-    human_review_required: true,
-    human_review_badge: '제목 및 공저자 확인',
-    human_review_callout: 'KCI 등재 논문 제목 및 공저자 표기를 다시 확인하십시오.',
-    verification_path: [
-      { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'ok', detail: '✓ 유사 후보 발견' },
-      { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'warn', detail: '! 제목 유사도 미달' },
-      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year', status: 'skip', detail: '- 대조 미완료' },
-      { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
-      { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
-    ],
-  },
-];
+// Fallback example (same real KCI-based list as GET /api/references/example; used only if that request fails)
+const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595
+2. 대운해 (2024). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385
+3. 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267
+4. 대운해 (2023). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385
+5. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.596
+6. 최승재 (2008). 금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여. 증권법연구, 9(2), 227-270.`;
 
 // UI State
 const state = {
@@ -349,6 +181,7 @@ const state = {
   // Batch Audit State
   parsedCitations: [],
   batchFindings: [],
+  batchSummary: null,
   batchFilter: 'ALL',
   batchSearchQuery: '',
   selectedBatchIndex: 1, // Default selected index (0-indexed: item 1 is METADATA_DRIFT)
@@ -466,7 +299,7 @@ function renderKciResult(finding, { isFrozenSnapshot = false, targetElement = el
   const isVerified = status === 'VERIFIED';
   const tone = isDrift ? 'drift' : (isVerified ? 'verified' : (isNotFound ? 'notfound' : (isSystem ? 'system' : 'review')));
 
-  const recordId = finding.evidence?.[0]?.source_record_id || (isDrift ? 'ART003062835' : null);
+  const recordId = finding.evidence?.[0]?.source_record_id || null;
   const kciUrl = recordId ? `https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=${encodeURIComponent(recordId)}` : null;
 
   const path = finding.verification_path || CANONICAL_KCI_DRIFT.verification_path;
@@ -481,7 +314,9 @@ function renderKciResult(finding, { isFrozenSnapshot = false, targetElement = el
             ${isFrozenSnapshot ? '📦 Frozen Evidence Snapshot (OAI-PMH 고정본)' : (isDrift ? '정보 불일치 (METADATA_DRIFT)' : (isNotFound ? 'KCI 미발견 (NOT_FOUND_IN_KCI)' : (isSystem ? '시스템 연결 오류 (SYSTEM_FAILURE)' : escapeHtml(status))))}
           </span>
         </div>
-        <span class="rule-tag">규칙: ${escapeHtml(finding.rule_id || finding.operation || 'REF-META-002')} (v${escapeHtml(finding.rule_version || '1.0')})</span>
+        <span class="rule-tag">${finding.rule_id
+          ? `규칙: ${escapeHtml(finding.rule_id)} (v${escapeHtml(finding.rule_version || '1.0')})`
+          : (finding.operation ? `실패 단계: ${escapeHtml(finding.operation)}` : '규칙 미적용 (판정 아님)')}</span>
       </div>
       <p class="status-summary-text">${escapeHtml(finding.reason || '')}</p>
     </div>`;
@@ -494,13 +329,17 @@ function renderKciResult(finding, { isFrozenSnapshot = false, targetElement = el
         <div class="field-rows-list">
           ${finding.field_comparisons.map(row => {
             const isMismatch = row.result === 'MISMATCH';
+            const isMatch = row.result === 'MATCH';
+            // Only MATCH is shown as 일치; UNKNOWN or any other result is never presented as a match.
             return `
-              <div class="compare-row ${isMismatch ? 'is-mismatch' : 'is-match'}">
-                <span class="col-field">${escapeHtml(row.label || row.field)}</span>
+              <div class="compare-row ${isMismatch || !isMatch ? 'is-mismatch' : 'is-match'}">
+                <span class="col-field">${escapeHtml(row.label || BATCH_FIELD_LABELS[row.field] || row.field)}</span>
                 <div class="col-result">
                   ${isMismatch
-                    ? `<span class="val-pill mismatch">${escapeHtml(row.input_value)} <span class="arr">→</span> ${escapeHtml(row.evidence_value)} (MISMATCH)</span>`
-                    : `<span class="val-pill match"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 일치 (${escapeHtml(row.input_value)})</span>`}
+                    ? `<span class="val-pill mismatch">${escapeHtml(formatBatchValue(row.input_value))} <span class="arr">→</span> ${escapeHtml(formatBatchValue(row.evidence_value))} (MISMATCH)</span>`
+                    : isMatch
+                      ? `<span class="val-pill match"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 일치 (${escapeHtml(formatBatchValue(row.input_value))})</span>`
+                      : `<span class="val-pill mismatch">${escapeHtml(formatBatchValue(row.input_value))} <span class="arr">·</span> KCI: ${escapeHtml(formatBatchValue(row.evidence_value))} (${escapeHtml(row.result)} · 확인 불가)</span>`}
                 </div>
               </div>`;
           }).join('')}
@@ -602,7 +441,7 @@ function renderKciResult(finding, { isFrozenSnapshot = false, targetElement = el
       </summary>
       <div class="accordion-content">
         <dl class="tech-kv-grid">
-          <div><dt>rule_id</dt><dd>${escapeHtml(finding.rule_id || 'REF-META-002')}</dd></div>
+          <div><dt>rule_id</dt><dd>${escapeHtml(finding.rule_id || '(없음)')}</dd></div>
           <div><dt>rule_version</dt><dd>${escapeHtml(finding.rule_version || '1.0')}</dd></div>
           <div><dt>source_system</dt><dd>${isFrozenSnapshot ? 'KCI OAI-PMH Frozen Snapshot' : 'NRF KCI Open API'}</dd></div>
           <div><dt>source_record_id</dt><dd>${escapeHtml(recordId || '(없음)')}</dd></div>
@@ -791,15 +630,21 @@ async function handleAnalyzeBatch() {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.rows) && data.rows.length) {
-        state.parsedCitations = data.rows.map((r, i) => ({
-          index: r.index || i + 1,
-          raw: r.raw || '',
-          title: r.citation?.title || '',
-          authors: Array.isArray(r.citation?.authors) ? r.citation.authors : (r.citation?.authors ? [r.citation.authors] : []),
-          year: r.citation?.publication_year || '',
-          doi: r.citation?.doi || '',
-          parseStatus: r.parse_status || 'READY',
-        }));
+        // Backend parser rows are flat (title, authors, publication_year, doi); r.citation kept for compatibility.
+        state.parsedCitations = data.rows.map((r, i) => {
+          const fields = r.citation ?? r;
+          return {
+            index: r.index || i + 1,
+            rowId: r.row_id || `ref-${i + 1}`,
+            raw: r.raw || '',
+            title: fields.title || '',
+            authors: Array.isArray(fields.authors) ? fields.authors : (fields.authors ? [fields.authors] : []),
+            year: fields.publication_year || '',
+            doi: fields.doi || '',
+            parseStatus: r.parse_status || 'UNPARSED',
+            parseIssues: Array.isArray(r.issues) ? r.issues : [],
+          };
+        });
         if (el.batchParseCard) el.batchParseCard.hidden = false;
         if (el.batchResultsWrapper) el.batchResultsWrapper.hidden = true;
         if (el.batchProgressCard) el.batchProgressCard.hidden = true;
@@ -840,9 +685,9 @@ function renderParsePreviewTable() {
     `;
   }
 
-  const validCount = readyCount + reviewCount;
+  // Only READY rows are sent to KCI; NEEDS_REVIEW / UNPARSED rows are listed but not audited.
   if (el.btnExecuteBatchAudit) {
-    el.btnExecuteBatchAudit.innerHTML = `<span class="btn-icon">⚡</span> KCI에서 ${validCount}개 검증 실행`;
+    el.btnExecuteBatchAudit.innerHTML = `<span class="btn-icon">⚡</span> KCI에서 ${readyCount}개 검증 실행`;
   }
 
   if (!el.parseTableBody) return;
@@ -928,15 +773,122 @@ function updateParsedCitation(index, field, value) {
     `;
   }
   if (el.btnExecuteBatchAudit) {
-    el.btnExecuteBatchAudit.innerHTML = `<span class="btn-icon">⚡</span> KCI에서 ${readyCount + reviewCount}개 검증 실행`;
+    el.btnExecuteBatchAudit.innerHTML = `<span class="btn-icon">⚡</span> KCI에서 ${readyCount}개 검증 실행`;
   }
+}
+
+const BATCH_FIELD_LABELS = { title: '제목', authors: '저자', publication_year: '연도', doi: 'DOI' };
+const fieldList = comparisons => comparisons.map(c => BATCH_FIELD_LABELS[c.field] || c.field).join(', ');
+const OPTIONAL_STAGES = [
+  { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 미실행 (선택 단계)' },
+  { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 미실행 (선택 단계)' },
+];
+
+// Verification path built only from facts in the returned finding (which steps ran, which fields differed).
+function deriveVerificationPath(f) {
+  const step = (n, api, status, detail) => ({ step: n, is_optional: false, name: ['', '1. 후보 탐색', '2. 실제 레코드 고정', '3. 필드 정합성 검증'][n], api, status, detail });
+  const s1 = (status, detail) => step(1, 'KCI articleSearch', status, detail);
+  const s2 = (status, detail) => step(2, 'KCI articleDetail', status, detail);
+  const s3 = (status, detail) => step(3, 'Title · Author · Year · DOI', status, detail);
+  if (f.kind === 'SYSTEM_FAILURE') {
+    const atDetail = f.operation === 'articleDetail';
+    return [
+      atDetail ? s1('ok', '✓ 후보 레코드 발견') : s1('fail', `✕ ${f.system_state}`),
+      atDetail ? s2('fail', `✕ ${f.system_state}`) : s2('skip', '- 중단'),
+      s3('skip', '- 판정 보류 (인용 결함 아님)'),
+      ...OPTIONAL_STAGES,
+    ];
+  }
+  if (f.status === 'NOT_FOUND_IN_KCI') {
+    return [s1('notfound', '! 후보 레코드 0건 (No Data)'), s2('skip', '- 대상 식별자 부재'), s3('skip', '- 대조 미실행'), ...OPTIONAL_STAGES];
+  }
+  const comparisons = f.field_comparisons || [];
+  if (!comparisons.length) {
+    const candidates = (f.evidence || []).length;
+    return [
+      s1('warn', `! 후보 ${candidates}건 · 단일 레코드 식별 불가`),
+      s2('skip', '- 레코드 미고정 (보수적 식별 규칙)'),
+      s3('skip', '- 대조 미실행'),
+      ...OPTIONAL_STAGES,
+    ];
+  }
+  const recordId = f.evidence?.[0]?.source_record_id;
+  const mismatched = comparisons.filter(c => c.result === 'MISMATCH');
+  const unknown = comparisons.filter(c => c.result === 'UNKNOWN');
+  const s3Result = mismatched.length
+    ? s3('warn', `! ${fieldList(mismatched)} 불일치`)
+    : unknown.length ? s3('warn', `? ${fieldList(unknown)} 확인 불가`) : s3('ok', `✓ 입력한 ${comparisons.length}개 필드 일치`);
+  return [s1('ok', '✓ 후보 레코드 발견'), s2('ok', `✓ ${recordId}`), s3Result, ...OPTIONAL_STAGES];
+}
+
+// Display text only; human_review_required itself is left exactly as the engine returned it.
+function describeHumanReview(f) {
+  if (f.kind === 'SYSTEM_FAILURE') return ['재시도 필요', '시스템 문제로 KCI 조회를 완료하지 못했습니다. 인용 결함이 아니며 어떤 판정도 내리지 않았습니다.'];
+  const comparisons = f.field_comparisons || [];
+  const mismatched = comparisons.filter(c => c.result === 'MISMATCH');
+  const unknown = comparisons.filter(c => c.result === 'UNKNOWN');
+  if (f.status === 'VERIFIED') return ['일치 확인', `입력한 ${comparisons.length}개 필드가 KCI 레코드와 일치합니다.`];
+  if (f.status === 'METADATA_DRIFT') return ['서지정보 확인 권장', `KCI 레코드와 다른 필드: ${fieldList(mismatched)}. 원문 서지정보를 확인하세요.`];
+  if (f.status === 'NOT_FOUND_IN_KCI') return ['색인 범위 확인 권장', 'KCI 색인에서 찾지 못했습니다. 가짜 논문이라는 뜻은 아닙니다.'];
+  if (unknown.length) return ['연구자 검토 필요', `${fieldList(unknown)} 항목은 결정적으로 비교할 수 없어 사람의 확인이 필요합니다.`];
+  return ['연구자 검토 필요', 'KCI 후보를 하나의 레코드로 확정할 수 없어 사람의 확인이 필요합니다.'];
+}
+
+// Rows that produced no finding become labeled notices: no rule, no verdict, never a KCI status.
+const BATCH_NOTICES = {
+  UNPARSED: { kind: 'PARSER_NOTICE', status: 'UNPARSED_CITATION', reason: '구문 분석 단계에서 제목을 식별하지 못해 KCI 조회 대상에서 제외했습니다. NOT_FOUND_IN_KCI(색인 미발견)가 아닙니다.', badge: '서지형식 재입력 권장', path: ['✕ 제목 추출 실패', '- 미발송'] },
+  NEEDS_REVIEW: { kind: 'PARSER_NOTICE', status: 'PARSE_NEEDS_REVIEW', reason: '구문 분석 결과가 모호하여(예: 저자 이니셜, 연도 후보 다수) KCI에 보내지 않았습니다. 표에서 필드를 확인·수정한 뒤 다시 실행하세요.', badge: '추출 필드 확인 필요', path: ['! 추출 필드 확인 필요', '- 미발송'] },
+  INVALID_INPUT: { kind: 'PARSER_NOTICE', status: 'INPUT_INVALID', reason: '입력값이 단일 인용 검증 형식을 통과하지 못했습니다. KCI 장애가 아니며 인용 판정도 아닙니다.', badge: '입력 수정 필요', path: ['✕ 입력 형식 오류', '- 미발송'] },
+  NO_FROZEN_EVIDENCE: { kind: 'BATCH_NOTICE', status: 'NO_FROZEN_EVIDENCE', reason: 'FROZEN EVIDENCE 모드에는 이 인용에 대해 저장된 KCI 근거가 없어 결과를 만들지 않았습니다. LIVE KCI로 실행하세요.', badge: 'LIVE 실행 필요', path: ['- 저장된 근거 없음', '- 미실행'] },
+  ROW_ERROR: { kind: 'BATCH_NOTICE', status: 'ROW_ERROR', reason: '이 행을 처리하는 중 서버 내부 오류가 발생했습니다. 다른 행의 결과에는 영향이 없습니다.', badge: '다시 실행 필요', path: ['✕ 처리 오류', '- 중단'] },
+};
+
+function batchNotice(item, noticeKey) {
+  const notice = BATCH_NOTICES[noticeKey];
+  return {
+    kind: notice.kind,
+    status: notice.status,
+    notice_id: `batch-${noticeKey.toLowerCase()}-${item.index}`,
+    rule_id: null,
+    batch_item_index: item.index,
+    input: { ...item.input, raw: state.parsedCitations[item.index - 1]?.raw },
+    evidence: [],
+    field_comparisons: [],
+    reason: notice.reason,
+    human_review_badge: notice.badge,
+    human_review_callout: notice.reason,
+    verification_path: [
+      { step: 1, is_optional: false, name: '1. 서지 구문분석 / 입력 확인', api: 'Reference Parser', status: 'fail', detail: notice.path[0] },
+      { step: 2, is_optional: false, name: '2. 후보 탐색', api: 'KCI articleSearch', status: 'skip', detail: notice.path[1] },
+      { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 대조 미실행' },
+      ...OPTIONAL_STAGES,
+    ],
+  };
+}
+
+function toBatchFinding(item, evidenceMode) {
+  if (item.outcome === 'AUDITED' && item.finding) {
+    const finding = JSON.parse(JSON.stringify(item.finding));
+    const [badge, callout] = describeHumanReview(finding);
+    finding.batch_item_index = item.index;
+    finding.evidence_mode = evidenceMode;
+    finding.verification_path = deriveVerificationPath(finding);
+    finding.human_review_badge = badge;
+    finding.human_review_callout = callout;
+    return finding;
+  }
+  if (item.outcome === 'NOT_AUDITED') return batchNotice(item, item.parse_status === 'UNPARSED' ? 'UNPARSED' : 'NEEDS_REVIEW');
+  if (item.outcome === 'NO_FROZEN_EVIDENCE') return batchNotice(item, 'NO_FROZEN_EVIDENCE');
+  if (item.outcome === 'INVALID_INPUT') return batchNotice(item, 'INVALID_INPUT');
+  return batchNotice(item, 'ROW_ERROR');
 }
 
 async function executeBatchAudit() {
   const items = state.parsedCitations;
   if (!items.length) return;
 
-  const execMode = el.radioDemoKci?.checked ? 'DEMO' : 'LIVE';
+  // DEMO = FROZEN EVIDENCE: live-observed KCI evidence replayed through the same audit engine, labeled as such.
+  const execMode = el.radioDemoKci?.checked ? 'FROZEN_EVIDENCE' : 'LIVE';
   state.batchExecMode = execMode;
   state.batchSystemErrorCount = 0;
   state.batchFindings = [];
@@ -945,137 +897,48 @@ async function executeBatchAudit() {
   if (el.batchProgressCard) el.batchProgressCard.hidden = false;
   if (el.batchResultsWrapper) el.batchResultsWrapper.hidden = true;
 
-  const total = items.length;
-
-  for (let i = 0; i < total; i++) {
-    const item = items[i];
-    if (el.progressCountText) {
-      el.progressCountText.textContent = `KCI 검증 중 ${i + 1} / ${total} (${item.title.slice(0, 24)}...)`;
-    }
-    if (el.progressFill) {
-      el.progressFill.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
-    }
-
-    if (item.parseStatus === 'UNPARSED') {
-      // Principle: UNPARSED must never be treated as NOT_FOUND_IN_KCI
-      const unparsedFinding = {
-        contract_version: 'trustverify-citation-finding-v1',
-        kind: 'PARSER_NOTICE',
-        finding_id: `batch-unparsed-${i + 1}`,
-        track: 'CITATION_INTEGRITY',
-        status: 'UNPARSED_CITATION',
-        rule_id: 'PARSE-UNPARSED',
-        rule_version: '1.0',
-        input: {
-          citation_id: `batch-citation-${i + 1}`,
-          title: item.title || '(제목 미추출)',
-          authors: item.authors,
-          publication_year: item.year,
-          doi: item.doi,
-          raw: item.raw,
-        },
-        evidence: [],
-        field_comparisons: [],
-        reason: '구문 분석 단계에서 필수 서지정보(제목)가 식별되지 않았습니다. KCI 조회 대상에서 제외되었으며, NOT_FOUND_IN_KCI(색인 미발견)가 아닙니다.',
-        human_review_required: true,
-        human_review_badge: '서지형식 재입력 권장',
-        human_review_callout: '참고문헌 서지형식이 비표준적이어서 제목을 추출하지 못했습니다. 수동으로 서지정보를 입력하여 검증하세요.',
-        verification_path: [
-          { step: 1, is_optional: false, name: '1. 서지 구문분석', api: 'Local Parser', status: 'fail', detail: '✕ 제목 추출 실패' },
-          { step: 2, is_optional: false, name: '2. 후보 탐색', api: 'KCI articleSearch', status: 'skip', detail: '- 미발송 (오검색 방지)' },
-          { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 대조 미실행' },
-          { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 미실행' },
-          { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 미실행' },
-        ],
-      };
-      state.batchFindings.push(unparsedFinding);
-      continue;
-    }
-
-    if (execMode === 'DEMO') {
-      // Simulate slight responsive feel
-      await new Promise(r => setTimeout(r, 120));
-      const demoFinding = DEMO_BATCH_FIXTURES[i % DEMO_BATCH_FIXTURES.length];
-      const cloned = JSON.parse(JSON.stringify(demoFinding));
-      cloned.batch_item_index = i + 1;
-      cloned.input = {
-        citation_id: `batch-citation-${i + 1}`,
-        title: item.title,
-        authors: item.authors,
-        publication_year: item.year,
-        doi: item.doi,
-      };
-      state.batchFindings.push(cloned);
-    } else {
-      // LIVE KCI Open API Call
-      try {
-        const payload = { title: item.title };
-        if (item.authors.length) payload.authors = item.authors;
-        if (item.year) payload.publication_year = item.year;
-        if (item.doi) payload.doi = item.doi;
-
-        const res = await fetch('/api/audit/citation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const result = await res.json();
-
-        if (!res.ok) {
-          throw new Error(result.error || `HTTP ${res.status}`);
-        }
-
-        const isDrift = result.status === 'METADATA_DRIFT';
-        const isVerified = result.status === 'VERIFIED';
-        const isNotFound = result.status === 'NOT_FOUND_IN_KCI';
-        const recordId = result.evidence?.[0]?.source_record_id;
-
-        result.human_review_badge = isDrift ? '서지정보 확인 권장' : (isVerified ? '원문 보존 확인' : (isNotFound ? '색인 범위 확인 권장' : '연구자 검토 필요'));
-        result.human_review_callout = isDrift
-          ? 'KCI 공식 레코드와 출판연도가 다릅니다. 출판본과 프리프린트의 차이인지 확인하세요.'
-          : (isVerified ? 'KCI 공식 서지정보와 직접 일치합니다.' : (isNotFound ? 'KCI에서 미발견되었습니다. 해외 논문은 Crossref 독립 DOI를 교차확인하세요.' : 'KCI 근거를 직접 확인하세요.'));
-
-        result.verification_path = [
-          { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: isNotFound ? 'notfound' : 'ok', detail: isNotFound ? '! 후보 레코드 0건 (No Data)' : `✓ 후보 레코드 발견 (${result.evidence?.length || 1}건)` },
-          { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: recordId ? 'ok' : 'skip', detail: recordId ? `✓ ${recordId}` : '- 대상 식별자 부재' },
-          { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: isDrift ? 'warn' : (isVerified ? 'ok' : 'skip'), detail: isDrift ? '! 서지 불일치' : (isVerified ? '✓ 4대 서지필드 일치' : '- 대조 미실행') },
-          { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 이번 판정에는 미사용' },
-          { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 이번 판정에는 불필요' },
-        ];
-
-        result.batch_item_index = i + 1;
-        state.batchFindings.push(result);
-      } catch (err) {
-        state.batchSystemErrorCount++;
-        const sysFailureFinding = {
-          contract_version: 'trustverify-system-failure-v1',
-          kind: 'SYSTEM_FAILURE',
-          failure_id: `batch-sysfail-${i + 1}`,
-          system_state: 'KCI_UNAVAILABLE',
-          operation: 'articleSearch',
-          batch_item_index: i + 1,
-          input: {
-            citation_id: `batch-citation-${i + 1}`,
-            title: item.title,
-            authors: item.authors,
-            publication_year: item.year,
-            doi: item.doi,
-          },
-          reason: `조회 실패: ${err.message}. KCI_UNAVAILABLE 장애 격리 상태입니다 (인용 결함 아님).`,
-          retry_recommended: true,
-          research_finding_emitted: false,
-          verification_path: [
-            { step: 1, is_optional: false, name: '1. 후보 탐색', api: 'KCI articleSearch', status: 'fail', detail: '✕ 통신 장애 (503)' },
-            { step: 2, is_optional: false, name: '2. 실제 레코드 고정', api: 'KCI articleDetail', status: 'skip', detail: '- 중단' },
-            { step: 3, is_optional: false, name: '3. 필드 정합성 검증', api: 'Title · Author · Year · DOI', status: 'skip', detail: '- 판정 보류' },
-            { step: 4, is_optional: true, name: '4. 참고문헌 근거', api: 'Reference Evidence', status: 'unexecuted', detail: '○ 미실행' },
-            { step: 5, is_optional: true, name: '5. 외부 교차확인', api: 'External Corroboration', status: 'unexecuted', detail: '○ 미실행' },
-          ],
-        };
-        state.batchFindings.push(sysFailureFinding);
-      }
-    }
+  const readyCount = items.filter(c => c.parseStatus === 'READY').length;
+  if (el.progressCountText) {
+    el.progressCountText.textContent = `${execMode === 'LIVE' ? 'LIVE KCI' : 'FROZEN EVIDENCE'} 검증 중 · READY ${readyCount}건 순차 처리 (전체 ${items.length}행)`;
   }
+  if (el.progressFill) el.progressFill.style.width = '60%';
+
+  let data;
+  try {
+    const res = await fetch('/api/audit/citations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        evidence_mode: execMode,
+        references: items.map(c => ({
+          row_id: c.rowId || `ref-${c.index}`,
+          parse_status: c.parseStatus,
+          title: c.title,
+          authors: c.authors,
+          publication_year: c.year,
+          doi: c.doi,
+        })),
+      }),
+    });
+    data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const error = new Error(data.error || `HTTP ${res.status}`);
+      error.httpStatus = res.status;
+      throw error;
+    }
+  } catch (err) {
+    // A rejected request (e.g. more than 20 rows) is not a KCI outage and produces no citation results.
+    if (el.batchProgressCard) el.batchProgressCard.hidden = true;
+    if (el.batchParseCard) el.batchParseCard.hidden = false;
+    const label = err.httpStatus && err.httpStatus < 500 ? '요청 형식 오류' : '서버 처리 오류';
+    alert(`${label}: ${err.message}\nKCI 장애로 분류하지 않았으며, 인용 판정도 생성되지 않았습니다. (한 번에 최대 20개)`);
+    return;
+  }
+
+  if (el.progressFill) el.progressFill.style.width = '100%';
+  state.batchFindings = data.items.map(item => toBatchFinding(item, data.evidence_mode));
+  state.batchSummary = data.summary;
+  state.batchSystemErrorCount = data.summary.system_failure;
 
   // Finish batch execution
   if (el.batchProgressCard) el.batchProgressCard.hidden = true;
@@ -1092,26 +955,36 @@ async function executeBatchAudit() {
 }
 
 function renderBatchSummary() {
-  const findings = state.batchFindings;
-  const total = findings.length;
+  // Counts come from the backend batch summary, which is derived from the returned row results only.
+  const summary = state.batchSummary;
+  if (!summary) return;
+  const total = summary.total;
+  const verified = summary.status_counts.VERIFIED;
+  const drift = summary.status_counts.METADATA_DRIFT;
+  const review = summary.status_counts.REVIEW_REQUIRED;
+  const notfound = summary.status_counts.NOT_FOUND_IN_KCI;
+  const sysErrors = summary.system_failure;
+  const notAudited = summary.not_audited.UNPARSED + summary.not_audited.NEEDS_REVIEW + summary.not_audited.NO_FROZEN_EVIDENCE;
+  const audited = total - notAudited - summary.row_errors;
+  const modeLabel = state.batchExecMode === 'FROZEN_EVIDENCE' ? 'FROZEN EVIDENCE 재현' : 'LIVE KCI';
 
-  const verified = findings.filter(f => f.status === 'VERIFIED').length;
-  const drift = findings.filter(f => f.status === 'METADATA_DRIFT').length;
-  const review = findings.filter(f => f.status === 'REVIEW_REQUIRED' || f.status === 'UNPARSED_CITATION').length;
-  const notfound = findings.filter(f => f.status === 'NOT_FOUND_IN_KCI').length;
-  const sysErrors = findings.filter(f => f.kind === 'SYSTEM_FAILURE').length;
-
-  if (el.summaryTotalTitle) el.summaryTotalTitle.textContent = `총 ${total}개 참고문헌 검증 완료`;
+  if (el.summaryTotalTitle) el.summaryTotalTitle.textContent = `총 ${total}개 참고문헌 · ${modeLabel} 조회 ${audited}건`;
   if (el.countVerified) el.countVerified.textContent = String(verified);
   if (el.countDrift) el.countDrift.textContent = String(drift);
   if (el.countReview) el.countReview.textContent = String(review);
   if (el.countNotFound) el.countNotFound.textContent = String(notfound);
 
   if (el.sysStatusText) {
+    const notes = [];
+    if (summary.not_audited.UNPARSED) notes.push(`구문 미해석 ${summary.not_audited.UNPARSED}건`);
+    if (summary.not_audited.NEEDS_REVIEW) notes.push(`추출 필드 확인 필요 ${summary.not_audited.NEEDS_REVIEW}건`);
+    if (summary.not_audited.NO_FROZEN_EVIDENCE) notes.push(`저장 근거 없음 ${summary.not_audited.NO_FROZEN_EVIDENCE}건`);
+    if (summary.row_errors) notes.push(`입력·처리 오류 ${summary.row_errors}건`);
+    const notAuditedText = notes.length ? ` · KCI 미조회: ${escapeHtml(notes.join(', '))} (인용 판정 아님)` : '';
     if (sysErrors > 0) {
-      el.sysStatusText.innerHTML = `<span class="sys-error-highlight">시스템 연결 오류 ${sysErrors}건</span> (KCI API 장애 격리됨 · 인용 결함과 분리)`;
+      el.sysStatusText.innerHTML = `<span class="sys-error-highlight">KCI 시스템 오류 ${sysErrors}건</span> (인용 결함과 분리)${notAuditedText}`;
     } else {
-      el.sysStatusText.textContent = '시스템 오류 0건 (NRF KCI API 정상 통신)';
+      el.sysStatusText.innerHTML = `KCI 시스템 오류 0건 · ${escapeHtml(modeLabel)}${notAuditedText}`;
     }
   }
 
@@ -1124,20 +997,31 @@ function renderBatchSummary() {
   if (el.filterCountSystem) el.filterCountSystem.textContent = String(sysErrors);
 }
 
-function getProblemFieldLabel(f) {
-  if (f.kind === 'SYSTEM_FAILURE') return '시스템 연결 장애';
-  if (f.status === 'VERIFIED') return '-';
-  if (f.status === 'NOT_FOUND_IN_KCI') return '0건 (No Data)';
-  if (f.status === 'UNPARSED_CITATION') return '제목 미추출';
-
-  if (f.field_comparisons?.length) {
-    const mismatches = f.field_comparisons.filter(fc => fc.result === 'MISMATCH');
-    if (mismatches.length) {
-      return mismatches.map(fc => `${fc.label || fc.field}: ${fc.input_value} → ${fc.evidence_value}`).join(' · ');
-    }
+function formatBatchValue(value) {
+  if (value === null || value === undefined || value === '') return '(없음)';
+  if (Array.isArray(value)) return value.map(formatBatchValue).join(', ');
+  if (typeof value === 'object') {
+    if ('doi_normalized' in value || 'doi_raw' in value) return value.doi_normalized || value.doi_raw || '(없음)';
+    if ('name' in value) return value.english_name ? `${value.name} (${value.english_name})` : value.name;
+    return JSON.stringify(value);
   }
-  if (f.status === 'METADATA_DRIFT') return '연도/서지 불일치';
-  if (f.status === 'REVIEW_REQUIRED') return '후보 다수 / 유사도 미달';
+  return String(value);
+}
+
+function getProblemFieldLabel(f) {
+  if (f.kind === 'SYSTEM_FAILURE') return `KCI 시스템 오류 (${f.system_state})`;
+  if (f.kind === 'PARSER_NOTICE' || f.kind === 'BATCH_NOTICE') return f.human_review_badge || '-';
+  if (f.status === 'VERIFIED') return '-';
+  if (f.status === 'NOT_FOUND_IN_KCI') return 'KCI 0건 (No Data)';
+
+  const comparisons = f.field_comparisons || [];
+  const mismatches = comparisons.filter(fc => fc.result === 'MISMATCH');
+  if (mismatches.length) {
+    return mismatches.map(fc => `${BATCH_FIELD_LABELS[fc.field] || fc.field}: ${formatBatchValue(fc.input_value)} → ${formatBatchValue(fc.evidence_value)}`).join(' · ');
+  }
+  const unknown = comparisons.filter(fc => fc.result === 'UNKNOWN');
+  if (unknown.length) return `${fieldList(unknown)} 확인 불가`;
+  if (f.status === 'REVIEW_REQUIRED') return '단일 KCI 레코드로 식별되지 않음';
   return '-';
 }
 
@@ -1160,7 +1044,7 @@ function renderBatchResultsTable() {
     if (filter === 'SYSTEM_FAILURE') {
       if (f.kind !== 'SYSTEM_FAILURE') return false;
     } else if (filter === 'REVIEW_REQUIRED') {
-      if (f.status !== 'REVIEW_REQUIRED' && f.status !== 'UNPARSED_CITATION') return false;
+      if (f.status !== 'REVIEW_REQUIRED') return false;
     } else if (filter !== 'ALL') {
       if (f.status !== filter) return false;
     }
@@ -1208,8 +1092,12 @@ function renderBatchResultsTable() {
     else if (status === 'METADATA_DRIFT') statusDisplay = 'METADATA_DRIFT';
     else if (status === 'REVIEW_REQUIRED') statusDisplay = 'REVIEW_REQUIRED';
     else if (status === 'NOT_FOUND_IN_KCI') statusDisplay = 'NOT_FOUND';
-    else if (status === 'SYSTEM_FAILURE') statusDisplay = 'KCI_UNAVAILABLE';
+    else if (status === 'SYSTEM_FAILURE') statusDisplay = escapeHtml(f.system_state);
     else if (status === 'UNPARSED_CITATION') statusDisplay = 'UNPARSED';
+    else if (status === 'PARSE_NEEDS_REVIEW') statusDisplay = 'NEEDS_REVIEW (미조회)';
+    else if (status === 'INPUT_INVALID') statusDisplay = 'INPUT_INVALID (미조회)';
+    else if (status === 'NO_FROZEN_EVIDENCE') statusDisplay = 'NO_FROZEN_EVIDENCE';
+    else if (status === 'ROW_ERROR') statusDisplay = 'ROW_ERROR';
 
     return `
       <tr class="result-row ${isSelected ? 'is-selected' : ''}" data-index="${originalIndex}">
@@ -1482,6 +1370,7 @@ function init() {
     if (el.batchProgressCard) el.batchProgressCard.hidden = true;
     state.parsedCitations = [];
     state.batchFindings = [];
+    state.batchSummary = null;
   });
 
   // Batch Step 2: Execute Audit

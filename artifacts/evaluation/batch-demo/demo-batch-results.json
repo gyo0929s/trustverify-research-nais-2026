@@ -1,0 +1,619 @@
+{
+  "evaluation_id": "KCI-BATCH-DEMO-6",
+  "observed_on": "2026-10-01",
+  "execution_mode": "LIVE (observed), frozen for FROZEN_EVIDENCE replay",
+  "source_text": "test/fixtures/batch/demo-bibliography.txt",
+  "runner": "tools/evaluation/run-batch-demo.mjs",
+  "design": "R1-R3 valid real KCI records; R4 year mutation of R2 record; R5 DOI mutation of R1 record; R6 REAL-TITLE-FORMAT-001 PDF title (conservative identity case). Counts below are observed, not targeted.",
+  "hash_definitions": {
+    "input_hash": "sha256(canonicalJson(citation input))",
+    "evidence_hash": "sha256(canonicalJson({search, detail})) over sanitized bibliographic fields only"
+  },
+  "observed_summary": {
+    "total": 6,
+    "status_counts": {
+      "VERIFIED": 3,
+      "METADATA_DRIFT": 2,
+      "REVIEW_REQUIRED": 1,
+      "NOT_FOUND_IN_KCI": 0
+    },
+    "other_research_status": 0,
+    "system_failure": 0,
+    "not_audited": {
+      "NEEDS_REVIEW": 0,
+      "UNPARSED": 0
+    },
+    "row_errors": 0
+  },
+  "items": [
+    {
+      "index": 1,
+      "row_id": "ref-1",
+      "raw": "1. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595",
+      "parse_status": "READY",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "10.9728/dcs.2024.25.3.595"
+      },
+      "input_hash": "0bee8a6ccbff77400769ba7ba72f2ccffa2583516f4d927da642a212d75ac3db",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "VERIFIED",
+      "system_state": null,
+      "rule_id": "REF-META-001",
+      "finding_id": "finding-fae1511e0d9c5c73",
+      "kci_record_ids": [
+        "ART003062835"
+      ],
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+    },
+    {
+      "index": 2,
+      "row_id": "ref-2",
+      "raw": "2. 대운해 (2024). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385",
+      "parse_status": "READY",
+      "input": {
+        "title": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+        "authors": [
+          "대운해"
+        ],
+        "publication_year": "2024",
+        "doi": "10.21740/jas.2024.11.30.2.385"
+      },
+      "input_hash": "be17aa5ae849d2e3426fc5c848ebf8870b4e55f2299987071836f5e09394d6a3",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "VERIFIED",
+      "system_state": null,
+      "rule_id": "REF-META-001",
+      "finding_id": "finding-264b803a4c00fea5",
+      "kci_record_ids": [
+        "ART003141185"
+      ],
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "evidence_hash": "43562639de97dbf3ebb78321c9d0c5b3caf805abdaec05d977b0300554ab1e51"
+    },
+    {
+      "index": 3,
+      "row_id": "ref-3",
+      "raw": "3. 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267",
+      "parse_status": "READY",
+      "input": {
+        "title": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+        "authors": [
+          "김미엘",
+          "김미선",
+          "최은숙",
+          "권호범",
+          "박영석"
+        ],
+        "publication_year": "2025",
+        "doi": "10.14368/jdras.2025.41.4.267"
+      },
+      "input_hash": "a1c7945203fe472359fbe045f6e798a99fe3e1bf6e073557d8b6b3ec7af77fea",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "VERIFIED",
+      "system_state": null,
+      "rule_id": "REF-META-001",
+      "finding_id": "finding-bc9bb02137aefcde",
+      "kci_record_ids": [
+        "ART003267604"
+      ],
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "evidence_hash": "42e31be110ebeeffd4fc1ce8400b94d97b5ddcfc8ae1534366bb8a855e4626f3"
+    },
+    {
+      "index": 4,
+      "row_id": "ref-4",
+      "raw": "4. 대운해 (2023). Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration. 아시아연구, 27(4), 385-400. https://doi.org/10.21740/jas.2024.11.30.2.385",
+      "parse_status": "READY",
+      "input": {
+        "title": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+        "authors": [
+          "대운해"
+        ],
+        "publication_year": "2023",
+        "doi": "10.21740/jas.2024.11.30.2.385"
+      },
+      "input_hash": "516dab1be23dc95b99a40a018467a7ee7ab941c8d1b82e47dbe6390087d91e59",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "METADATA_DRIFT",
+      "system_state": null,
+      "rule_id": "REF-META-002",
+      "finding_id": "finding-164f7de296869886",
+      "kci_record_ids": [
+        "ART003141185"
+      ],
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MISMATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "evidence_hash": "43562639de97dbf3ebb78321c9d0c5b3caf805abdaec05d977b0300554ab1e51"
+    },
+    {
+      "index": 5,
+      "row_id": "ref-5",
+      "raw": "5. 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.596",
+      "parse_status": "READY",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "10.9728/dcs.2024.25.3.596"
+      },
+      "input_hash": "8eee31587ba80ae3901c40882392de539167a78291d8c7ad335b41a3d1b93182",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "METADATA_DRIFT",
+      "system_state": null,
+      "rule_id": "REF-META-002",
+      "finding_id": "finding-caf72ee33c7b1321",
+      "kci_record_ids": [
+        "ART003062835"
+      ],
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MISMATCH"
+        }
+      ],
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+    },
+    {
+      "index": 6,
+      "row_id": "ref-6",
+      "raw": "6. 최승재 (2008). 금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여. 증권법연구, 9(2), 227-270.",
+      "parse_status": "READY",
+      "input": {
+        "title": "금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위 ‘행동경제학’적 관점을 반영하여",
+        "authors": [
+          "최승재"
+        ],
+        "publication_year": "2008"
+      },
+      "input_hash": "d9071c1acf71d070d8e0b21aed9b97cfb879dd96d5a2e1fb94600e20f45bbae3",
+      "outcome": "AUDITED",
+      "execution_mode": "LIVE",
+      "kind": "RESEARCH_FINDING",
+      "observed_status": "REVIEW_REQUIRED",
+      "system_state": null,
+      "rule_id": "REF-ID-002",
+      "finding_id": "finding-d1f0d69ec44bdcdd",
+      "kci_record_ids": [
+        "ART001298965"
+      ],
+      "field_comparisons": [],
+      "search_state": "KCI_OK",
+      "detail_state": null,
+      "evidence_hash": "8e0ad7d743ba33d37094232a9762df1207cec6a8ba43bdfa90a78964b47384d1"
+    }
+  ],
+  "evidence_notice": "Sanitized bibliographic KCI evidence keyed by evidence_hash. No API key, request URL, public_url, source paths, or timestamps. Offline replay only; never a fallback for LIVE KCI.",
+  "evidence": {
+    "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": "장만(Dept. of Computer and Media Engineering, Tongmyong University)"
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": "신승수(Dept. of Information Security, Tongmyong University)"
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": null
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      }
+    },
+    "43562639de97dbf3ebb78321c9d0c5b3caf805abdaec05d977b0300554ab1e51": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003141185",
+            "titles": [
+              {
+                "value": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+                "lang": "original"
+              },
+              {
+                "value": "인간-컴퓨터 협업의 관점에서 AI 지원 쓰기 교육 탐색",
+                "lang": "foreign"
+              },
+              {
+                "value": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "대운해",
+                "english_name": "Dai Yun-hai",
+                "source_text": "대운해(Namseoul University)"
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "아시아연구",
+            "volume": "27",
+            "issue": "4",
+            "first_page": "385",
+            "last_page": "400",
+            "doi_raw": "http://dx.doi.org/10.21740/jas.2024.11.30.2.385",
+            "doi_normalized": "10.21740/jas.2024.11.30.2.385"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003141185",
+            "titles": [
+              {
+                "value": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+                "lang": "original"
+              },
+              {
+                "value": "인간-컴퓨터 협업의 관점에서 AI 지원 쓰기 교육 탐색",
+                "lang": "foreign"
+              },
+              {
+                "value": "Exploring AI-Assisted Writing Instruction from the Perspective of Human-Computer Collaboration",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "대운해",
+                "english_name": "Dai Yun-hai",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "아시아연구",
+            "volume": "27",
+            "issue": "4",
+            "first_page": "385",
+            "last_page": "400",
+            "doi_raw": "http://dx.doi.org/10.21740/jas.2024.11.30.2.385",
+            "doi_normalized": "10.21740/jas.2024.11.30.2.385"
+          }
+        ]
+      }
+    },
+    "42e31be110ebeeffd4fc1ce8400b94d97b5ddcfc8ae1534366bb8a855e4626f3": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003267604",
+            "titles": [
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "original"
+              },
+              {
+                "value": "교합력 전달에서 인접면 접촉의 역할에 관한 컴퓨터 시뮬레이션",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김미엘",
+                "english_name": "Mi-El Kim",
+                "source_text": "김미엘(서울대학교)"
+              },
+              {
+                "name": "김미선",
+                "english_name": "Mi-Sun Kim",
+                "source_text": "김미선(부천대학교)"
+              },
+              {
+                "name": "최은숙",
+                "english_name": "Enshu Cui",
+                "source_text": "최은숙(서울대학교 치의학대학원 치과보철학교실 및 치학연구소)"
+              },
+              {
+                "name": "권호범",
+                "english_name": "Ho-Beom Kwon",
+                "source_text": "권호범(서울대학교)"
+              },
+              {
+                "name": "박영석",
+                "english_name": "Young-Seok Park",
+                "source_text": "박영석(서울대학교)"
+              }
+            ],
+            "publication_year": "2025",
+            "journal": "구강회복응용과학지",
+            "volume": "41",
+            "issue": "4",
+            "first_page": "267",
+            "last_page": "275",
+            "doi_raw": "http://dx.doi.org/10.14368/jdras.2025.41.4.267",
+            "doi_normalized": "10.14368/jdras.2025.41.4.267"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003267604",
+            "titles": [
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "original"
+              },
+              {
+                "value": "교합력 전달에서 인접면 접촉의 역할에 관한 컴퓨터 시뮬레이션",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "김미엘",
+                "english_name": "Mi-El Kim",
+                "source_text": null
+              },
+              {
+                "name": "김미선",
+                "english_name": "Mi-Sun Kim",
+                "source_text": null
+              },
+              {
+                "name": "최은숙",
+                "english_name": "Enshu Cui",
+                "source_text": null
+              },
+              {
+                "name": "권호범",
+                "english_name": "Ho-Beom Kwon",
+                "source_text": null
+              },
+              {
+                "name": "박영석",
+                "english_name": "Young-Seok Park",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2025",
+            "journal": "구강회복응용과학지",
+            "volume": "41",
+            "issue": "4",
+            "first_page": "267",
+            "last_page": "275",
+            "doi_raw": "http://dx.doi.org/10.14368/jdras.2025.41.4.267",
+            "doi_normalized": "10.14368/jdras.2025.41.4.267"
+          }
+        ]
+      }
+    },
+    "8e0ad7d743ba33d37094232a9762df1207cec6a8ba43bdfa90a78964b47384d1": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART001298965",
+            "titles": [
+              {
+                "value": "금융시장에서의 금융소비자의 행동양태를 고려한 투자자보호규범의 설계에 대한 연구 ―소위＂행동경제학＂적 관점을 반영하여",
+                "lang": "original"
+              },
+              {
+                "value": "A Study on the Financial Consumer　s Behavioral Pattern in the Financial Market and A Design of Regulatory Scheme for the Protection of the Financial Consumers from Behavioral Economics Perspective",
+                "lang": "foreign"
+              },
+              {
+                "value": "A Study on the Financial Consumer　s Behavioral Pattern in the Financial Market and A Design of Regulatory Scheme for the Protection of the Financial Consumers from Behavioral Economics Perspective",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "최승재",
+                "english_name": "Sung Jai, Choi",
+                "source_text": "최승재(경북대학교)"
+              }
+            ],
+            "publication_year": "2008",
+            "journal": "증권법연구",
+            "volume": "9",
+            "issue": "2",
+            "first_page": "227",
+            "last_page": "270",
+            "doi_raw": "",
+            "doi_normalized": null
+          }
+        ]
+      },
+      "detail": null
+    }
+  }
+}
