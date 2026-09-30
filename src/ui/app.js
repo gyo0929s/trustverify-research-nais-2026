@@ -343,11 +343,10 @@ const DEMO_BATCH_FIXTURES = [
 const state = {
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
-  activeSection: 'overview',
+  currentView: 'batch', // 'batch' | 'single' | 'method'
   activePreset: 'drift',
   isFrozenSnapshotActive: false,
   // Batch Audit State
-  auditMode: 'batch', // 'batch' | 'single'
   parsedCitations: [],
   batchFindings: [],
   batchFilter: 'ALL',
@@ -360,13 +359,13 @@ const state = {
 // DOM References
 const $ = id => document.getElementById(id);
 const el = {
-  topnavLinks: document.querySelectorAll('.topnav-link[data-target]'),
-  // Mode Selector Bar
-  tabModeBatch: $('tabModeBatch'),
-  tabModeSingle: $('tabModeSingle'),
-  batchWorkspace: $('batchWorkspace'),
-  singleWorkspace: $('singleWorkspace'),
-  modeDescText: $('modeDescText'),
+  // Main Navigation Tabs & View Panels
+  navTabBatch: $('navTabBatch'),
+  navTabSingle: $('navTabSingle'),
+  navTabMethod: $('navTabMethod'),
+  viewBatch: $('viewBatch'),
+  viewSingle: $('viewSingle'),
+  viewMethod: $('viewMethod'),
   // Step 1: Input
   batchInputCard: $('batchInputCard'),
   batchInputText: $('batchInputText'),
@@ -429,65 +428,23 @@ const el = {
   tfEvidencePanel: $('tfEvidencePanel'),
 };
 
-/* ------------------------------------------------------------------ NAVIGATION & SCROLL TRACKING */
+/* ------------------------------------------------------------------ MAIN VIEW ROUTING (3 TABS) */
 
-function updateActiveNav(targetId) {
-  state.activeSection = targetId;
-  el.topnavLinks.forEach(link => {
-    link.classList.toggle('is-active', link.dataset.target === targetId);
-  });
-}
+function switchMainView(viewName) {
+  state.currentView = viewName;
+  const isBatch = viewName === 'batch';
+  const isSingle = viewName === 'single';
+  const isMethod = viewName === 'method';
 
-function initScrollTracking() {
-  const sections = ['overview', 'kci-live', 'test-evidence', 'claim-evidence', 'architecture']
-    .map(id => $(id))
-    .filter(Boolean);
+  el.navTabBatch?.classList.toggle('is-active', isBatch);
+  el.navTabSingle?.classList.toggle('is-active', isSingle);
+  el.navTabMethod?.classList.toggle('is-active', isMethod);
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        updateActiveNav(entry.target.id);
-      }
-    });
-  }, { threshold: 0.25 });
+  if (el.viewBatch) el.viewBatch.hidden = !isBatch;
+  if (el.viewSingle) el.viewSingle.hidden = !isSingle;
+  if (el.viewMethod) el.viewMethod.hidden = !isMethod;
 
-  sections.forEach(sec => observer.observe(sec));
-
-  // Smooth click scroll
-  el.topnavLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      const targetId = link.dataset.target;
-      const targetSec = $(targetId);
-      if (targetSec) {
-        e.preventDefault();
-        targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        history.replaceState(null, '', `#${targetId}`);
-        updateActiveNav(targetId);
-      }
-    });
-  });
-
-  // Buttons in Hero
-  $('btnGoLiveKci')?.addEventListener('click', e => {
-    e.preventDefault();
-    $('kci-live')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.replaceState(null, '', '#kci-live');
-    updateActiveNav('kci-live');
-  });
-
-  $('btnGoClaimEvidence')?.addEventListener('click', e => {
-    e.preventDefault();
-    $('claim-evidence')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.replaceState(null, '', '#claim-evidence');
-    updateActiveNav('claim-evidence');
-  });
-
-  $('btnGoTranslation')?.addEventListener('click', e => {
-    e.preventDefault();
-    $('claim-evidence')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.replaceState(null, '', '#claim-evidence');
-    updateActiveNav('claim-evidence');
-  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ------------------------------------------------------------------ SECTION 2: LIVE KCI DEMO (RESULT FIRST) */
@@ -738,26 +695,8 @@ async function handleLiveAudit(event) {
   }
 }
 
-/* ------------------------------------------------------------------ SECTION 2A: BIBLIOGRAPHY BATCH AUDIT */
-
 function switchAuditMode(mode) {
-  state.auditMode = mode;
-  const isBatch = mode === 'batch';
-  el.tabModeBatch?.classList.toggle('is-active', isBatch);
-  el.tabModeBatch?.setAttribute('aria-selected', isBatch ? 'true' : 'false');
-  el.tabModeSingle?.classList.toggle('is-active', !isBatch);
-  el.tabModeSingle?.setAttribute('aria-selected', !isBatch ? 'true' : 'false');
-
-  if (el.batchWorkspace) el.batchWorkspace.hidden = !isBatch;
-  if (el.singleWorkspace) el.singleWorkspace.hidden = isBatch;
-
-  if (el.modeDescText) {
-    if (isBatch) {
-      el.modeDescText.textContent = '논문 전체의 참고문헌 목록을 한 번에 붙여넣어 구문 분석 및 KCI 다중 서지 무결성을 일괄 검증합니다.';
-    } else {
-      el.modeDescText.textContent = '개별 인용 서지정보를 직접 입력하거나 프리셋을 선택하여 KCI 공식 레코드와의 1:1 대조 및 검증 경로를 심층 분석합니다.';
-    }
-  }
+  switchMainView(mode);
 }
 
 function parseBibliographyLine(rawLine, index) {
@@ -1510,11 +1449,10 @@ function escapeHtml(str) {
 /* ------------------------------------------------------------------ INITIALIZATION */
 
 function init() {
-  initScrollTracking();
-
-  // Mode Selector Tabs
-  el.tabModeBatch?.addEventListener('click', () => switchAuditMode('batch'));
-  el.tabModeSingle?.addEventListener('click', () => switchAuditMode('single'));
+  // Top Navigation Tabs (Batch First, Single, Method)
+  el.navTabBatch?.addEventListener('click', () => switchMainView('batch'));
+  el.navTabSingle?.addEventListener('click', () => switchMainView('single'));
+  el.navTabMethod?.addEventListener('click', () => switchMainView('method'));
 
   // Batch Step 1: Input Actions
   el.btnAnalyzeBatch?.addEventListener('click', handleAnalyzeBatch);
@@ -1619,12 +1557,13 @@ function init() {
   selectTfFinding('TR-CAUS-001');
 
   // Check URL hash on load
-  const hash = location.hash.replace('#', '');
-  if (hash && $(hash)) {
-    setTimeout(() => {
-      $(hash).scrollIntoView({ behavior: 'smooth', block: 'start' });
-      updateActiveNav(hash);
-    }, 100);
+  const hash = location.hash.replace('#', '').toLowerCase();
+  if (hash === 'single' || hash === 'viewsingle') {
+    switchMainView('single');
+  } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'claim-evidence' || hash === 'architecture') {
+    switchMainView('method');
+  } else {
+    switchMainView('batch');
   }
 }
 
