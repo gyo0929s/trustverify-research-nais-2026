@@ -17,6 +17,7 @@ const DEFAULT_FIXTURES_DIR = join(ROOT_DIR, 'test', 'fixtures', 'findings');
 const DEFAULT_BATCH_DEMO_PATH = join(ROOT_DIR, 'test', 'fixtures', 'batch', 'demo-bibliography.txt');
 const DEFAULT_FROZEN_EVIDENCE_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'batch-demo', 'demo-batch-results.json');
 const DEFAULT_CLAIM_EVIDENCE_DIR = join(ROOT_DIR, 'artifacts', 'evaluation', 'claim-evidence-p0');
+const DEFAULT_FINANCE_D4_PATH = join(ROOT_DIR, 'artifacts', 'evaluation', 'claim-evidence-finance-d4', 'finance-d4.json');
 export const MAX_CITING_CLAIM_LENGTH = 2000;
 export const MAX_JSON_BODY_BYTES = 16 * 1024;
 export const MAX_BATCH_BODY_BYTES = 128 * 1024;
@@ -137,6 +138,7 @@ export function createTrustVerifyServer({
   batchDemoPath = DEFAULT_BATCH_DEMO_PATH,
   frozenEvidencePath = DEFAULT_FROZEN_EVIDENCE_PATH,
   claimEvidenceDir = DEFAULT_CLAIM_EVIDENCE_DIR,
+  financeD4Path = DEFAULT_FINANCE_D4_PATH,
 } = {}) {
   // Layer 3 P0: the unchanged engine over the frozen, sanitized KCI abstract (no live Layer 3 path exists).
   let claimEvidenceP0 = null;
@@ -149,19 +151,24 @@ export function createTrustVerifyServer({
     return claimEvidenceP0;
   }
 
-  // Draft → reference → KCI → claim trace over the frozen D4 evidence (both records observed live, then frozen).
-  let traceDeps = null;
-  async function loadTraceDeps() {
-    if (!traceDeps) {
-      const d4 = JSON.parse(await readFile(join(claimEvidenceDir, 'd4-unrelated-reference.json'), 'utf8'));
-      const frozenAdapter = createFrozenEvidenceAdapter(d4);
-      traceDeps = {
+  // Draft → reference → KCI → claim trace. Each scenario is one committed frozen evidence set
+  // (records observed live, then frozen). Scenarios never fall back to each other.
+  const traceScenarioPaths = {
+    ORIGINAL_D4: join(claimEvidenceDir, 'd4-unrelated-reference.json'),
+    FINANCE_D4: financeD4Path,
+  };
+  const traceDeps = new Map();
+  async function loadTraceDeps(scenario) {
+    if (!traceDeps.has(scenario)) {
+      const frozen = JSON.parse(await readFile(traceScenarioPaths[scenario], 'utf8'));
+      const frozenAdapter = createFrozenEvidenceAdapter(frozen);
+      traceDeps.set(scenario, {
         auditService: createCitationAuditService({ kciAdapter: frozenAdapter }),
         covers: citation => frozenAdapter.covers(citation),
-        abstractEvidenceFor: recordId => d4.abstract_evidence?.[recordId] ?? null,
-      };
+        abstractEvidenceFor: recordId => frozen.abstract_evidence?.[recordId] ?? null,
+      });
     }
-    return traceDeps;
+    return traceDeps.get(scenario);
   }
   const auditService = createCitationAuditService({ kciAdapter: configuredAdapter(kciAdapter) });
   const liveBatchService = createCitationBatchService({ auditService, evidenceMode: 'LIVE' });
@@ -217,10 +224,15 @@ export function createTrustVerifyServer({
         if (!body || typeof body !== 'object' || Array.isArray(body)) throw new TypeError('Body must be an object');
         // P0 supports frozen evidence only; a LIVE trace is not implemented and is never silently substituted.
         if ((body.evidence_mode ?? 'FROZEN_EVIDENCE') !== 'FROZEN_EVIDENCE') throw new TypeError('evidence_mode must be FROZEN_EVIDENCE');
-        return traceDraftCitation(
+        // Omitted scenario keeps the original behavior (ORIGINAL_D4) and is reported as defaulted; unknown ones are rejected.
+        const scenarioDefaulted = body.scenario === undefined;
+        const scenario = scenarioDefaulted ? 'ORIGINAL_D4' : body.scenario;
+        if (!Object.hasOwn(traceScenarioPaths, scenario)) throw new TypeError(`scenario must be one of ${Object.keys(traceScenarioPaths).join(', ')}`);
+        const result = await traceDraftCitation(
           { draftText: body.draft_text, references: body.references, evidenceMode: 'FROZEN_EVIDENCE' },
-          await loadTraceDeps(),
+          await loadTraceDeps(scenario),
         );
+        return { scenario, scenario_defaulted: scenarioDefaulted, ...result };
       },
     },
     '/api/references/parse': {

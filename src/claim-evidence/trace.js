@@ -27,6 +27,14 @@ const LINKING_FROM_RESOLUTION = {
 // Claim–Evidence runs only when Citation Integrity established one coherent KCI record.
 const IDENTIFIED_STATUSES = new Set(['VERIFIED', 'METADATA_DRIFT']);
 
+// Presentation-safe boundary wording for INSUFFICIENT_EVIDENCE. It never says the paper is wrong or lacks the claim.
+export const INSUFFICIENT_BOUNDARY_NOTE = '현재 확보된 KCI 공개 초록에서는 이 인용 문장을 뒷받침하는 구체적 근거를 확인하지 못했습니다.';
+
+const titleOf = finding => {
+  const titles = finding.evidence?.[0]?.data?.titles ?? [];
+  return titles.find(title => title.lang === 'original')?.value ?? titles[0]?.value ?? null;
+};
+
 const citationFields = row => Object.fromEntries(Object.entries({
   title: row.title, authors: row.authors, publication_year: row.publication_year, doi: row.doi,
 }).filter(([, value]) => value !== null && !(Array.isArray(value) && value.length === 0)));
@@ -69,6 +77,7 @@ export async function traceDraftCitation({ draftText, references, evidenceMode }
     system_state: finding.system_state ?? null,
     rule_id: finding.rule_id ?? null,
     article_id: recordId,
+    article_title: recordId ? titleOf(finding) : null,
     field_comparisons: (finding.field_comparisons ?? []).map(({ field, result }) => ({ field, result })),
     finding_id: finding.finding_id ?? finding.failure_id,
   };
@@ -98,6 +107,7 @@ export async function traceDraftCitation({ draftText, references, evidenceMode }
       evidence_span: alignment.evidence_span,
       evidence_hash: alignment.evidence_hash,
       why: alignment.why,
+      boundary_note: alignment.status === 'INSUFFICIENT_EVIDENCE' ? INSUFFICIENT_BOUNDARY_NOTE : null,
       human_review_required: alignment.human_review_required,
       human_review_reason: alignment.human_review_reason,
       finding_id: alignment.finding_id,
