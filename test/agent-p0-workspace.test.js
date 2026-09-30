@@ -17,11 +17,11 @@ test('TrustVerify Agent P0 workspace UI shell integrity', async () => {
   assert.ok(tfIndex < arIndex, 'Academic Expression must be preserved as its own module');
 
   const railAgentBlock = html.slice(agentIndex, html.indexOf('</button>', agentIndex));
-  assert.ok(railAgentBlock.includes('◆'), 'Agent P0 icon must be ◆');
-  assert.ok(railAgentBlock.includes('TrustVerify Agent'), 'Agent title must be TrustVerify Agent');
-  assert.ok(railAgentBlock.includes('검증 결과 → 근거 계약 → PromptPackage'), 'Agent subtitle must match specification');
+  assert.ok(railAgentBlock.includes('🧩'), 'Agent P0 icon must be 🧩');
+  assert.ok(railAgentBlock.includes('검증 에이전트'), 'Agent title must be 검증 에이전트');
+  assert.ok(railAgentBlock.includes('검증 결과를 다음 AI 작업으로 연결'), 'Agent subtitle must match specification');
   assert.ok(railAgentBlock.includes('badge-agent-p0'), 'Badge class badge-agent-p0 must be present');
-  assert.ok(railAgentBlock.includes('AGENT P0'), 'Badge text AGENT P0 must be present');
+  assert.ok(railAgentBlock.includes('Agent P0'), 'Badge text Agent P0 must be present');
 
   // 2. Module-aware top navigation for TrustVerify Agent P0
   assert.ok(html.includes('id="topnavAgent"'), 'topnavAgent must exist');

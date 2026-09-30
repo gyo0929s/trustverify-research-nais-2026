@@ -18,7 +18,7 @@
       </span>
       <div class="brand-text">
         <span class="brand-name">TrustVerify Research</span>
-        <span class="brand-sub">Academic Citation Integrity Auditor</span>
+        <span class="brand-sub">연구 검증 시스템</span>
       </div>
     </div>
 
@@ -98,83 +98,79 @@
 
   <!-- ============================== APP LAYOUT: RAIL + WORKSPACE ============================== -->
   <div class="app-layout">
-    <!-- ============================== SLIM LEFT EXTENSION RAIL ============================== -->
-    <aside class="extension-rail" id="extensionRail" aria-label="연구 검증 확장 레일">
-      <!-- Active Core Module Switch / Indicator -->
-      <div class="rail-group">
-        <div class="rail-group-label">현재 검증</div>
-        <button class="rail-item is-active" id="railBtnCitation" type="button" data-module="citation" title="Citation Integrity (LIVE)">
-          <div class="rail-item-top">
-            <span class="rail-item-icon">●</span>
-            <span class="rail-item-title">Citation Integrity</span>
-          </div>
-          <div class="rail-item-sub">인용 무결성</div>
-          <div class="rail-item-meta">
-            <span class="rail-badge badge-core">LIVE</span>
-            <span class="rail-active-pill" id="railActiveTagCitation">ACTIVE</span>
+    <!-- ============================== LEFT EXTENSION RAIL ============================== -->
+    <aside class="extension-rail" id="extensionRail" aria-label="연구 검증 제품 내비게이션">
+      <nav class="rail-list" aria-label="연구 검증 모듈 목록">
+        <!-- MODULE 1: 인용 무결성 (실시간) -->
+        <button class="rail-item is-active" id="railBtnCitation" type="button" data-module="citation" title="인용 무결성 (실시간)">
+          <div class="rail-item-row">
+            <span class="rail-item-icon">🛡️</span>
+            <div class="rail-item-content">
+              <span class="rail-item-title">인용 무결성</span>
+              <span class="rail-item-sub">실제 KCI 서지 검증</span>
+              <div class="rail-item-meta">
+                <span class="rail-badge badge-core">실시간</span>
+              </div>
+            </div>
           </div>
         </button>
-      </div>
 
-      <div class="rail-divider"></div>
+        <!-- MODULE 2: 주장–근거 검증 (P0) -->
+        <button class="rail-item" id="railBtnClaimEvidence" type="button" data-module="claim-evidence" title="주장–근거 검증 (P0)">
+          <div class="rail-item-row">
+            <span class="rail-item-icon">🔎</span>
+            <div class="rail-item-content">
+              <span class="rail-item-title">주장–근거 검증</span>
+              <span class="rail-item-sub">인용 문장과 공개 근거 대조</span>
+              <div class="rail-item-meta">
+                <span class="rail-badge badge-expansion">P0</span>
+              </div>
+            </div>
+          </div>
+        </button>
 
-      <!-- Extension Research Verification Modules -->
-      <div class="rail-group">
-        <div class="rail-group-label">확장 연구 검증</div>
-        <div class="rail-list">
-          <!-- MODULE 1: Claim–Evidence Alignment (Layer 3 · EXPANSION / P0) -->
-          <button class="rail-item" id="railBtnClaimEvidence" type="button" data-module="claim-evidence" title="Claim–Evidence Alignment (EXPANSION / P0)">
-            <div class="rail-item-top">
-              <span class="rail-item-icon">◇</span>
-              <span class="rail-item-title">Claim–Evidence Alignment</span>
+        <!-- MODULE 3: 검증 에이전트 (Agent P0) -->
+        <button class="rail-item" id="railBtnAgent" type="button" data-module="agent-p0" title="검증 에이전트 (Agent P0)">
+          <div class="rail-item-row">
+            <span class="rail-item-icon">🧩</span>
+            <div class="rail-item-content">
+              <span class="rail-item-title">검증 에이전트</span>
+              <span class="rail-item-sub">검증 결과를 다음 AI 작업으로 연결</span>
+              <div class="rail-item-meta">
+                <span class="rail-badge badge-agent-p0">Agent P0</span>
+              </div>
             </div>
-            <div class="rail-item-sub">공개 근거 ↔ 인용 문장</div>
-            <div class="rail-item-meta">
-              <span class="rail-badge badge-expansion">EXPANSION / P0</span>
-              <span class="rail-active-pill" id="railActiveTagCe" hidden>ACTIVE</span>
-            </div>
-          </button>
+          </div>
+        </button>
 
-          <!-- MODULE: TrustVerify Agent (AGENT P0) -->
-          <button class="rail-item" id="railBtnAgent" type="button" data-module="agent-p0" title="TrustVerify Agent (AGENT P0)">
-            <div class="rail-item-top">
-              <span class="rail-item-icon">◆</span>
-              <span class="rail-item-title">TrustVerify Agent</span>
+        <!-- MODULE 4: 번역 충실도 (예정) -->
+        <button class="rail-item" id="railBtnTranslation" type="button" data-module="translation" title="번역 충실도 (예정)">
+          <div class="rail-item-row">
+            <span class="rail-item-icon">🌐</span>
+            <div class="rail-item-content">
+              <span class="rail-item-title">번역 충실도</span>
+              <span class="rail-item-sub">한→영 의미 변화 확인</span>
+              <div class="rail-item-meta">
+                <span class="rail-badge badge-future">예정</span>
+              </div>
             </div>
-            <div class="rail-item-sub">검증 결과 → 근거 계약 → PromptPackage</div>
-            <div class="rail-item-meta">
-              <span class="rail-badge badge-agent-p0">AGENT P0</span>
-              <span class="rail-active-pill" id="railActiveTagAgent" hidden>ACTIVE</span>
-            </div>
-          </button>
+          </div>
+        </button>
 
-          <!-- MODULE 2: Translation Fidelity -->
-          <button class="rail-item" id="railBtnTranslation" type="button" data-module="translation" title="Translation Fidelity (FUTURE)">
-            <div class="rail-item-top">
-              <span class="rail-item-icon">◇</span>
-              <span class="rail-item-title">Translation Fidelity</span>
-            </div>
-            <div class="rail-item-sub">KO→EN 의미 보존</div>
-            <div class="rail-item-meta">
-              <span class="rail-badge badge-future">FUTURE</span>
-              <span class="rail-active-pill" id="railActiveTagTf" hidden>ACTIVE</span>
-            </div>
-          </button>
-
-          <!-- MODULE 3: 학술 표현 참조 -->
-          <button class="rail-item" id="railBtnAcademicRef" type="button" data-module="academic-reference" title="학술 표현 참조 (PILOT)">
-            <div class="rail-item-top">
-              <span class="rail-item-icon">◇</span>
+        <!-- MODULE 5: 학술 표현 참조 (파일럿) -->
+        <button class="rail-item" id="railBtnAcademicRef" type="button" data-module="academic-reference" title="학술 표현 참조 (파일럿)">
+          <div class="rail-item-row">
+            <span class="rail-item-icon">✍️</span>
+            <div class="rail-item-content">
               <span class="rail-item-title">학술 표현 참조</span>
+              <span class="rail-item-sub">분야별 실제 논문 표현과 비교</span>
+              <div class="rail-item-meta">
+                <span class="rail-badge badge-pilot">파일럿</span>
+              </div>
             </div>
-            <div class="rail-item-sub">분야별 표현 · 생성 보조</div>
-            <div class="rail-item-meta">
-              <span class="rail-badge badge-pilot">PILOT</span>
-              <span class="rail-active-pill" id="railActiveTagAr" hidden>ACTIVE</span>
-            </div>
-          </button>
-        </div>
-      </div>
+          </div>
+        </button>
+      </nav>
     </aside>
 
     <!-- ============================== MAIN PRESENTATION CONTAINER ============================== -->

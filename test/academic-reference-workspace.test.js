@@ -9,9 +9,9 @@ test('Academic Expression & Agent Vision workspace UI shell integrity', async ()
   assert.ok(html.includes('id="railBtnAcademicRef"'));
   const railArBlock = html.slice(html.indexOf('id="railBtnAcademicRef"'), html.indexOf('</button>', html.indexOf('id="railBtnAcademicRef"')));
   assert.ok(railArBlock.includes('학술 표현 참조'));
-  assert.ok(railArBlock.includes('분야별 표현 · 생성 보조'));
+  assert.ok(railArBlock.includes('분야별 실제 논문 표현과 비교'));
   assert.ok(railArBlock.includes('badge-pilot'));
-  assert.ok(railArBlock.includes('PILOT'));
+  assert.ok(railArBlock.includes('파일럿'));
 
   // 2. Module-aware top navigation for Academic Reference
   assert.ok(html.includes('id="topnavAcademicRef"'));
