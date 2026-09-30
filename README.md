@@ -41,17 +41,30 @@ flowchart TD
 
 ## Current status
 
-Only the isolated KCI API qualification probe and redacted evidence artifacts are implemented. KCI received **YELLOW**: the observed API supports bibliographic evidence, with snapshot precautions and strict response validation required. Search/detail lookup was confirmed using the actual `articleInfo/@article-id` field.
+The KCI runtime adapter now implements search/detail requests, fail-closed envelope classification, normalization of observed fields, and redacted snapshot persistence. The isolated qualification probe and its evidence remain separate. KCI received **YELLOW**: the observed API supports bibliographic evidence, with snapshot precautions and strict response validation required. Search/detail lookup was confirmed using the actual `articleInfo/@article-id` field.
 
-The three product pipelines above are plans. The Finance-50 corpus has not been established by this repository, and Upstage Document Parse, Solar analysis, translation checks, comparison engines, and application UI are not implemented.
+The full three-track product pipelines above remain plans. Citation comparison and findings are not implemented; the adapter returns internal KCI states and eligibility flags only. The Finance-50 corpus has not been established by this repository, and Upstage Document Parse, Solar analysis, translation checks, comparison engines, and application UI are not implemented.
 
-A valid zero-result KCI search means only `NOT_FOUND_IN_KCI`; it does not prove a fake paper or hallucination. API and parsing failures remain separate from citation findings. KCI is the canonical citation source; ScienceON remains a possible future second source only if KCI coverage is insufficient. NTIS is excluded from the current prototype.
+A valid zero-result KCI search is eligible only for a future `NOT_FOUND_IN_KCI` finding; it does not prove a fake paper or hallucination. API and parsing failures remain separate from citation findings. **KCI is the primary canonical bibliographic evidence source for this prototype; it does not prove scientific truth.** ScienceON remains a possible future second source only if KCI coverage is insufficient. NTIS is excluded from the current prototype.
+
+## Run the offline adapter tests
+
+Use Node.js 24 or later:
+
+```sh
+npm ci --ignore-scripts
+npm test
+```
+
+Tests use the committed redacted qualification fixtures and synthetic transport responses. They require no API credential and make no live KCI calls. See the [runtime adapter contract](docs/KCI_ADAPTER.md) for server-side usage, state definitions, normalization, and snapshot handling.
 
 ## Documentation and repository layout
 
 - [Architecture and evidence contracts](docs/ARCHITECTURE.md)
 - [KCI qualification summary](artifacts/api-qualification/kci/SUMMARY.md)
 - [Observed KCI field map](artifacts/api-qualification/kci/field-map.md)
+- `src/kci/adapter.js`: runtime adapter and explicit redacted snapshot persistence.
+- `test/kci.test.js`: offline fixture, failure-boundary, transport and audit tests.
 - `tools/api-probe/kci/`: isolated qualification and offline verification scripts, separate from future product runtime.
 - `artifacts/api-qualification/kci/`: minimal redacted qualification snapshots and findings.
 

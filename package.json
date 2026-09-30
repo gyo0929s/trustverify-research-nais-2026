@@ -1,0 +1,9 @@
+{
+  "name": "trustverify-research",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test" },
+  "dependencies": { "saxes": "6.0.0" }
+}

@@ -1,6 +1,6 @@
 # TrustVerify Research architecture
 
-This document defines the implementation plan. The repository currently contains a KCI qualification probe and redacted API evidence, not the product pipelines described here. This documentation task adds no new features.
+This document defines the implementation plan and current boundaries. The repository contains a KCI qualification probe, redacted API evidence, and the BUILD-01 runtime adapter for search/detail, fail-closed classification, normalization, and snapshot persistence. Citation comparison, research findings, and the language-track product pipelines remain unimplemented. See the [runtime contract](KCI_ADAPTER.md).
 
 The system addresses two problems: unreliable metadata in AI-generated references, and English translations or generated manuscripts that preserve a Korean research topic while changing meaning or scholarly expression. It returns explainable evidence and review signals. Human reviewers retain the final decision; the system does not determine manuscript acceptance.
 
@@ -44,7 +44,7 @@ Pipeline: **KCI Open API → search/detail → pinned evidence → deterministic
 
 System failures remain separate: `KCI_UNAVAILABLE`, `KCI_AUTH_FAILED`, `KCI_INVALID_RESPONSE`, and `KCI_PARSE_FAILED`. No failure becomes a zero result. The qualification observed HTTP 200 for both valid zero results and invalid input. A valid zero response used `resultMsg=No Data` with no total or records; missing totals alone are insufficient. See the [qualification summary](../artifacts/api-qualification/kci/SUMMARY.md) for tested behavior and untested error families.
 
-KCI remains the canonical citation evidence source. ScienceON is a future option only if KCI coverage is insufficient; NTIS is excluded from the current prototype. Source coverage does not establish whether a paper exists everywhere, and KCI's own `verified` field is not the application's `VERIFIED` finding.
+KCI is the primary canonical bibliographic evidence source for this prototype. It does not prove scientific truth. ScienceON is a future option only if KCI coverage is insufficient; NTIS is excluded from the current prototype. Source coverage does not establish whether a paper exists everywhere, and KCI's own `verified` field is not the application's `VERIFIED` finding.
 
 ## Track B — Academic English Reference Profile
 
@@ -85,7 +85,7 @@ Every planned finding should expose:
 - Comparison, result, missing evidence, uncertainty and human review recommendation.
 - Retrieval/processing timestamp and links to pinned evidence hashes.
 
-For KCI, proposed ledger values include `source_system=KCI`, `source_record_id` derived from the actual article attribute, `retrieved_at`, normalized metadata, a versioned content hash, and a redacted response snapshot hash. These are application concepts, not invented KCI response fields. Existing probe hashes cover saved redacted XML snapshots, not raw wire bytes.
+For KCI, the adapter now supplies `source_system=KCI`, `source_record_id` derived from the actual article attribute, `retrieved_at`, normalized metadata, `normalizer_version=kci-normalizer-v1`, `normalized_content_sha256`, and `redacted_snapshot_sha256`. These are application concepts, not invented KCI response fields. The runtime snapshot hash covers exact persisted redacted tree JSON bytes; the earlier probe hashes cover saved redacted XML. Neither is a raw-wire hash. The shared ledger and rule engine remain future work.
 
 For the language tracks, pin the corpus manifest, permitted derived observations, model/prompt/extraction versions, and aggregation rules. Deterministic reruns need the preserved inputs as well as their hashes. Live retrieval or model re-execution may change results. Stale snapshots must be labeled, and processing failures must remain distinct from manuscript findings.
 
@@ -93,4 +93,4 @@ For the language tracks, pin the corpus manifest, permitted derived observations
 
 Never include API secrets, credential-bearing URLs, authorization headers, raw copyrighted PDFs, or full paper text in the repository. Redact KCI's echoed key before persistence. Keep any authorized source-document processing in controlled storage with appropriate access and retention; publish only permitted metadata, derived evidence and aggregates. Do not commit full extracted text as a substitute for excluded PDFs.
 
-Before implementation, resolve KCI response-validation and pagination questions, define lawful Finance-50 selection and processing, specify structured-observation schemas, and establish human-reviewed evaluation cases for each track. Evaluate citation identity/mismatches, corpus extraction consistency, and translation-change signals separately. Ambiguity must lead to review rather than an unsupported conclusion. No application, corpus ingestion, Upstage/Solar integration, or translation checker is introduced by this documentation change.
+Before completing the product pipelines, resolve remaining KCI error-envelope and pagination questions, define lawful Finance-50 selection and processing, specify structured-observation schemas, and establish human-reviewed evaluation cases for each track. Evaluate citation identity/mismatches, corpus extraction consistency, and translation-change signals separately. Ambiguity must lead to review rather than an unsupported conclusion. BUILD-01 adds only the KCI adapter; no UI, corpus ingestion, Upstage/Solar integration, translation checker, manuscript scoring, or additional evidence source is implemented.
