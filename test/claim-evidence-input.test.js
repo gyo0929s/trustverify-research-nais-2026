@@ -45,8 +45,9 @@ test('input card holds two editable textareas in order: citing sentence, then bi
   assert.ok(inputCard.indexOf('2. 참고문헌 목록') < inputCard.indexOf('id="btnExecuteCeVerify"'));
   assert.ok(inputCard.includes('Citing Statement with Marker'));
   assert.ok(inputCard.includes('발표용 통제 인용 문장(영문) · 실제 KCI 공개 초록 기반 검증'));
-  assert.ok(inputCard.includes('현재 발표 모드는 검증된 Frozen KCI Evidence를 재현합니다. 고정 근거에 없는 참고문헌은 자동 판정하지 않습니다.'));
-  assert.ok(inputCard.includes('검증 모드: Frozen KCI Evidence · 발표 재현용'));
+  assert.ok(inputCard.includes('현재 발표 모드는 검증된 KCI 근거를 재현합니다. 고정 근거에 없는 참고문헌은 자동 판정하지 않습니다.'));
+  assert.ok(inputCard.includes('검증 모드: 검증된 KCI 근거 재현'));
+  assert.equal(/FROZEN EVALUATION EVIDENCE|\bP0\b|Frozen KCI Evidence|검증된 KCI 근거 재생/.test(inputCard), false, 'mode kept to one small line');
   // Technical mode labels are no longer headline elements of the input card.
   assert.equal(/batch-step-pill|ce-frozen-persistent-banner|ce-integration-badge/.test(inputCard), false);
 });

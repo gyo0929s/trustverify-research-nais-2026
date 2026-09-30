@@ -178,6 +178,8 @@ const state = {
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
   currentCeCase: 'D4', // 'D4' | 'D4-CONTRAST' | 'D2' | 'D3' | 'D1'
+  currentCeCompareMode: 'default', // 'default' | 'compare'
+  ceFinanceRuns: {}, // FINANCE_D4 preset responses received this session, keyed by marker (used only to compare [2] ↔ [1])
   currentAgentView: 'contract', // 'contract' | 'prompt' | 'reverify'
   currentArView: 'reference', // 'reference' | 'handoff' | 'vision'
   currentKciFinding: CANONICAL_KCI_DRIFT,
@@ -263,13 +265,17 @@ const el = {
   navTabCeVerify: $('navTabCeVerify'),
   navTabCeExamples: $('navTabCeExamples'),
   navTabCeMethod: $('navTabCeMethod'),
+  ceCompareNavBanner: $('ceCompareNavBanner'),
+  btnCeNavDefault: $('btnCeNavDefault'),
+  btnCeNavContrast: $('btnCeNavContrast'),
   ceViewVerify: $('ceViewVerify'),
+  ceViewCompare: $('ceViewCompare'),
+  btnCeBackToDefault: $('btnCeBackToDefault'),
   ceViewExamples: $('ceViewExamples'),
   ceViewMethod: $('ceViewMethod'),
   ceVerifyInputText: $('ceVerifyInputText'),
   btnExecuteCeVerify: $('btnExecuteCeVerify'),
   btnLoadCeD4: $('btnLoadCeD4'),
-  btnLoadCeD4Contrast: $('btnLoadCeD4Contrast'),
   btnLoadCeExample: $('btnLoadCeExample'),
   btnLoadCeInsufficient: $('btnLoadCeInsufficient'),
   btnLoadCeK2: $('btnLoadCeK2'),
@@ -277,6 +283,7 @@ const el = {
   ceVerifyReferences: $('ceVerifyReferences'),
   ceInputSentenceNote: $('ceInputSentenceNote'),
   ceResolutionCard: $('ceResolutionCard'),
+  ceReservedResults: $('ceReservedResults'),
   ceSelectedPaperId: $('ceSelectedPaperId'),
   ceSelectedPaperStatus: $('ceSelectedPaperStatus'),
   ceSelectedPaperTitle: $('ceSelectedPaperTitle'),
@@ -1701,7 +1708,6 @@ async function executeCeVerify(triggerBtn) {
   if (activeBtn) activeBtn.textContent = '검증 중...';
   if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
   if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = true;
-  if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = true;
   if (el.ceVerifyResultBody) el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">검증 중...</p>';
   try {
     const res = await fetch('/api/claim-evidence/align', {
@@ -1720,25 +1726,98 @@ async function executeCeVerify(triggerBtn) {
     if (activeBtn) activeBtn.textContent = originalText;
     if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
     if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = false;
-    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = false;
   }
 }
 
-async function executeCeTrace(draftText, triggerBtn) {
+// Trace progress. There is one backend request: while it is in flight every step shows 진행. Only after the response
+// arrives is each step marked, from the returned fields (linking, citation_integrity, claim_evidence). Nothing is simulated.
+const CE_TRACE_STEPS = [
+  ['marker', '① 인용 마커 확인'],
+  ['reference', '② 참고문헌 연결'],
+  ['evidence', '③ 검증된 KCI 근거 불러오기'],
+  ['grounding', '④ 근거 문장 찾기 (Grounding Gate)'],
+  ['result', '⑤ 검증 결과 생성'],
+];
+const CE_STEP_LABELS = { run: '진행', done: '완료', stop: '중단', skip: '미실행', error: '요청 실패' };
+const CE_CONTRAST_PROGRESS_NOTE = ['문장은 그대로 유지', '[2] → [1] 근거 source만 변경'];
+const ceReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+const ceDelay = ms => new Promise(resolve => setTimeout(resolve, ceReducedMotion() ? 0 : ms));
+
+function renderCeTraceProgress(note) {
+  return `
+    <div class="ce-trace-progress" aria-live="polite">
+      <div class="ce-trace-progress-head"><span class="ce-spinner" aria-hidden="true"></span><span id="ceTraceProgressTitle">검증된 KCI 근거를 확인하고 있습니다...</span></div>
+      ${note ? `<div class="ce-trace-progress-note">${note.map(line => `<span>${escapeHtml(line)}</span>`).join('')}</div>` : ''}
+      <ol class="ce-trace-steps">
+        ${CE_TRACE_STEPS.map(([key, label]) => `
+          <li class="ce-trace-step is-run" data-ce-step="${key}">
+            <span class="ce-trace-step-label">${label}</span>
+            <span class="ce-trace-step-state">${CE_STEP_LABELS.run}</span>
+            <span class="ce-trace-step-detail"></span>
+          </li>`).join('')}
+      </ol>
+    </div>`;
+}
+
+// Per-step outcome read from the backend response only.
+function ceTraceStepStates(data) {
+  const linking = data.linking || {};
+  const markerOk = Boolean(linking.state) && linking.state !== 'MARKER_UNRESOLVED' && linking.state !== 'MULTIPLE_MARKERS_UNSUPPORTED';
+  const refOk = linking.state === 'RESOLVED';
+  const ci = data.citation_integrity || {};
+  const ce = data.claim_evidence || {};
+  const ceRan = ce.state === 'RUN';
+  return {
+    marker: markerOk ? ['done', linking.marker] : ['stop', linking.state],
+    reference: !markerOk ? ['skip', ''] : refOk ? ['done', `참고문헌 #${linking.row_index}`] : ['stop', linking.state],
+    evidence: !refOk ? ['skip', ''] : ceRan ? ['done', ci.article_id] : ['stop', ci.state || ci.status || ci.system_state || ce.reason],
+    grounding: !ceRan ? ['skip', '근거 미확보'] : ['done', ce.grounding?.grounded === true ? 'PASS' : 'FAIL'],
+    result: ['done', ceRan ? ce.status : (ce.reason || linking.state)],
+  };
+}
+
+function setCeTraceStep(key, stepState, detail) {
+  const step = el.ceVerifyResultBody?.querySelector(`[data-ce-step="${key}"]`);
+  if (!step) return;
+  step.className = `ce-trace-step is-${stepState}`;
+  step.querySelector('.ce-trace-step-state').textContent = CE_STEP_LABELS[stepState];
+  step.querySelector('.ce-trace-step-detail').textContent = detail ?? '';
+}
+
+async function revealCeTraceSteps(data) {
+  const states = ceTraceStepStates(data);
+  for (const [key] of CE_TRACE_STEPS) {
+    setCeTraceStep(key, ...states[key]);
+    await ceDelay(160);
+  }
+  await ceDelay(220);
+}
+
+function scrollCeResultsIntoView() {
+  el.ceReservedResults?.scrollIntoView({ behavior: ceReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+}
+
+async function executeCeTrace(draftText, triggerBtn, progressNote = null) {
   const references = ceReferenceRows();
   if (references.length === 0) {
     alert('참고문헌 목록을 입력하세요.');
     return;
   }
   const activeBtn = triggerBtn || el.btnExecuteCeVerify;
-  const originalText = activeBtn ? activeBtn.textContent : '';
-  if (activeBtn) activeBtn.textContent = '검증 중...';
+  const originalHtml = activeBtn ? activeBtn.innerHTML : '';
+  if (activeBtn) {
+    activeBtn.textContent = '검증 중...';
+    activeBtn.classList.add('is-busy');
+  }
   if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
   if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = true;
-  if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = true;
+  if (el.ceResolutionCard) el.ceResolutionCard.hidden = true;
+  if (el.ceResultModeTag) el.ceResultModeTag.textContent = '검증 진행 중';
   if (el.ceVerifyResultBody) {
-    el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">검증 중...</p>';
+    el.ceVerifyResultBody.classList.remove('ce-reveal');
+    el.ceVerifyResultBody.innerHTML = renderCeTraceProgress(progressNote);
   }
+  scrollCeResultsIntoView();
   try {
     const res = await fetch('/api/claim-evidence/trace', {
       method: 'POST',
@@ -1752,16 +1831,27 @@ async function executeCeTrace(draftText, triggerBtn) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    await revealCeTraceSteps(data);
     renderCeTraceResult(data);
-  } catch (err) {
     if (el.ceVerifyResultBody) {
-      el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text" style="color:var(--danger);font-weight:700;padding:16px;text-align:center;">검증 요청 실패 — 연구 판정이 아닙니다.</p>';
+      void el.ceVerifyResultBody.offsetWidth; // restart the reveal animation
+      el.ceVerifyResultBody.classList.add('ce-reveal');
     }
+    scrollCeResultsIntoView();
+  } catch (err) {
+    for (const [key] of CE_TRACE_STEPS) setCeTraceStep(key, 'error', '');
+    const title = el.ceVerifyResultBody?.querySelector('#ceTraceProgressTitle');
+    if (title) title.textContent = '검증 요청이 완료되지 않았습니다.';
+    el.ceVerifyResultBody?.querySelector('.ce-spinner')?.remove();
+    if (el.ceResultModeTag) el.ceResultModeTag.textContent = '검증 요청 실패';
+    el.ceVerifyResultBody?.insertAdjacentHTML('beforeend', '<p class="ce-slot-text" style="color:var(--danger);font-weight:700;padding:16px;text-align:center;">검증 요청 실패 — 연구 판정이 아닙니다.</p>');
   } finally {
-    if (activeBtn) activeBtn.textContent = originalText;
+    if (activeBtn) {
+      activeBtn.innerHTML = originalHtml;
+      activeBtn.classList.remove('is-busy');
+    }
     if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
     if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = false;
-    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = false;
   }
 }
 
@@ -1846,7 +1936,7 @@ function renderCeTraceResult(data) {
   if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = '';
 
   if (el.ceResultModeTag) {
-    el.ceResultModeTag.textContent = `${data.evidence_mode === 'FROZEN_EVIDENCE' ? 'FROZEN EVALUATION EVIDENCE' : data.evidence_mode} · 검증된 KCI 근거 재생`;
+    el.ceResultModeTag.textContent = '검증 완료 · 검증된 KCI 근거 재현 (모드 상세는 기술 상세 참조)';
   }
 
   // 1. Linking Failure Check
@@ -1910,7 +2000,7 @@ function renderCeTraceResult(data) {
   // 2. Linking Resolved: Update Reference Context Header directly from endpoint response
   if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${escapeHtml(data.citation_integrity.article_id)}`;
   if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = data.citation_integrity.article_title || '';
-  if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `인용 ${data.linking.marker} → 참고문헌 #${data.linking.row_index} → ${data.citation_integrity.article_id} · 백엔드 검증 결과 (${data.evidence_mode})`;
+  if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `인용 ${data.linking.marker} → 참고문헌 #${data.linking.row_index} → ${data.citation_integrity.article_id} · 백엔드 검증 결과`;
   if (el.ceSelectedPaperStatus) {
     el.ceSelectedPaperStatus.innerHTML = `
       <span class="${data.citation_integrity.status === 'VERIFIED' ? 'ce-badge-integrity-verified' : 'source-status roadmap'}" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;font-weight:800;${data.citation_integrity.status === 'VERIFIED' ? 'color:var(--verified);background:var(--verified-soft);border:1px solid var(--verified-border);' : ''}padding:2px 8px;border-radius:4px;">
@@ -1920,6 +2010,18 @@ function renderCeTraceResult(data) {
 
   // 3. Render 3-Area Main View
   const ce = data.claim_evidence;
+  if (data.scenario === 'FINANCE_D4' && [FINANCE_D4_DRAFT_SENTENCE, FINANCE_D4_CONTRAST_SENTENCE].includes(data.draft_text)) {
+    const anchors = ce.grounding?.grounded ? ce.grounding.shared_anchors : ce.grounding?.best_shared_anchors;
+    state.ceFinanceRuns[data.linking.marker] = {
+      marker: data.linking.marker,
+      article_id: data.citation_integrity.article_id,
+      article_title: data.citation_integrity.article_title,
+      ci_status: data.citation_integrity.status,
+      ce_status: ce.status,
+      shared_count: Array.isArray(anchors) ? anchors.length : null,
+      citing_anchor_count: ce.grounding?.citing_anchor_count ?? null,
+    };
+  }
   const isInsufficient = ce.status === 'INSUFFICIENT_EVIDENCE';
   const isShift = ce.status === 'POTENTIAL_CLAIM_SHIFT';
   const ceStatusView = CE_TRACE_STATUS[ce.status] ?? { ko: ce.status, badge: 'badge-insufficient' };
@@ -2031,61 +2133,8 @@ function renderCeTraceResult(data) {
     <!-- Two-stage verification logic (rendered from backend grounding) -->
     ${renderCeLogicPanel({ ...ce, _marker: data.linking?.marker })}
 
-    <!-- Contrast Action & Side-by-Side Comparison (finance D4 scenario only) -->
-    <div class="ce-contrast-action-box" ${isFinanceContrast ? '' : 'hidden'}>
-      <div class="ce-contrast-head">
-        <span class="contrast-icon">⚖️</span>
-        <strong>대조 시연: 같은 문장 · 올바른 근거 논문으로 비교</strong>
-        ${isInsufficient
-          ? `<button class="btn btn-primary btn-sm" id="btnTraceContrastInline" type="button">
-               [ 같은 문장 · 올바른 근거 논문으로 비교 ]
-             </button>`
-          : `<button class="btn btn-secondary btn-sm" id="btnTraceD4Inline" type="button">
-               [ ← 원래 사례 ([2] 다른 논문 인용) 다시 대조 ]
-             </button>`
-        }
-      </div>
-
-      <div class="ce-side-by-side-contrast" style="margin-top:8px;">
-        <!-- [2] 연결 -->
-        <div class="contrast-col ${isInsufficient ? 'is-active-side' : ''}">
-          <div class="contrast-col-head">
-            <span class="contrast-tag tag-current">[2] 연결</span>
-            <span class="contrast-paper-name">금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구</span>
-          </div>
-          <div class="contrast-col-body">
-            <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002510435</code></div>
-            <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
-            <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span></div>
-          </div>
-        </div>
-
-        <!-- Center Label -->
-        <div class="contrast-col-center">
-          <span class="contrast-center-arr">↔</span>
-          <span class="contrast-center-label">같은 문장 · 인용 연결만 변경</span>
-          <span style="font-size:10.5px;color:var(--text-3);margin-top:4px;">(같은 엔진 · 같은 규칙)</span>
-        </div>
-
-        <!-- [1] 연결 -->
-        <div class="contrast-col ${!isInsufficient ? 'is-active-side target-binding' : 'target-binding'}">
-          <div class="contrast-col-head">
-            <span class="contrast-tag tag-target">[1] 연결</span>
-            <span class="contrast-paper-name">텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석</span>
-          </div>
-          <div class="contrast-col-body">
-            <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART002961723</code></div>
-            <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
-            <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Why This Matters Callout -->
-      <div class="ce-why-this-matters" style="margin-top:8px;padding:10px 14px;background:#ffffff;border:1px solid #bfdbfe;border-radius:6px;font-size:13px;line-height:1.5;color:var(--text);">
-        💡 <strong>핵심 시사점:</strong> "참고문헌이 실제 논문이라는 사실과, 그 논문이 특정 문장의 근거라는 사실은 다릅니다."
-      </div>
-    </div>
+    <!-- Same-sentence contrast: offered only after a returned result (finance D4 scenario only) -->
+    ${renderCeContrastBlock(data, ce)}
 
     <!-- Technical Provenance Details (Collapsed) -->
     <details class="ce-provenance-details" style="margin-top:12px;">
@@ -2108,30 +2157,81 @@ function renderCeTraceResult(data) {
       </div>
     </details>`;
 
-  // Bind inline contrast buttons
+  // Bind the post-result contrast actions: only the sentence's marker changes; the bibliography stays as entered.
   const btnContrastInline = document.getElementById('btnTraceContrastInline');
   btnContrastInline?.addEventListener('click', () => {
     state.ceTraceContext = 'FINANCE_D4';
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_CONTRAST_SENTENCE;
-    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.add('is-active');
-    if (el.btnLoadCeD4) el.btnLoadCeD4.classList.remove('is-active');
-    executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, btnContrastInline);
+    el.btnLoadCeD4?.classList.remove('is-active');
+    executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, btnContrastInline, CE_CONTRAST_PROGRESS_NOTE);
   });
   const btnD4Inline = document.getElementById('btnTraceD4Inline');
   btnD4Inline?.addEventListener('click', () => {
     state.ceTraceContext = 'FINANCE_D4';
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_DRAFT_SENTENCE;
-    if (el.btnLoadCeD4) el.btnLoadCeD4.classList.add('is-active');
-    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.remove('is-active');
+    el.btnLoadCeD4?.classList.add('is-active');
     executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, btnD4Inline);
   });
+}
+
+// Same-sentence contrast (FINANCE_D4 presentation case). The CTA appears only once the [2] result has been returned;
+// the side-by-side view uses only responses actually received in this session, never preset verdicts.
+function renderCeContrastBlock(data, ce) {
+  if (data.scenario !== 'FINANCE_D4') return '';
+  if (data.draft_text === FINANCE_D4_DRAFT_SENTENCE && ce.status === 'INSUFFICIENT_EVIDENCE') {
+    return `
+    <div class="ce-contrast-action-box ce-contrast-cta">
+      <div class="ce-contrast-cta-text">
+        <strong>다음 단계 · 같은 문장을 올바른 근거 논문으로 비교</strong>
+        <span>인용 문장은 그대로 두고, 연결된 논문만 실제 근거 source로 변경합니다.</span>
+      </div>
+      <button class="btn btn-primary" id="btnTraceContrastInline" type="button">↔ 같은 문장 · 올바른 근거로 비교</button>
+    </div>`;
+  }
+  if (data.draft_text !== FINANCE_D4_CONTRAST_SENTENCE) return '';
+  const before = state.ceFinanceRuns['[2]'];
+  const after = state.ceFinanceRuns['[1]'];
+  const column = (run, active) => `
+        <div class="contrast-col ${active ? 'is-active-side target-binding' : ''}">
+          <div class="contrast-col-head">
+            <span class="contrast-tag ${active ? 'tag-target' : 'tag-current'}">${escapeHtml(run.marker)} 연결</span>
+            <span class="contrast-paper-name">${escapeHtml(run.article_title || '')}</span>
+          </div>
+          <div class="contrast-col-body">
+            <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">${escapeHtml(run.article_id)}</code></div>
+            <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">${escapeHtml(run.ci_status)}</span></div>
+            <div class="c-row"><span class="c-k">공유 내용어</span><code class="c-v">${escapeHtml(run.shared_count ?? '-')} / ${escapeHtml(run.citing_anchor_count ?? '-')}</code></div>
+            <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge ${(CE_TRACE_STATUS[run.ce_status] ?? { badge: 'badge-insufficient' }).badge}">${escapeHtml(run.ce_status)}</span></div>
+          </div>
+        </div>`;
+  return `
+    <div class="ce-contrast-action-box">
+      <div class="ce-contrast-head">
+        <span class="contrast-icon">⚖️</span>
+        <strong>문장은 그대로 유지 · [2] → [1] 근거 source만 변경</strong>
+        <button class="btn btn-secondary btn-sm" id="btnTraceD4Inline" type="button">← 원래 사례 ([2]) 다시 보기</button>
+      </div>
+      ${before && after ? `
+      <div class="ce-side-by-side-contrast" style="margin-top:8px;">
+        ${column(before, false)}
+        <div class="contrast-col-center">
+          <span class="contrast-center-arr">↔</span>
+          <span class="contrast-center-label">같은 문장 · 인용 연결만 변경</span>
+          <span style="font-size:10.5px;color:var(--text-3);margin-top:4px;">(같은 엔진 · 같은 규칙)</span>
+        </div>
+        ${column(after, true)}
+      </div>` : ''}
+      <div class="ce-why-this-matters" style="margin-top:8px;padding:10px 14px;background:#ffffff;border:1px solid #bfdbfe;border-radius:6px;font-size:13px;line-height:1.5;color:var(--text);">
+        💡 <strong>핵심 시사점:</strong> "참고문헌이 실제 논문이라는 사실과, 그 논문이 특정 문장의 근거라는 사실은 다릅니다."
+      </div>
+    </div>`;
 }
 
 function renderCeResult(finding, evidenceMode) {
   if (!el.ceVerifyResultBody || !finding) return;
   const label = CE_STATUS_LABELS[finding.status] ?? { ko: finding.status, badge: 'badge-insufficient' };
   const abstract = state.ceP0?.abstracts.find(item => item.lang === finding.evidence_source?.abstract_lang) ?? state.ceP0?.abstracts[0];
-  if (el.ceResultModeTag) el.ceResultModeTag.textContent = `${evidenceMode === 'FROZEN_EVIDENCE' ? 'FROZEN EVALUATION EVIDENCE' : evidenceMode} · 결정론적 규칙 ${finding.rule_id}`;
+  if (el.ceResultModeTag) el.ceResultModeTag.textContent = `${evidenceMode === 'FROZEN_EVIDENCE' ? '검증된 KCI 근거 재현' : evidenceMode} · 결정론적 규칙 ${finding.rule_id}`;
 
   // Observed marker transitions for each signaled dimension, straight from finding.observed.
   const transitions = (finding.signals || []).map(signal => {
@@ -2343,29 +2443,20 @@ function init() {
   // Claim-Evidence Input Actions: presets only fill committed claims; results always come from the backend.
   el.btnLoadCeD4?.addEventListener('click', async () => {
     el.btnLoadCeD4.classList.add('is-active');
-    el.btnLoadCeD4Contrast?.classList.remove('is-active');
     fillCePreset('D4');
     await executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, el.btnLoadCeD4);
   });
-  el.btnLoadCeD4Contrast?.addEventListener('click', async () => {
-    el.btnLoadCeD4Contrast.classList.add('is-active');
-    el.btnLoadCeD4?.classList.remove('is-active');
-    fillCePreset('D4-CONTRAST');
-    await executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, el.btnLoadCeD4Contrast);
-  });
   el.btnLoadCeExample?.addEventListener('click', () => {
     el.btnLoadCeD4?.classList.remove('is-active');
-    el.btnLoadCeD4Contrast?.classList.remove('is-active');
     fillCePreset('C1');
     el.ceVerifyInputText?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
   el.btnLoadCeInsufficient?.addEventListener('click', () => {
     el.btnLoadCeD4?.classList.remove('is-active');
-    el.btnLoadCeD4Contrast?.classList.remove('is-active');
     fillCePreset('I1');
     el.ceVerifyInputText?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
-  const setPresetActive = active => [el.btnLoadCeD4, el.btnLoadCeD4Contrast, el.btnLoadCeK2, el.btnLoadCeK2Control]
+  const setPresetActive = active => [el.btnLoadCeD4, el.btnLoadCeK2, el.btnLoadCeK2Control]
     .forEach(button => button?.classList.toggle('is-active', button === active));
   el.btnLoadCeK2?.addEventListener('click', async () => {
     setPresetActive(el.btnLoadCeK2);

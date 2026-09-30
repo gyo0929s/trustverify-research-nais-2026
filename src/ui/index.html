@@ -880,6 +880,25 @@
            ========================================================================= -->
       <div class="workspace-module" id="workspaceClaimEvidence" hidden>
 
+        <!-- Compact Comparison Navigation Banner (Presentation Switcher) -->
+        <div class="ce-compare-nav-banner" id="ceCompareNavBanner">
+          <div class="ce-compare-nav-content">
+            <div class="ce-compare-nav-tabs" role="tablist" aria-label="사례 대조 내비게이션">
+              <button class="ce-compare-tab is-active" id="btnCeNavDefault" type="button" role="tab" aria-selected="true">
+                <span class="ce-compare-tab-badge">A. 현재 인용</span>
+                <span class="ce-compare-tab-title">현재 사례 · 연결된 논문의 근거 부족</span>
+              </button>
+              <button class="ce-compare-tab" id="btnCeNavContrast" type="button" role="tab" aria-selected="false">
+                <span class="ce-compare-tab-icon">↔</span>
+                <span class="ce-compare-tab-title">같은 문장 · 올바른 근거로 비교</span>
+              </button>
+            </div>
+            <p class="ce-compare-nav-desc">
+              문장은 그대로 두고, 연결된 논문만 실제 근거 source로 변경합니다.
+            </p>
+          </div>
+        </div>
+
         <!-- =========================================================================
              TAB 1: 주장–근거 검증 (RESEARCHER WORKFLOW SHELL)
              ========================================================================= -->
@@ -887,10 +906,8 @@
           <section class="ext-workspace-hero">
             <div class="ext-hero-top">
               <div class="ce-method-badges">
-                <span class="rail-badge badge-expansion">NEXT VERIFICATION LAYER · EXPANSION / P0</span>
                 <span class="ce-tag-pill">ABSTRACT-ONLY</span>
                 <span class="ce-tag-pill">DETERMINISTIC-FIRST</span>
-                <span class="ce-tag-pill">FROZEN EVALUATION EVIDENCE</span>
               </div>
               <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromCe" type="button">
                 ← Citation Integrity (인용 무결성)으로 돌아가기
@@ -905,16 +922,12 @@
 
           <!-- Input Card: user input only (citing sentence + bibliography). System resolution is shown only after a run, in the result area. -->
           <div class="batch-card ce-verify-input-card">
-            <!-- Quick Presets: small controls; results always come from the backend. -->
+            <!-- Quick Preset: one small control. The same-sentence contrast is offered only after a result (see renderCeTraceResult). -->
             <div class="ce-preset-row">
               <span class="preset-label">예시 불러오기</span>
               <button class="btn btn-preset btn-sm ce-primary-preset is-active" id="btnLoadCeD4" type="button">
                 <span class="ce-primary-preset-title">▶ 대표 사례 실행</span>
                 <span class="ce-primary-preset-desc">실제 KCI 논문이지만 현재 인용문을 뒷받침하는 근거가 부족한 사례</span>
-              </button>
-              <button class="btn btn-preset btn-sm ce-primary-preset" id="btnLoadCeD4Contrast" type="button">
-                <span class="ce-primary-preset-title">↔ 같은 문장 · 올바른 근거로 비교</span>
-                <span class="ce-primary-preset-desc">인용 문장은 그대로 두고, 연결된 논문만 올바른 source로 변경</span>
               </button>
             </div>
 
@@ -929,14 +942,14 @@
             <div class="ce-verify-field-group">
               <label class="ce-field-label ce-field-label-md" for="ceVerifyReferences">2. 참고문헌 목록 <span class="ce-field-label-en">References</span></label>
               <textarea class="ce-verify-textarea ce-verify-references" id="ceVerifyReferences" rows="4" placeholder="[1] 저자 (연도). 제목. 학술지, 권(호), 쪽. DOI" spellcheck="false"></textarea>
-              <p class="ce-field-help ce-frozen-boundary">현재 발표 모드는 검증된 Frozen KCI Evidence를 재현합니다. 고정 근거에 없는 참고문헌은 자동 판정하지 않습니다.</p>
+              <p class="ce-field-help ce-frozen-boundary">현재 발표 모드는 검증된 KCI 근거를 재현합니다. 고정 근거에 없는 참고문헌은 자동 판정하지 않습니다.</p>
             </div>
 
             <div class="ce-verify-actions">
               <button class="btn btn-primary btn-lg" id="btnExecuteCeVerify" type="button">
                 <span class="btn-icon">🔍</span> 인용 내용 검증
               </button>
-              <span class="ce-mode-note">검증 모드: Frozen KCI Evidence · 발표 재현용</span>
+              <span class="ce-mode-note">검증 모드: 검증된 KCI 근거 재현</span>
             </div>
           </div>
 
@@ -1953,6 +1966,69 @@
 
           <div class="ext-footer-note">
             <span>💡 <strong>검증 위계 안내:</strong> TrustVerify의 핵심 실시간 검증은 <strong>Citation Integrity(서지 존재성 및 메타데이터 무결성)</strong>입니다. Claim–Evidence Alignment는 KCI 공식 서지가 확정된 논문의 공개 초록을 바탕으로 인용 문장의 서술 차이를 보조 관측하는 직후 연구 확장층(Layer 3)입니다.</span>
+          </div>
+        <!-- =========================================================================
+             COMPARISON VIEW: 정상 대조 (CONTRAST WITH GROUNDED EVIDENCE)
+             ========================================================================= -->
+        <div class="ce-view-panel" id="ceViewCompare" hidden>
+          <section class="ext-workspace-hero">
+            <div class="ext-hero-top">
+              <div class="ce-method-badges">
+                <span class="rail-badge badge-expansion">CONTRAST CASE</span>
+                <span class="ce-tag-pill">SAME SENTENCE · GROUNDED SOURCE</span>
+              </div>
+              <button class="btn btn-sm btn-ghost btn-back-citation" id="btnCeBackToDefault" type="button">
+                ← 현재 사례로 돌아가기
+              </button>
+            </div>
+            <h1 class="ext-hero-title">정상 대조 · 같은 문장, 올바른 근거 논문</h1>
+            <p class="ext-hero-sub">Contrast with Grounded Evidence · Same Citing Sentence</p>
+            <p class="ext-hero-desc">
+              "문장은 그대로 두고, 연결된 논문만 실제 근거 source로 변경합니다."
+            </p>
+          </section>
+
+          <!-- Comparison View Visual Shell -->
+          <div class="batch-card ce-compare-shell-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">CONTRAST SHELL</span>
+                <h3 class="batch-title">정상 대조 관측 (Comparison Visual Shell)</h3>
+              </div>
+              <span class="ce-integration-badge" style="background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;">UI SHELL ONLY · BACKEND CONNECTED IN NEXT TASK</span>
+            </div>
+
+            <div class="ce-compare-context-box">
+              <div class="ce-compare-field">
+                <span class="ce-field-label">동일 인용 문장 (Same Citing Statement)</span>
+                <div class="ce-compare-sentence-box">
+                  "The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [1]."
+                </div>
+                <p class="ce-field-help">인용 문장은 완전히 동일하며 인용 마커만 [2] → [1]로 변경되어 올바른 KCI 레코드와 연결됩니다.</p>
+              </div>
+
+              <div class="ce-compare-source-grid">
+                <div class="ce-compare-source-col is-unrelated">
+                  <span class="ce-compare-col-tag">A. 현재 사례 (Current Case)</span>
+                  <div class="ce-compare-col-head">
+                    <strong>인용 [2]</strong> · 미정합 레코드
+                  </div>
+                  <p class="ce-compare-col-desc">실제 존재하는 KCI 논문이나 본 인용 주장을 뒷받침하는 공개 초록 근거가 특정되지 않음</p>
+                </div>
+                <div class="ce-compare-arrow">➔</div>
+                <div class="ce-compare-source-col is-grounded">
+                  <span class="ce-compare-col-tag">B. 정상 대조 (Contrast Case)</span>
+                  <div class="ce-compare-col-head">
+                    <strong>인용 [1]</strong> · 올바른 근거 레코드
+                  </div>
+                  <p class="ce-compare-col-desc">실제 KCI 공개 초록에 명시된 실증 결과와 인용 주장의 방향·강도가 정합함</p>
+                </div>
+              </div>
+
+              <div class="ce-compare-placeholder-note">
+                <span>💡 <strong>안내:</strong> 본 화면은 발표 및 시연을 위한 정상 대조 UI 셸입니다. 다음 UI 작업에서 실제 백엔드 엔드포인트(<code>POST /api/claim-evidence/trace</code>) 결과가 연결됩니다.</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

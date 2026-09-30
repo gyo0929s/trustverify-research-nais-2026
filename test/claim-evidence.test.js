@@ -206,7 +206,7 @@ test('Claim–Evidence verify panel and preset code hold no hardcoded verdicts o
   const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
   const panel = html.slice(html.indexOf('id="ceViewVerify"'), html.indexOf('id="ceViewExamples"'));
   assert.equal(/CONSISTENT_WITH_EVIDENCE|POTENTIAL_CLAIM_SHIFT|INSUFFICIENT_EVIDENCE|_STRENGTHENED|_CHANGED|ART\d{9}|\bLIVE\b|Solar|HALLUCINATION|FALSE\b/.test(panel), false);
-  assert.ok(panel.includes('FROZEN EVALUATION EVIDENCE'));
+  assert.ok(panel.includes('검증 모드: 검증된 KCI 근거 재현'));
   for (const id of ['ceVerifyInputText', 'btnExecuteCeVerify', 'btnLoadCeExample', 'btnLoadCeInsufficient', 'ceVerifyResultBody']) assert.ok(panel.includes(`id="${id}"`), id);
 
   const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
@@ -219,21 +219,20 @@ test('Claim–Evidence verify panel and preset code hold no hardcoded verdicts o
   assert.equal(/Solar|HALLUCINATION|hallucinat|\bfalse claim|wrong claim/i.test(fn('renderCeResult')), false);
 });
 
-test('Finance D4 preset interaction regression: btnLoadCeD4 and btnLoadCeD4Contrast trigger trace with scenario FINANCE_D4 and live server responds with non-hardcoded findings', async () => {
+test('Finance D4 preset interaction regression: btnLoadCeD4 and the post-result contrast CTA trigger trace with scenario FINANCE_D4 and live server responds with non-hardcoded findings', async () => {
   const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
   assert.ok(html.includes('id="btnLoadCeD4"'));
   assert.ok(html.includes('▶ 대표 사례 실행'));
-  assert.ok(html.includes('id="btnLoadCeD4Contrast"'));
-  assert.ok(html.includes('↔ 같은 문장 · 올바른 근거로 비교'));
+  assert.equal(html.includes('id="btnLoadCeD4Contrast"'), false, 'no contrast control on the first screen');
 
   const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
   // 1. btnLoadCeD4 wires to executeCeTrace with scenario: 'FINANCE_D4'
   assert.ok(app.includes("el.btnLoadCeD4?.addEventListener('click'"));
   assert.ok(app.includes("executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, el.btnLoadCeD4)"));
 
-  // 2. btnLoadCeD4Contrast wires to executeCeTrace with scenario: 'FINANCE_D4' and marker [1]
-  assert.ok(app.includes("el.btnLoadCeD4Contrast?.addEventListener('click'"));
-  assert.ok(app.includes("executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, el.btnLoadCeD4Contrast)"));
+  // 2. The post-result contrast CTA wires to executeCeTrace with the same sentence and marker [1]
+  assert.ok(app.includes("const btnContrastInline = document.getElementById('btnTraceContrastInline');"));
+  assert.ok(app.includes('executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, btnContrastInline, CE_CONTRAST_PROGRESS_NOTE)'));
 
   // 3. executeCeTrace calls POST /api/claim-evidence/trace with scenario: 'FINANCE_D4' and evidence_mode: 'FROZEN_EVIDENCE'
   const fnCeTrace = app.slice(app.indexOf('function executeCeTrace('), app.indexOf('\n}\n', app.indexOf('function executeCeTrace(')));

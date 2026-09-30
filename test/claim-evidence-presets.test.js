@@ -40,12 +40,12 @@ test('K2 presets use the committed artifact values and the KOREAN_P0 scenario', 
   assert.ok(more.includes('id="btnLoadCeK2"') && more.includes('id="btnLoadCeK2Control"'));
 });
 
-test('first screen shows only the two primary presets without internal case labels', () => {
+test('first screen shows only the representative preset (no contrast) and no internal case labels', () => {
   const panel = html.slice(html.indexOf('id="ceViewVerify"'), html.indexOf('id="ceViewExamples"'));
   const first = panel.slice(0, panel.indexOf('class="ce-more-examples"'));
-  assert.deepEqual([...first.matchAll(/id="(btnLoadCe\w+)"/g)].map(m => m[1]), ['btnLoadCeD4', 'btnLoadCeD4Contrast']);
+  assert.deepEqual([...first.matchAll(/id="(btnLoadCe\w+)"/g)].map(m => m[1]), ['btnLoadCeD4']);
   assert.ok(first.includes('대표 사례 실행') && first.includes('실제 KCI 논문이지만 현재 인용문을 뒷받침하는 근거가 부족한 사례'));
-  assert.ok(first.includes('같은 문장 · 올바른 근거로 비교') && first.includes('인용 문장은 그대로 두고, 연결된 논문만 올바른 source로 변경'));
+  assert.equal(/같은 문장 · 올바른 근거로 비교|btnLoadCeD4Contrast|btnTraceContrastInline/.test(first), false, 'contrast is offered only after a result');
   const visible = first.replace(/<!--[\s\S]*?-->/g, '').replace(/\sid="[^"]*"/g, '');
   assert.equal(/D4|K2|CONTROLLED|PERTURBATION/.test(visible), false);
   const more = panel.slice(panel.indexOf('class="ce-more-examples"'));
