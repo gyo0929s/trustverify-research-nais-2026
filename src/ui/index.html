@@ -43,8 +43,66 @@
     </div>
   </header>
 
-  <!-- ============================== MAIN PRESENTATION CONTAINER ============================== -->
-  <main class="presentation-container">
+  <!-- ============================== APP LAYOUT: RAIL + WORKSPACE ============================== -->
+  <div class="app-layout">
+    <!-- ============================== SLIM LEFT EXTENSION RAIL ============================== -->
+    <aside class="extension-rail" id="extensionRail" aria-label="연구 검증 확장 레일">
+      <!-- Active Core Module Switch / Indicator -->
+      <div class="rail-group">
+        <div class="rail-group-label">핵심 검증</div>
+        <button class="rail-item is-active" id="railBtnCitation" type="button" data-module="citation" title="KCI 인용 무결성 검증 (CORE / LIVE)">
+          <div class="rail-item-top">
+            <span class="rail-item-icon">📚</span>
+            <span class="rail-item-title">인용 무결성</span>
+          </div>
+          <div class="rail-item-sub">Citation Integrity</div>
+          <div class="rail-item-meta">
+            <span class="rail-badge badge-core">CORE · LIVE</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="rail-divider"></div>
+
+      <!-- Extension Research Verification Modules -->
+      <div class="rail-group">
+        <div class="rail-group-label">확장 연구 검증</div>
+        <div class="rail-list">
+          <!-- MODULE 1: 번역 충실도 -->
+          <button class="rail-item" id="railBtnTranslation" type="button" data-module="translation" title="번역 충실도 검증 모듈">
+            <div class="rail-item-top">
+              <span class="rail-item-icon">🌐</span>
+              <span class="rail-item-title">번역 충실도</span>
+            </div>
+            <div class="rail-item-sub">숫자 · 인용 · 부정 · 인과 · 확신 변화</div>
+            <div class="rail-item-meta">
+              <span class="rail-badge badge-expansion">EXPANSION</span>
+            </div>
+          </button>
+
+          <!-- MODULE 2: 학술 표현 참조 -->
+          <button class="rail-item" id="railBtnAcademicRef" type="button" data-module="academic-reference" title="학술 표현 참조 모듈">
+            <div class="rail-item-top">
+              <span class="rail-item-icon">📊</span>
+              <span class="rail-item-title">학술 표현 참조</span>
+            </div>
+            <div class="rail-item-sub">실제 분야 논문의 표현 분포와 비교</div>
+            <div class="rail-item-meta">
+              <span class="rail-badge badge-pilot">PILOT</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============================== MAIN PRESENTATION CONTAINER ============================== -->
+    <main class="presentation-container">
+
+      <!-- =========================================================================
+           WORKSPACE 1: CITATION INTEGRITY WORKSPACE (CORE KCI AUDIT)
+           Retains 100% of existing views: Batch, Single Citation, Method
+           ========================================================================= -->
+      <div class="workspace-module" id="workspaceCitation">
 
     <!-- =========================================================================
          VIEW 1: PRIMARY PRODUCT EXPERIENCE (참고문헌 목록 검증 - BATCH FIRST)
@@ -737,8 +795,249 @@
         </div>
       </section>
     </div>
+  </div>
+  <!-- ============================== END WORKSPACE 1 ============================== -->
 
-  </main>
+      <!-- =========================================================================
+           WORKSPACE 2: TRANSLATION FIDELITY (EXPANSION MODULE)
+           ========================================================================= -->
+      <div class="workspace-module" id="workspaceTranslation" hidden>
+        <section class="ext-workspace-hero">
+          <div class="ext-hero-top">
+            <span class="rail-badge badge-expansion">EXPANSION MODULE · 개발 중</span>
+            <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromTf" type="button">
+              ← 인용 무결성 검증으로 돌아가기
+            </button>
+          </div>
+          <h1 class="ext-hero-title">번역 충실도</h1>
+          <p class="ext-hero-sub">Translation Fidelity</p>
+          <p class="ext-hero-desc">
+            "한국어 연구물이 영어로 재생성되는 과정에서 숫자 · 인용 · 부정 · 인과 · 확신 변화 신호를 확인합니다."
+          </p>
+        </section>
+
+        <!-- Future Input Areas (Mock) -->
+        <div class="ext-grid-two">
+          <div class="batch-card ext-input-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">INPUT 1</span>
+                <h3 class="batch-title">한국어 원문 (Korean Original)</h3>
+              </div>
+              <span class="batch-helper-text">작성된 한국어 연구 초안 또는 원본 단락</span>
+            </div>
+            <div class="ext-mock-textarea">
+본 연구에서는 42.8%의 표본에서 X와 Y 사이의 유의미한 관련성이 관찰되었으나(문현철, 2024), 이것이 직접적인 인과관계를 입증하는 것은 아니라고 판단된다. 또한 후속 조건에서 역방향 효과는 유의하지 않았다.
+            </div>
+          </div>
+
+          <div class="batch-card ext-input-card">
+            <div class="batch-card-header">
+              <div class="batch-title-wrap">
+                <span class="batch-step-pill">INPUT 2</span>
+                <h3 class="batch-title">AI 영어 결과 (AI English Output)</h3>
+              </div>
+              <span class="batch-helper-text">LLM에 의해 재생성·영문화된 연구 텍스트</span>
+            </div>
+            <div class="ext-mock-textarea">
+In this study, a significant relationship between X and Y was observed in 42.8% of the sample (Moon, 2024), which causes the subsequent performance improvements. Furthermore, reverse effects were significant in follow-up conditions.
+            </div>
+          </div>
+        </div>
+
+        <!-- Future Checks Checklist -->
+        <div class="batch-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">AUDIT LAYERS</span>
+              <h3 class="batch-title">번역 충실도 5대 검증 항목 (Future Checks)</h3>
+            </div>
+            <span class="batch-helper-text">규칙 기반 직접 비교 및 시맨틱 신호 탐지</span>
+          </div>
+
+          <div class="ext-checks-grid">
+            <div class="ext-check-item">
+              <div class="ext-check-head">
+                <span class="ext-check-icon">🔢</span>
+                <span class="ext-check-title">숫자 (Numbers)</span>
+                <span class="ext-check-rule">규칙 비교</span>
+              </div>
+              <p class="ext-check-desc">원문의 수치(42.8%), 단위(%), 통계치(p-value)가 영문화 과정에서 왜곡되거나 누락되지 않고 정확히 보존되는지 검증합니다.</p>
+            </div>
+
+            <div class="ext-check-item">
+              <div class="ext-check-head">
+                <span class="ext-check-icon">📚</span>
+                <span class="ext-check-title">인용 (Citations)</span>
+                <span class="ext-check-rule">KCI 연동</span>
+              </div>
+              <p class="ext-check-desc">영문 인용 표기(Moon, 2024)가 원문의 서지 앵커와 대응하며, KCI 실시간 인용 무결성 검증 결과를 그대로 계승합니다.</p>
+            </div>
+
+            <div class="ext-check-item">
+              <div class="ext-check-head">
+                <span class="ext-check-icon">⚠️</span>
+                <span class="ext-check-title">부정 (Negation)</span>
+                <span class="ext-check-rule">신호 탐지</span>
+              </div>
+              <p class="ext-check-desc">원문의 부정 표현("유의하지 않았다")이 AI 생성 과정에서 긍정문("were significant")으로 반전되는 치명적 의미 왜곡을 포착합니다.</p>
+            </div>
+
+            <div class="ext-check-item">
+              <div class="ext-check-head">
+                <span class="ext-check-icon">🔀</span>
+                <span class="ext-check-title">인과 (Causality)</span>
+                <span class="ext-check-rule">신호 탐지</span>
+              </div>
+              <p class="ext-check-desc">원문의 상관성 유보 서술("관련성이 관찰됨")이 단정적 인과문("causes the improvements")으로 무단 격상되는 신호를 탐지합니다.</p>
+            </div>
+
+            <div class="ext-check-item">
+              <div class="ext-check-head">
+                <span class="ext-check-icon">⚖️</span>
+                <span class="ext-check-title">확신 (Certainty)</span>
+                <span class="ext-check-rule">신호 탐지</span>
+              </div>
+              <p class="ext-check-desc">학술적 신중함(Hedging: "suggests", "may indicate")이 누락되고 과도한 확신 어조(proves, confirms)로 변질되는 정도를 측정합니다.</p>
+            </div>
+          </div>
+
+          <div class="ext-footer-note">
+            <span>💡 <strong>개발 상태 안내:</strong> 번역 충실도 모듈은 현재 TrustVerify Research의 2단계 확장 영역으로 설계되어 있습니다. 현재 버전의 완전 구현된 실시간 검증은 <strong>인용 무결성(KCI Open API)</strong> 모듈을 참조하십시오.</span>
+          </div>
+        </div>
+      </div>
+      <!-- ============================== END WORKSPACE 2 ============================== -->
+
+      <!-- =========================================================================
+           WORKSPACE 3: ACADEMIC REFERENCE CONTEXT (PILOT MODULE)
+           ========================================================================= -->
+      <div class="workspace-module" id="workspaceAcademicRef" hidden>
+        <section class="ext-workspace-hero">
+          <div class="ext-hero-top">
+            <span class="rail-badge badge-pilot">PILOT · 개발 중</span>
+            <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromAr" type="button">
+              ← 인용 무결성 검증으로 돌아가기
+            </button>
+          </div>
+          <h1 class="ext-hero-title">학술 표현 참조</h1>
+          <p class="ext-hero-sub">Academic-language Reference Context</p>
+          <p class="ext-hero-desc">
+            "대상 영문 표현을 실제 분야 논문의 참조 분포와 비교합니다."
+          </p>
+        </section>
+
+        <!-- Prominent Disclaimer -->
+        <div class="ext-disclaimer-banner">
+          <div class="ext-disclaimer-icon">⚖️</div>
+          <div class="ext-disclaimer-body">
+            <strong>정답 판정이 아닌 참조 분포 비교 (Corpus Reference Observation)</strong>
+            <p>
+              학술 표현 참조는 문법적 정오나 품질 합격/불합격을 단정하는 검증기가 아닙니다.
+              실제 출판된 동료 평가(Peer-reviewed) 분야별 논문 코퍼스의 어휘·문장 구조 분포와 대상 영문 표현의 거리를 관측하여 연구자에게 참고 지표를 제공합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Pilot Corpus Profile -->
+        <div class="batch-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">REFERENCE CORPUS</span>
+              <h3 class="batch-title">Finance-20 Pilot Reference Profile</h3>
+            </div>
+            <span class="batch-helper-text">재무·회계 실증 연구 논문 20편 기반 파일럿 참조 기준</span>
+          </div>
+
+          <div class="ext-pilot-summary">
+            <div class="ext-pilot-metric">
+              <span class="ep-num">20</span>
+              <span class="ep-lbl">실증 연구 표본 논문</span>
+            </div>
+            <div class="ext-pilot-metric">
+              <span class="ep-num">1,840</span>
+              <span class="ep-lbl">참조 문장 단위</span>
+            </div>
+            <div class="ext-pilot-metric">
+              <span class="ep-num">Finance & Accounting</span>
+              <span class="ep-lbl">특화 연구 도메인</span>
+            </div>
+            <div class="ext-pilot-metric">
+              <span class="ep-num">Distributional</span>
+              <span class="ep-lbl">비교 방식 (규범적 판정 배제)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observation Examples -->
+        <div class="batch-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">OBSERVATIONS</span>
+              <h3 class="batch-title">분야별 학술 표현 관측 차원 (Observation Dimensions)</h3>
+            </div>
+            <span class="batch-helper-text">해당 분야 정규 논문 집합에서 추출된 표현 패턴 예시</span>
+          </div>
+
+          <div class="ext-observation-grid">
+            <div class="ext-obs-card">
+              <div class="ext-obs-head">
+                <span class="ext-obs-badge">HEDGING</span>
+                <span class="ext-obs-title">신중한 어조 (Hedging)</span>
+              </div>
+              <p class="ext-obs-desc">연구 한계 인정 및 신중한 결론 유보 표현의 빈도와 패턴</p>
+              <div class="ext-obs-example">
+                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
+                <code>"The results suggest that...", "may indicate a modest correlation", "consistent with prior evidence"</code>
+              </div>
+            </div>
+
+            <div class="ext-obs-card">
+              <div class="ext-obs-head">
+                <span class="ext-obs-badge">CAUSAL</span>
+                <span class="ext-obs-title">인과 언어 (Causal language)</span>
+              </div>
+              <p class="ext-obs-desc">인과 관계를 주장하는 서술의 강도 및 조건부 전제 표기 빈도</p>
+              <div class="ext-obs-example">
+                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
+                <code>"leads to under specific boundary conditions", "is associated with increased risk"</code>
+              </div>
+            </div>
+
+            <div class="ext-obs-card">
+              <div class="ext-obs-head">
+                <span class="ext-obs-badge">CITATION</span>
+                <span class="ext-obs-title">인용 근접도 (Citation proximity)</span>
+              </div>
+              <p class="ext-obs-desc">문장 내 인용 표기의 배치 위치와 문맥적 결합 강도</p>
+              <div class="ext-obs-example">
+                <div class="ext-example-lbl">코퍼스 전형 표현:</div>
+                <code>"(e.g., Kim et al., 2023)", "Following the methodology of Park (2022)..."</code>
+              </div>
+            </div>
+
+            <div class="ext-obs-card">
+              <div class="ext-obs-head">
+                <span class="ext-obs-badge">ASSERTION</span>
+                <span class="ext-obs-title">단정적 주장 (Strong assertion)</span>
+              </div>
+              <p class="ext-obs-desc">예외 없는 절대적 단정 표현의 희소성 관측 (분야 논문에서 극히 드묾)</p>
+              <div class="ext-obs-example">
+                <div class="ext-example-lbl">코퍼스 관측 빈도:</div>
+                <code>"proves definitively", "undeniably demonstrates" (코퍼스 내 발생 빈도 &lt; 0.2%)</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="ext-footer-note">
+            <span>💡 <strong>로드맵 안내:</strong> 학술 표현 참조 모듈은 단일 정답 규칙이 아닌, 연구 분야별(컴퓨터과학, 경영, 생명공학 등) 표현 분포를 연구자가 자율적으로 탐색할 수 있도록 확장될 예정입니다.</span>
+          </div>
+        </div>
+      </div>
+      <!-- ============================== END WORKSPACE 3 ============================== -->
+
+    </main>
+  </div>
 
   <script src="/app.js" type="module"></script>
 </body>

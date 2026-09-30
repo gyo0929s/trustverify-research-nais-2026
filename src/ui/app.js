@@ -173,6 +173,7 @@ const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 장만, 신승수 (2024). Computer Vision-
 
 // UI State
 const state = {
+  currentModule: 'citation', // 'citation' | 'translation' | 'academic-reference'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
   currentView: 'batch', // 'batch' | 'single' | 'method'
@@ -192,6 +193,17 @@ const state = {
 // DOM References
 const $ = id => document.getElementById(id);
 const el = {
+  // Extension Rail & Workspaces
+  extensionRail: $('extensionRail'),
+  railBtnCitation: $('railBtnCitation'),
+  railBtnTranslation: $('railBtnTranslation'),
+  railBtnAcademicRef: $('railBtnAcademicRef'),
+  workspaceCitation: $('workspaceCitation'),
+  workspaceTranslation: $('workspaceTranslation'),
+  workspaceAcademicRef: $('workspaceAcademicRef'),
+  btnBackToCitationFromTf: $('btnBackToCitationFromTf'),
+  btnBackToCitationFromAr: $('btnBackToCitationFromAr'),
+
   // Main Navigation Tabs & View Panels
   navTabBatch: $('navTabBatch'),
   navTabSingle: $('navTabSingle'),
@@ -261,9 +273,31 @@ const el = {
   tfEvidencePanel: $('tfEvidencePanel'),
 };
 
+/* ------------------------------------------------------------------ WORKSPACE MODULE ROUTING (EXTENSION RAIL) */
+
+function switchWorkspaceModule(moduleName) {
+  state.currentModule = moduleName;
+  const isCitation = moduleName === 'citation';
+  const isTranslation = moduleName === 'translation';
+  const isAcademicRef = moduleName === 'academic-reference';
+
+  el.railBtnCitation?.classList.toggle('is-active', isCitation);
+  el.railBtnTranslation?.classList.toggle('is-active', isTranslation);
+  el.railBtnAcademicRef?.classList.toggle('is-active', isAcademicRef);
+
+  if (el.workspaceCitation) el.workspaceCitation.hidden = !isCitation;
+  if (el.workspaceTranslation) el.workspaceTranslation.hidden = !isTranslation;
+  if (el.workspaceAcademicRef) el.workspaceAcademicRef.hidden = !isAcademicRef;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 /* ------------------------------------------------------------------ MAIN VIEW ROUTING (3 TABS) */
 
 function switchMainView(viewName) {
+  if (state.currentModule !== 'citation') {
+    switchWorkspaceModule('citation');
+  }
   state.currentView = viewName;
   const isBatch = viewName === 'batch';
   const isSingle = viewName === 'single';
@@ -1337,6 +1371,13 @@ function escapeHtml(str) {
 /* ------------------------------------------------------------------ INITIALIZATION */
 
 function init() {
+  // Extension Rail Module Switching
+  el.railBtnCitation?.addEventListener('click', () => switchWorkspaceModule('citation'));
+  el.railBtnTranslation?.addEventListener('click', () => switchWorkspaceModule('translation'));
+  el.railBtnAcademicRef?.addEventListener('click', () => switchWorkspaceModule('academic-reference'));
+  el.btnBackToCitationFromTf?.addEventListener('click', () => switchWorkspaceModule('citation'));
+  el.btnBackToCitationFromAr?.addEventListener('click', () => switchWorkspaceModule('citation'));
+
   // Top Navigation Tabs (Batch First, Single, Method)
   el.navTabBatch?.addEventListener('click', () => switchMainView('batch'));
   el.navTabSingle?.addEventListener('click', () => switchMainView('single'));
@@ -1447,7 +1488,11 @@ function init() {
 
   // Check URL hash on load
   const hash = location.hash.replace('#', '').toLowerCase();
-  if (hash === 'single' || hash === 'viewsingle') {
+  if (hash === 'translation' || hash === 'viewtranslation') {
+    switchWorkspaceModule('translation');
+  } else if (hash === 'academic-reference' || hash === 'finance-20' || hash === 'viewacademicref') {
+    switchWorkspaceModule('academic-reference');
+  } else if (hash === 'single' || hash === 'viewsingle') {
     switchMainView('single');
   } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'claim-evidence' || hash === 'architecture') {
     switchMainView('method');
