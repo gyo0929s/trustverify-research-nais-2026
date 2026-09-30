@@ -172,7 +172,9 @@ const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 대운해 (2024). Exploring AI-Assisted Wr
 
 // UI State
 const state = {
-  currentModule: 'citation', // 'citation' | 'translation' | 'academic-reference'
+  currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
+  currentCitationView: 'batch', // 'batch' | 'single' | 'method'
+  currentCeView: 'verify', // 'verify' | 'examples' | 'method'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
   currentView: 'batch', // 'batch' | 'single' | 'method'
@@ -198,21 +200,45 @@ const el = {
   railBtnClaimEvidence: $('railBtnClaimEvidence'),
   railBtnTranslation: $('railBtnTranslation'),
   railBtnAcademicRef: $('railBtnAcademicRef'),
+  railActiveTagCitation: $('railActiveTagCitation'),
+  railActiveTagCe: $('railActiveTagCe'),
+  railActiveTagTf: $('railActiveTagTf'),
+  railActiveTagAr: $('railActiveTagAr'),
   workspaceCitation: $('workspaceCitation'),
   workspaceClaimEvidence: $('workspaceClaimEvidence'),
   workspaceTranslation: $('workspaceTranslation'),
   workspaceAcademicRef: $('workspaceAcademicRef'),
   btnBackToCitationFromCe: $('btnBackToCitationFromCe'),
+  btnBackToCitationFromCeExamples: $('btnBackToCitationFromCeExamples'),
+  btnBackToCitationFromCeMethod: $('btnBackToCitationFromCeMethod'),
   btnBackToCitationFromTf: $('btnBackToCitationFromTf'),
   btnBackToCitationFromAr: $('btnBackToCitationFromAr'),
 
-  // Main Navigation Tabs & View Panels
+  // Context-Aware Top Navigation Blocks
+  topnavCitation: $('topnavCitation'),
+  topnavClaimEvidence: $('topnavClaimEvidence'),
+  topnavExpansion: $('topnavExpansion'),
+  topnavModuleName: $('topnavModuleName'),
+
+  // Citation Integrity Navigation Tabs & View Panels
   navTabBatch: $('navTabBatch'),
   navTabSingle: $('navTabSingle'),
   navTabMethod: $('navTabMethod'),
   viewBatch: $('viewBatch'),
   viewSingle: $('viewSingle'),
   viewMethod: $('viewMethod'),
+
+  // Claim-Evidence Navigation Tabs & View Panels
+  navTabCeVerify: $('navTabCeVerify'),
+  navTabCeExamples: $('navTabCeExamples'),
+  navTabCeMethod: $('navTabCeMethod'),
+  ceViewVerify: $('ceViewVerify'),
+  ceViewExamples: $('ceViewExamples'),
+  ceViewMethod: $('ceViewMethod'),
+  ceVerifyInputText: $('ceVerifyInputText'),
+  btnExecuteCeVerify: $('btnExecuteCeVerify'),
+  btnLoadCeExample: $('btnLoadCeExample'),
+
   // Step 1: Input
   batchInputCard: $('batchInputCard'),
   batchInputText: $('batchInputText'),
@@ -277,7 +303,7 @@ const el = {
 
 /* ------------------------------------------------------------------ WORKSPACE MODULE ROUTING (EXTENSION RAIL) */
 
-function switchWorkspaceModule(moduleName) {
+function switchWorkspaceModule(moduleName, targetSubView) {
   state.currentModule = moduleName;
   const isCitation = moduleName === 'citation';
   const isClaimEvidence = moduleName === 'claim-evidence';
@@ -289,20 +315,41 @@ function switchWorkspaceModule(moduleName) {
   el.railBtnTranslation?.classList.toggle('is-active', isTranslation);
   el.railBtnAcademicRef?.classList.toggle('is-active', isAcademicRef);
 
+  if (el.railActiveTagCitation) el.railActiveTagCitation.hidden = !isCitation;
+  if (el.railActiveTagCe) el.railActiveTagCe.hidden = !isClaimEvidence;
+  if (el.railActiveTagTf) el.railActiveTagTf.hidden = !isTranslation;
+  if (el.railActiveTagAr) el.railActiveTagAr.hidden = !isAcademicRef;
+
   if (el.workspaceCitation) el.workspaceCitation.hidden = !isCitation;
   if (el.workspaceClaimEvidence) el.workspaceClaimEvidence.hidden = !isClaimEvidence;
   if (el.workspaceTranslation) el.workspaceTranslation.hidden = !isTranslation;
   if (el.workspaceAcademicRef) el.workspaceAcademicRef.hidden = !isAcademicRef;
 
+  if (el.topnavCitation) el.topnavCitation.hidden = !isCitation;
+  if (el.topnavClaimEvidence) el.topnavClaimEvidence.hidden = !isClaimEvidence;
+  if (el.topnavExpansion) el.topnavExpansion.hidden = !(isTranslation || isAcademicRef);
+
+  if (isTranslation && el.topnavModuleName) {
+    el.topnavModuleName.textContent = '번역 충실도 (Translation Fidelity · 확장 연구)';
+  } else if (isAcademicRef && el.topnavModuleName) {
+    el.topnavModuleName.textContent = '참조 문헌 프로필 (Finance-20 · 보조 맥락)';
+  }
+
+  if (isCitation) {
+    if (targetSubView) switchCitationView(targetSubView);
+    else switchCitationView(state.currentCitationView || 'batch');
+  } else if (isClaimEvidence) {
+    if (targetSubView) switchCeView(targetSubView);
+    else switchCeView(state.currentCeView || 'verify');
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ------------------------------------------------------------------ MAIN VIEW ROUTING (3 TABS) */
+/* ------------------------------------------------------------------ CITATION INTEGRITY VIEW ROUTING */
 
-function switchMainView(viewName) {
-  if (state.currentModule !== 'citation') {
-    switchWorkspaceModule('citation');
-  }
+function switchCitationView(viewName) {
+  state.currentCitationView = viewName;
   state.currentView = viewName;
   const isBatch = viewName === 'batch';
   const isSingle = viewName === 'single';
@@ -317,6 +364,33 @@ function switchMainView(viewName) {
   if (el.viewMethod) el.viewMethod.hidden = !isMethod;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ------------------------------------------------------------------ CLAIM-EVIDENCE VIEW ROUTING */
+
+function switchCeView(viewName) {
+  state.currentCeView = viewName;
+  const isVerify = viewName === 'verify';
+  const isExamples = viewName === 'examples';
+  const isMethod = viewName === 'method';
+
+  el.navTabCeVerify?.classList.toggle('is-active', isVerify);
+  el.navTabCeExamples?.classList.toggle('is-active', isExamples);
+  el.navTabCeMethod?.classList.toggle('is-active', isMethod);
+
+  if (el.ceViewVerify) el.ceViewVerify.hidden = !isVerify;
+  if (el.ceViewExamples) el.ceViewExamples.hidden = !isExamples;
+  if (el.ceViewMethod) el.ceViewMethod.hidden = !isMethod;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchMainView(viewName) {
+  if (state.currentModule !== 'citation') {
+    switchWorkspaceModule('citation', viewName);
+  } else {
+    switchCitationView(viewName);
+  }
 }
 
 /* ------------------------------------------------------------------ SECTION 2: LIVE KCI DEMO (RESULT FIRST) */
@@ -1377,18 +1451,82 @@ function escapeHtml(str) {
 
 function init() {
   // Extension Rail Module Switching
-  el.railBtnCitation?.addEventListener('click', () => switchWorkspaceModule('citation'));
-  el.railBtnClaimEvidence?.addEventListener('click', () => switchWorkspaceModule('claim-evidence'));
-  el.railBtnTranslation?.addEventListener('click', () => switchWorkspaceModule('translation'));
-  el.railBtnAcademicRef?.addEventListener('click', () => switchWorkspaceModule('academic-reference'));
-  el.btnBackToCitationFromCe?.addEventListener('click', () => switchWorkspaceModule('citation'));
-  el.btnBackToCitationFromTf?.addEventListener('click', () => switchWorkspaceModule('citation'));
-  el.btnBackToCitationFromAr?.addEventListener('click', () => switchWorkspaceModule('citation'));
+  el.railBtnCitation?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.railBtnClaimEvidence?.addEventListener('click', () => {
+    location.hash = 'ce-verify';
+    switchWorkspaceModule('claim-evidence', 'verify');
+  });
+  el.railBtnTranslation?.addEventListener('click', () => {
+    location.hash = 'translation';
+    switchWorkspaceModule('translation');
+  });
+  el.railBtnAcademicRef?.addEventListener('click', () => {
+    location.hash = 'academic-reference';
+    switchWorkspaceModule('academic-reference');
+  });
 
-  // Top Navigation Tabs (Batch First, Single, Method)
-  el.navTabBatch?.addEventListener('click', () => switchMainView('batch'));
-  el.navTabSingle?.addEventListener('click', () => switchMainView('single'));
-  el.navTabMethod?.addEventListener('click', () => switchMainView('method'));
+  el.btnBackToCitationFromCe?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromCeExamples?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromCeMethod?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromTf?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+  el.btnBackToCitationFromAr?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchWorkspaceModule('citation', 'batch');
+  });
+
+  // Top Navigation Tabs (Citation Integrity)
+  el.navTabBatch?.addEventListener('click', () => {
+    location.hash = 'batch';
+    switchCitationView('batch');
+  });
+  el.navTabSingle?.addEventListener('click', () => {
+    location.hash = 'single';
+    switchCitationView('single');
+  });
+  el.navTabMethod?.addEventListener('click', () => {
+    location.hash = 'method';
+    switchCitationView('method');
+  });
+
+  // Top Navigation Tabs (Claim–Evidence Alignment)
+  el.navTabCeVerify?.addEventListener('click', () => {
+    location.hash = 'ce-verify';
+    switchCeView('verify');
+  });
+  el.navTabCeExamples?.addEventListener('click', () => {
+    location.hash = 'ce-examples';
+    switchCeView('examples');
+  });
+  el.navTabCeMethod?.addEventListener('click', () => {
+    location.hash = 'ce-method';
+    switchCeView('method');
+  });
+
+  // Claim-Evidence Input Actions
+  el.btnLoadCeExample?.addEventListener('click', () => {
+    if (el.ceVerifyInputText) {
+      el.ceVerifyInputText.value = 'The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.';
+    }
+  });
+
+  el.btnExecuteCeVerify?.addEventListener('click', () => {
+    alert('실시간 입력 연동 준비 단계입니다. 상단 [평가 예시] 탭에서 동결 검증된 기준 사례(C1, C2, I1)를 확인하세요.');
+  });
 
   // Batch Step 1: Input Actions
   el.btnAnalyzeBatch?.addEventListener('click', handleAnalyzeBatch);
@@ -1493,20 +1631,33 @@ function init() {
   // Initial render of Section 3
   selectTfFinding('TR-CAUS-001');
 
-  // Check URL hash on load
+  // Client-side Hash Routing
+  window.addEventListener('hashchange', handleHashRouting);
+  handleHashRouting();
+}
+
+function handleHashRouting() {
   const hash = location.hash.replace('#', '').toLowerCase();
   if (hash === 'claim-evidence' || hash === 'viewclaimevidence' || hash === 'claim' || hash === 'layer3') {
-    switchWorkspaceModule('claim-evidence');
+    switchWorkspaceModule('claim-evidence', 'verify');
+  } else if (hash === 'ce-verify') {
+    switchWorkspaceModule('claim-evidence', 'verify');
+  } else if (hash === 'ce-examples') {
+    switchWorkspaceModule('claim-evidence', 'examples');
+  } else if (hash === 'ce-method') {
+    switchWorkspaceModule('claim-evidence', 'method');
   } else if (hash === 'translation' || hash === 'viewtranslation') {
     switchWorkspaceModule('translation');
   } else if (hash === 'academic-reference' || hash === 'finance-20' || hash === 'viewacademicref') {
     switchWorkspaceModule('academic-reference');
   } else if (hash === 'single' || hash === 'viewsingle') {
-    switchMainView('single');
+    switchWorkspaceModule('citation', 'single');
   } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'architecture') {
-    switchMainView('method');
-  } else {
-    switchMainView('batch');
+    switchWorkspaceModule('citation', 'method');
+  } else if (hash === 'batch' || hash === 'viewbatch') {
+    switchWorkspaceModule('citation', 'batch');
+  } else if (!hash) {
+    switchWorkspaceModule('citation', 'batch');
   }
 }
 

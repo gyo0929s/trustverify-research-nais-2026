@@ -93,6 +93,17 @@ button { font: inherit; color: inherit; }
 .brand-sub { font-size: 11px; font-weight: 500; color: var(--text-3); }
 
 .topnav { display: flex; align-items: center; gap: 8px; }
+.topnav[hidden] { display: none !important; }
+.topnav-module-pill {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+}
 .topnav-tab {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 8px 16px; border-radius: var(--radius-sm);
@@ -285,6 +296,22 @@ button { font: inherit; color: inherit; }
   background: #f1f5f9;
   color: #475569;
   border: 1px solid #cbd5e1;
+}
+
+.rail-active-pill {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 800;
+  font-family: var(--mono);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--primary);
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+}
+.rail-item:not(.is-active) .rail-active-pill {
+  display: none !important;
 }
 
 .rail-divider {
@@ -583,6 +610,89 @@ button { font: inherit; color: inherit; }
 }
 
 /* ------------------------------------------------------------------ CLAIM–EVIDENCE ALIGNMENT MODULE */
+.ce-view-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+.ce-selected-paper-card {
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ce-paper-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ce-paper-meta-sub {
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+.ce-verify-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  resize: vertical;
+}
+.ce-verify-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.ce-reserved-results-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ce-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ce-results-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ce-pending-tag {
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--surface-3);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.ce-slot-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 16px;
+  text-align: center;
+  color: var(--text-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.ce-slot-icon { font-size: 22px; }
+.ce-slot-text { font-size: 12.5px; line-height: 1.45; }
+
 .ce-method-badges {
   display: flex;
   align-items: center;
