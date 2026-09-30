@@ -101,7 +101,10 @@ export async function traceDraftCitation({ draftText, references, evidenceMode }
       state: 'RUN',
       status: alignment.status,
       signal: alignment.signal,
+      signals: alignment.signals,
       insufficiency_reason: alignment.insufficiency_reason,
+      // Engine output passed through unchanged so the UI can show the grounding gate without recomputing it.
+      grounding: alignment.grounding,
       rule_id: alignment.rule_id,
       rule_version: alignment.rule_version,
       evidence_span: alignment.evidence_span,

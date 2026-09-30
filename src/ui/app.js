@@ -1671,6 +1671,71 @@ async function executeCeTrace(draftText, triggerBtn) {
   }
 }
 
+/**
+ * Two-stage verification logic panel (presentation only). Every value comes from the returned finding:
+ * grounding.grounded / shared_anchors / best_shared_anchors / citing_anchor_count / coverage / thresholds,
+ * status and signals. Nothing is recomputed here.
+ */
+function renderCeLogicPanel(ce) {
+  const g = ce.grounding;
+  if (!g) return '';
+  const grounded = g.grounded === true;
+  const shared = grounded ? g.shared_anchors : g.best_shared_anchors;
+  const sharedCount = Array.isArray(shared) ? shared.length : null;
+  const total = g.citing_anchor_count;
+  const t = g.thresholds || {};
+  const coverageText = typeof g.coverage === 'number' ? `${Math.round(g.coverage * 100)}%` : null;
+  const stage2Ran = grounded;
+  const stage2Pass = stage2Ran && ce.status === 'CONSISTENT_WITH_EVIDENCE';
+  const stage2Shift = stage2Ran && ce.status === 'POTENTIAL_CLAIM_SHIFT';
+  const stage2Text = !stage2Ran
+    ? '근거 문장 미확정 → 표현 변화 판정 미실행'
+    : stage2Pass
+      ? '확신 · 방향 · 인과 · 양태 변화 없음'
+      : `표현 변화 관측: ${(ce.signals || []).join(', ')}`;
+  const stage2Badge = !stage2Ran ? '미실행' : stage2Pass ? 'PASS' : stage2Shift ? '변화 관측' : escapeHtml(ce.status);
+  return `
+    <section class="ce-logic-panel" aria-label="TrustVerify 검증 로직">
+      <div class="ce-logic-head">
+        <strong class="ce-logic-title">🔎 TrustVerify 검증 로직</strong>
+        <span class="ce-logic-sub">근거를 먼저 고정하고, 그 다음에만 표현 변화를 확인합니다.</span>
+      </div>
+      <p class="ce-logic-principle">근거를 찾기 전에 의미를 판단하지 않습니다.</p>
+      <div class="ce-logic-stages">
+        <div class="ce-logic-stage ${grounded ? 'is-pass' : 'is-fail'}">
+          <div class="ce-logic-stage-head">
+            <span class="ce-logic-step">① 근거 문장 찾기</span>
+            <span class="ce-logic-badge">${grounded ? 'PASS' : 'FAIL'}</span>
+          </div>
+          <div class="ce-logic-rule">기준: 공유 내용어 ≥ ${escapeHtml(t.MIN_SHARED_ANCHORS)} 그리고 인용 핵심어 커버리지 ≥ ${escapeHtml(Math.round((t.MIN_COVERAGE ?? 0) * 100))}% <code>${escapeHtml(ce.rule_id === 'CE-GROUND-001' ? 'CE-GROUND-001' : 'Grounding Gate')}</code></div>
+          <div class="ce-logic-metric">
+            <span>현재 ${escapeHtml(ce._marker || '')} · 공유 내용어 <strong>${sharedCount ?? '-'} / ${escapeHtml(total ?? '-')}</strong></span>
+            ${coverageText ? `<span>인용 핵심어 커버리지 <strong>${coverageText}</strong></span>` : ''}
+          </div>
+          <div class="ce-logic-outcome">${grounded
+            ? `→ 근거 문장 확정 (초록 문장 #${escapeHtml(ce.evidence_span?.sentence_index ?? '-')})`
+            : '→ 충분한 근거 문장을 특정하지 못함 → INSUFFICIENT_EVIDENCE'}</div>
+        </div>
+        <div class="ce-logic-arrow" aria-hidden="true">➔</div>
+        <div class="ce-logic-stage ${!stage2Ran ? 'is-muted' : stage2Pass ? 'is-pass' : 'is-shift'}">
+          <div class="ce-logic-stage-head">
+            <span class="ce-logic-step">② 표현 변화 확인</span>
+            <span class="ce-logic-badge">${stage2Badge}</span>
+          </div>
+          <div class="ce-logic-outcome">${escapeHtml(stage2Text)}</div>
+          ${!stage2Ran
+            ? '<div class="ce-logic-note">근거가 고정되지 않으면 표현 의미를 추측하지 않습니다.</div>'
+            : `<div class="ce-logic-outcome">→ ${escapeHtml(ce.status)}</div>`}
+          <div class="ce-logic-examples">
+            <span class="ce-logic-examples-label">근거가 확인된 경우에만 보는 표현 예시 (이번 결과 아님)</span>
+            <span class="ce-logic-example"><code>suggest → prove</code> 확신 강도 강화</span>
+            <span class="ce-logic-example"><code>may → definitely</code> 가능성 → 강한 확신/필연 표현</span>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
 function renderCeTraceResult(data) {
   if (!el.ceVerifyResultBody || !data) return;
 
@@ -1852,6 +1917,9 @@ function renderCeTraceResult(data) {
       </div>
     </div>
 
+    <!-- Two-stage verification logic (rendered from backend grounding) -->
+    ${renderCeLogicPanel({ ...ce, _marker: data.linking?.marker })}
+
     <!-- Contrast Action & Side-by-Side Comparison (finance D4 scenario only) -->
     <div class="ce-contrast-action-box" ${isFinanceContrast ? '' : 'hidden'}>
       <div class="ce-contrast-head">
@@ -1918,6 +1986,7 @@ function renderCeTraceResult(data) {
           <div class="ce-prov-item"><span class="cp-k">Citation Rule ID</span><code class="cp-v">${escapeHtml(data.citation_integrity.rule_id || '-')}</code></div>
           <div class="ce-prov-item"><span class="cp-k">Claim Rule ID</span><code class="cp-v">${escapeHtml(ce.rule_id)} (v${escapeHtml(ce.rule_version || '1.0')})</code></div>
           <div class="ce-prov-item"><span class="cp-k">Insufficiency Reason</span><code class="cp-v">${escapeHtml(ce.insufficiency_reason || 'NONE')}</code></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Grounding Anchors</span><code class="cp-v">${escapeHtml(JSON.stringify(ce.grounding?.grounded ? ce.grounding.shared_anchors : ce.grounding?.best_shared_anchors ?? []))} / ${escapeHtml(ce.grounding?.citing_anchor_count ?? '-')}</code></div>
           <div class="ce-prov-item"><span class="cp-k">Evidence Hash</span><code class="cp-v">${escapeHtml(ce.evidence_hash || '-')}</code></div>
           <div class="ce-prov-item full-width"><span class="cp-k">Citation Finding ID</span><code class="cp-v">${escapeHtml(data.citation_integrity.finding_id)}</code></div>
           <div class="ce-prov-item full-width"><span class="cp-k">Claim Finding ID</span><code class="cp-v">${escapeHtml(ce.finding_id)}</code></div>

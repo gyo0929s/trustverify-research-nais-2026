@@ -3056,3 +3056,33 @@ button { font: inherit; color: inherit; }
   .summary-metrics-grid { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; }
 }
+
+/* Claim–Evidence two-stage verification logic panel */
+.ce-logic-panel { margin: 0 0 14px; padding: 14px 16px; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; background: #ffffff; }
+.ce-logic-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.ce-logic-title { font-size: 15px; color: var(--text, #0f172a); }
+.ce-logic-sub { font-size: 12.5px; color: var(--text-3, #64748b); }
+.ce-logic-principle { margin: 6px 0 12px; font-size: 14px; font-weight: 800; color: #1d4ed8; }
+.ce-logic-stages { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: stretch; }
+.ce-logic-arrow { align-self: center; font-size: 18px; color: var(--text-3, #64748b); }
+.ce-logic-stage { padding: 12px 14px; border-radius: 8px; border: 1px solid; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5; }
+.ce-logic-stage.is-pass { background: #f0fdf4; border-color: #86efac; }
+.ce-logic-stage.is-fail { background: #fef2f2; border-color: #fca5a5; }
+.ce-logic-stage.is-shift { background: #fffbeb; border-color: #fcd34d; }
+.ce-logic-stage.is-muted { background: #f1f5f9; border-color: #cbd5e1; color: #64748b; border-style: dashed; }
+.ce-logic-stage-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ce-logic-step { font-weight: 800; font-size: 14px; }
+.ce-logic-badge { font-family: var(--mono, monospace); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 4px; background: #ffffff; border: 1px solid currentColor; }
+.ce-logic-stage.is-pass .ce-logic-badge { color: #15803d; }
+.ce-logic-stage.is-fail .ce-logic-badge { color: #b91c1c; }
+.ce-logic-stage.is-shift .ce-logic-badge { color: #b45309; }
+.ce-logic-stage.is-muted .ce-logic-badge { color: #64748b; }
+.ce-logic-rule { font-size: 12.5px; color: var(--text-2, #334155); }
+.ce-logic-rule code { font-size: 11px; margin-left: 4px; color: var(--text-3, #64748b); }
+.ce-logic-metric { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; }
+.ce-logic-outcome { font-weight: 700; }
+.ce-logic-note { font-size: 12.5px; font-style: italic; }
+.ce-logic-examples { margin-top: 4px; padding-top: 6px; border-top: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #64748b; }
+.ce-logic-examples-label { font-weight: 700; }
+.ce-logic-example code { font-size: 11.5px; margin-right: 6px; }
+@media (max-width: 900px) { .ce-logic-stages { grid-template-columns: 1fr; } .ce-logic-arrow { transform: rotate(90deg); justify-self: center; } }
