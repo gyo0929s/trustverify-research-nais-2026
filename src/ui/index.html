@@ -868,39 +868,65 @@
               <span class="ce-integration-badge">P0 · FROZEN EVALUATION EVIDENCE (KCI 초록 고정본)</span>
             </div>
 
-            <!-- 1. Selected Paper -->
+            <!-- Persistent Frozen Evidence Badge & Notice -->
+            <div class="ce-frozen-persistent-banner">
+              <div class="ce-frozen-badge-row">
+                <span class="ce-frozen-pill">FROZEN EVIDENCE</span>
+                <span class="ce-frozen-pill-sub">검증된 KCI 근거 재생</span>
+              </div>
+              <p class="ce-frozen-banner-desc">"실제 KCI에서 확보·정제한 근거를 동일 엔진으로 재현합니다."</p>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="preset-buttons-group">
+              <span class="preset-label">검증 프리셋:</span>
+              <div class="preset-btns">
+                <button class="btn btn-preset is-active" id="btnLoadCeD4" type="button">
+                  ★ D4 실제 reference 연결 사례
+                </button>
+                <button class="btn btn-preset" id="btnLoadCeD4Contrast" type="button">
+                  ★ 같은 문장 · 올바른 source로 대조
+                </button>
+                <button class="btn btn-preset" id="btnLoadCeExample" type="button">
+                  보존된 인용 예시
+                </button>
+                <button class="btn btn-preset" id="btnLoadCeInsufficient" type="button">
+                  현재 초록으로 확인 어려운 예시
+                </button>
+              </div>
+            </div>
+
+            <!-- 1. Citing Sentence Input -->
             <div class="ce-verify-field-group">
-              <label class="ce-field-label">선택된 논문 (Selected Paper)</label>
+              <label class="ce-field-label" for="ceVerifyInputText">내가 실제로 작성한 인용 문장 (Citing Statement with Marker)</label>
+              <textarea class="ce-verify-textarea" id="ceVerifyInputText" rows="3" placeholder="검증할 인용 문장을 입력하세요. (예: The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2].)" spellcheck="false"></textarea>
+            </div>
+
+            <!-- 2. Selected Paper / Reference Context Display -->
+            <div class="ce-verify-field-group">
+              <label class="ce-field-label">참고문헌 및 KCI 레코드 연결 (Reference &amp; KCI Record)</label>
               <div class="ce-selected-paper-card">
                 <div class="ce-paper-badge-row">
                   <span class="ce-paper-id" id="ceSelectedPaperId">KCI ID: 불러오는 중…</span>
-                  <span class="source-status qualified">KCI VERIFIED</span>
+                  <span class="source-status qualified" id="ceSelectedPaperStatus">KCI VERIFIED</span>
                 </div>
                 <div class="ce-paper-title" id="ceSelectedPaperTitle"></div>
                 <div class="ce-paper-meta-sub" id="ceSelectedPaperMeta"></div>
               </div>
             </div>
 
-            <!-- 2. Citing Sentence Input -->
-            <div class="ce-verify-field-group">
-              <label class="ce-field-label" for="ceVerifyInputText">내가 실제로 작성한 인용 문장 (Citing Statement)</label>
-              <textarea class="ce-verify-textarea" id="ceVerifyInputText" rows="3" placeholder="검증할 인용 문장을 입력하세요. (예: The simulation results suggest a limit in the load-sharing capacity of interproximal contacts...)"></textarea>
-            </div>
-
             <div class="ce-verify-actions">
               <button class="btn btn-primary btn-lg" id="btnExecuteCeVerify" type="button">
                 <span class="btn-icon">🔍</span> 인용 내용 검증
               </button>
-              <button class="btn btn-secondary" id="btnLoadCeExample" type="button">보존된 인용 예시</button>
-              <button class="btn btn-secondary" id="btnLoadCeInsufficient" type="button">현재 초록으로 확인 어려운 예시</button>
             </div>
           </div>
 
-          <!-- Result: rendered only from the finding returned by POST /api/claim-evidence/align -->
+          <!-- Result: rendered only from the finding returned by POST /api/claim-evidence/trace or POST /api/claim-evidence/align -->
           <div class="ce-reserved-results-wrap" id="ceReservedResults">
             <div class="ce-results-header">
               <h3 class="ce-results-title">검증 결과</h3>
-              <span class="ce-pending-tag" id="ceResultModeTag">인용 문장을 입력하고 [인용 내용 검증]을 누르세요</span>
+              <span class="ce-pending-tag" id="ceResultModeTag">인용 문장을 입력하고 [인용 내용 검증]을 누르거나 프리셋을 선택하세요</span>
             </div>
             <div id="ceVerifyResultBody"></div>
           </div>
@@ -932,18 +958,33 @@
           <div class="ce-case-selector-bar">
             <div class="ce-selector-header">
               <span class="ce-selector-label">평가 사례 선택</span>
-              <span class="ce-selector-flow-hint">발표 권장 순서: D4(실제 논문≠실제 근거) ➔ D3(초록 근거 불충분) ➔ D2(표현 강도 강화)</span>
+              <span class="ce-selector-flow-hint">핵심 시연: D4(실제 논문 ≠ 현재 문장의 근거) ➔ D4-CONTRAST(같은 문장 · 올바른 source 대조)</span>
             </div>
-            <div class="ce-case-tabs" role="tablist">
-              <button class="ce-case-tab is-active" id="btnCaseD2" type="button" data-case="D2">
+            <!-- Primary Cases (Top Tier) -->
+            <div class="ce-case-tabs-primary" role="tablist">
+              <button class="ce-case-tab ce-case-tab-primary is-active" id="btnCaseD4" type="button" data-case="D4">
+                <span class="case-tab-tag primary-tag">★ PRIMARY TRACE</span>
+                <span class="case-tab-title">D4. 실제 논문 ≠ 현재 문장의 근거</span>
+                <span class="case-tab-signal">[2] 다른 실제 논문 인용 (INSUFFICIENT_EVIDENCE)</span>
+              </button>
+              <button class="ce-case-tab ce-case-tab-primary" id="btnCaseD4Contrast" type="button" data-case="D4-CONTRAST">
+                <span class="case-tab-tag contrast-tag">★ CONTRAST</span>
+                <span class="case-tab-title">D4-CONTRAST. 올바른 source 대조</span>
+                <span class="case-tab-signal">[1] 같은 문장 · 올바른 source (CONSISTENT_WITH_EVIDENCE)</span>
+              </button>
+            </div>
+
+            <!-- Secondary Divider -->
+            <div class="ce-secondary-divider">
+              <span>보조 사례 (Secondary)</span>
+            </div>
+
+            <!-- Secondary Cases (Bottom Tier) -->
+            <div class="ce-case-tabs-secondary" role="tablist">
+              <button class="ce-case-tab" id="btnCaseD2" type="button" data-case="D2">
                 <span class="case-tab-tag">D2 · STRESS</span>
                 <span class="case-tab-title">표현 강도 강화</span>
                 <span class="case-tab-signal">suggesting ➔ prove</span>
-              </button>
-              <button class="ce-case-tab" id="btnCaseD4" type="button" data-case="D4">
-                <span class="case-tab-tag">D4 · REF BOUNDARY</span>
-                <span class="case-tab-title">실제 논문 ≠ 실제 근거</span>
-                <span class="case-tab-signal">다른 실제 논문 인용</span>
               </button>
               <button class="ce-case-tab" id="btnCaseD3" type="button" data-case="D3">
                 <span class="case-tab-tag">D3 · BOUNDARY</span>
@@ -958,8 +999,394 @@
             </div>
           </div>
 
-          <!-- CASE DETAIL: D2 표현 강도 강화 (DEFAULT ACTIVE) -->
-          <div class="ce-case-detail" id="ceCaseDetailD2">
+          <!-- CASE DETAIL: D4 실제 논문 ≠ 실제 근거 (PRIMARY END-TO-END TRACE, DEFAULT ACTIVE) -->
+          <div class="ce-case-detail" id="ceCaseDetailD4">
+            <div class="ce-case-hero-banner tone-insufficient">
+              <div class="ce-case-headline-row">
+                <h3 class="ce-case-headline">D4. 실제 논문 ≠ 현재 문장의 근거 (PRIMARY TRACE)</h3>
+                <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+              </div>
+              <div class="boundary-quote-main" style="text-align: left; font-size: 15px; margin-top: 4px;">
+                "실제 존재하는 논문이라고 해서, 그 논문이 지금 문장의 근거라는 뜻은 아닙니다."
+              </div>
+              <p class="ce-case-short-desc">
+                "참고문헌 자체는 실제 KCI 논문이지만, 현재 확보된 해당 논문의 공개 초록에서는 이 문장을 연결할 충분한 근거를 찾지 못했습니다."
+              </p>
+            </div>
+
+            <!-- Main Trace Visual (Compact Evidence Chain) -->
+            <div class="ce-compact-trace-visual">
+              <div class="trace-chain-title">D4 검증 추적 경로 (End-to-End Evidence Trace)</div>
+              <div class="trace-chain-steps">
+                <div class="trace-step-node">
+                  <span class="ts-tag">본문 주장</span>
+                  <span class="ts-val">load-sharing capacity…</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">Citation Marker</span>
+                  <span class="ts-val marker-pill">[2]</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">참고문헌 2번</span>
+                  <span class="ts-val">Basketball Player Training System</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node highlight-kci">
+                  <span class="ts-tag">KCI 실제 Record</span>
+                  <span class="ts-val">ART003062835 (VERIFIED)</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">KCI 공개 Abstract</span>
+                  <span class="ts-val">대조 실행 (공유 앵커 0건)</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node is-halt">
+                  <span class="ts-tag">근거 특정</span>
+                  <span class="ts-val">관련 evidence span을 충분히 고정하지 못함</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node is-verdict">
+                  <span class="ts-tag">Claim–Evidence 결과</span>
+                  <span class="ts-status badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary D4 Result Card (4-Part Hierarchy) -->
+            <div class="ce-d4-primary-card">
+              <div class="d4-card-grid">
+                <div class="d4-item">
+                  <span class="d4-step-num">1. 실제 논문 확인</span>
+                  <div class="d4-status-val">
+                    <span class="source-status qualified">VERIFIED</span>
+                    <code class="d4-record-id">KCI Record: ART003062835</code>
+                  </div>
+                  <p class="d4-sub">서지 4개 항목(Title·Author·Year·DOI) 모두 공식 KCI 레코드와 100% 일치</p>
+                </div>
+
+                <div class="d4-item">
+                  <span class="d4-step-num">2. 현재 문장 근거 확인</span>
+                  <div class="d4-status-val">
+                    <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+                    <span class="rule-tag">규칙 CE-GROUND-001 (v1.0)</span>
+                  </div>
+                  <p class="d4-sub">NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD</p>
+                </div>
+
+                <div class="d4-item full-width">
+                  <span class="d4-step-num">3. 이유</span>
+                  <div class="d4-why-box">
+                    <p>"현재 연결된 실제 논문의 공개 초록에서 이 문장을 뒷받침할 관련 근거를 보수적으로 식별하지 못했습니다."</p>
+                    <p class="d4-why-detail">인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다.</p>
+                  </div>
+                </div>
+
+                <div class="d4-item full-width review-tier">
+                  <span class="d4-step-num">4. Human Review</span>
+                  <div class="d4-review-val">
+                    <span class="ce-action-badge">사람 검토 필요</span>
+                    <span>참고문헌 번호 오기재 또는 본문/부록 근거 여부를 연구자가 직접 대조해야 합니다.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contrast Visual & Quick Action -->
+            <div class="ce-contrast-action-box">
+              <div class="ce-contrast-head">
+                <span class="contrast-icon">⚖️</span>
+                <strong>대조 시연: 같은 문장 · 올바른 source로 변경 시</strong>
+                <button class="btn btn-primary btn-sm" id="btnSwitchToContrast" type="button">
+                  [ 같은 문장 · 올바른 근거 논문으로 비교 ]
+                </button>
+              </div>
+              <div class="ce-side-by-side-contrast">
+                <div class="contrast-col current-binding">
+                  <div class="contrast-col-head">
+                    <span class="contrast-tag tag-current">현재 연결 [2]</span>
+                    <span class="contrast-paper-name">Basketball Player Training System</span>
+                  </div>
+                  <div class="contrast-col-body">
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003062835</code></div>
+                    <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
+                    <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span></div>
+                  </div>
+                </div>
+
+                <div class="contrast-col-center">
+                  <span class="contrast-center-arr">↔</span>
+                  <span class="contrast-center-label">같은 문장 · reference binding만 변경</span>
+                </div>
+
+                <div class="contrast-col target-binding">
+                  <div class="contrast-col-head">
+                    <span class="contrast-tag tag-target">근거 source [1]</span>
+                    <span class="contrast-paper-name">Computer simulation on interproximal contacts</span>
+                  </div>
+                  <div class="contrast-col-body">
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003267604</code></div>
+                    <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
+                    <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="contrast-footer-defense">
+                💡 <strong>기술적 방어 논리:</strong> "문장은 그대로 두고 reference binding만 바꿨습니다. AI가 문장을 느낌으로 판단한 것이 아니라, 어떤 실제 KCI record에 연결됐는지에서 결정론적으로 발생한 결과 차이입니다."
+              </div>
+            </div>
+
+            <!-- Detailed 3-Step Flow for Drilldown -->
+            <div class="ce-3step-card-flow">
+              <div class="ce-flow-step-box citing-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">1. 내가 쓴 인용문 (Citing Statement with Marker)</span>
+                  <span class="rule-tag">Case D4 · Finding ID: claim-d46caafa57abe6b9</span>
+                </div>
+                <p class="claim-text">"The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2]."</p>
+                <div class="ce-display-aid">
+                  <span class="ce-aid-badge">한국어 이해 보조</span>
+                  <span>"시뮬레이션 결과는 대부분의 추가 하중이 제1대구치에서 국소적으로 소산됨에 따라, 인접 접촉면의 하중 분담 능력에 한계가 있음을 시사한다 [2]."</span>
+                </div>
+              </div>
+
+              <div class="ce-flow-arrow-down">↓ 참고문헌 2번 서지 검증 및 공개 초록 대조</div>
+
+              <div class="ce-flow-step-box evidence-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">2. 실제 논문의 공개 근거 (KCI Record &amp; Abstract Evidence)</span>
+                  <span class="source-status qualified">서지 검증: VERIFIED (REF-META-001)</span>
+                </div>
+                <div class="ce-paper-info">
+                  <span class="ce-paper-id">KCI ID: ART003062835 (실제 존재하는 KCI 공식 학술 레코드)</span>
+                  <span class="ce-paper-title">Computer Vision-based Basketball Player Training System (장만, 신승수 2024)</span>
+                </div>
+                <div class="ce-grounded-span">
+                  <span class="ce-span-badge">접지 결과 · 대응 근거 0건 (NO_SENTENCE_MEETS_THRESHOLD)</span>
+                  <p class="ce-span-text">인용된 논문(컴퓨터 비전 기반 농구선수 훈련 시스템)의 공개 초록 전체를 대조했으나, 치과 생체역학 하중 분담 인용문에 대응하는 공유 앵커가 0건입니다.</p>
+                </div>
+                <div class="ce-display-aid">
+                  <span class="ce-aid-badge">핵심 관측 원칙</span>
+                  <span>"논문이 실제로 존재하는 것과 이 문장의 근거인 것은 다릅니다."</span>
+                </div>
+              </div>
+
+              <div class="ce-flow-arrow-down">↓ 결정론적 관측 결과 도출</div>
+
+              <div class="ce-flow-step-box result-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">3. 관측 결과 (Observed Result)</span>
+                  <span class="ce-action-badge">사람 검토 필요</span>
+                </div>
+                <div class="ce-result-status-row">
+                  <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+                  <span class="rule-tag">규칙 CE-GROUND-001 (v1.0)</span>
+                </div>
+                <div class="ce-why-box">
+                  <strong>Why? (NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD)</strong>
+                  <p>"인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다."</p>
+                </div>
+                <div class="ce-prominent-callout neutral">
+                  🛡️ <strong>판정 원칙:</strong> 잘못된 인용이나 거짓 논문이라고 단정하지 않고, 확인 불가(INSUFFICIENT_EVIDENCE) 상태로 남깁니다.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CASE DETAIL: D4-CONTRAST 올바른 source 대조 -->
+          <div class="ce-case-detail" id="ceCaseDetailD4Contrast" hidden>
+            <div class="ce-case-hero-banner tone-consistent">
+              <div class="ce-case-headline-row">
+                <h3 class="ce-case-headline">D4-CONTRAST. 같은 문장 · 올바른 source 대조 (CORRECT SOURCE)</h3>
+                <span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+              </div>
+              <p class="ce-case-short-desc">
+                "동일한 인용 문장에 대해 실제 근거 논문[1]을 연결했을 때 정합성이 확인되는 대조 사례입니다."
+              </p>
+            </div>
+
+            <!-- Compact Trace Visual for [1] -->
+            <div class="ce-compact-trace-visual">
+              <div class="trace-chain-title">End-to-End Evidence Trace (Correct Source Binding)</div>
+              <div class="trace-chain-steps">
+                <div class="trace-step-node">
+                  <span class="ts-tag">본문 주장</span>
+                  <span class="ts-val">load-sharing capacity…</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">Citation Marker</span>
+                  <span class="ts-val marker-pill">[1]</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">참고문헌 1번</span>
+                  <span class="ts-val">Computer simulation on interproximal contacts</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node highlight-kci">
+                  <span class="ts-tag">KCI 실제 Record</span>
+                  <span class="ts-val">ART003267604 (VERIFIED)</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node">
+                  <span class="ts-tag">KCI 공개 Abstract</span>
+                  <span class="ts-val">Abstract sentence #9 접지 성공</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node highlight-kci">
+                  <span class="ts-tag">근거 특정</span>
+                  <span class="ts-val">공유 앵커 11/12 · coverage 91.7%</span>
+                </div>
+                <span class="ts-arr">↓</span>
+                <div class="trace-step-node is-verdict">
+                  <span class="ts-tag">Claim–Evidence 결과</span>
+                  <span class="ts-status badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result Card for [1] -->
+            <div class="ce-d4-primary-card">
+              <div class="d4-card-grid">
+                <div class="d4-item">
+                  <span class="d4-step-num">1. 실제 논문 확인</span>
+                  <div class="d4-status-val">
+                    <span class="source-status qualified">VERIFIED</span>
+                    <code class="d4-record-id">KCI Record: ART003267604</code>
+                  </div>
+                  <p class="d4-sub">서지 4개 항목(Title·Author·Year·DOI) 모두 공식 KCI 레코드와 100% 일치</p>
+                </div>
+
+                <div class="d4-item">
+                  <span class="d4-step-num">2. 현재 문장 근거 확인</span>
+                  <div class="d4-status-val">
+                    <span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+                    <span class="rule-tag">규칙 CE-CONSIST-001 (v1.0)</span>
+                  </div>
+                  <p class="d4-sub">EXPRESSION_PRESERVED</p>
+                </div>
+
+                <div class="d4-item full-width">
+                  <span class="d4-step-num">3. 이유</span>
+                  <div class="d4-why-box">
+                    <p>"특정된 초록 근거 문장 범위에서 인과성·양태·확실성·부정·방향 표현이 보존되었습니다."</p>
+                    <p class="d4-why-detail">인용된 논문의 공개 초록 9번 문장과 91.7% 일치하며, 원문의 신중한 유보(suggesting) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다.</p>
+                  </div>
+                </div>
+
+                <div class="d4-item full-width">
+                  <span class="d4-step-num">4. Human Review</span>
+                  <div class="d4-review-val">
+                    <span class="source-status qualified">자동 검증 완료 (통과)</span>
+                    <span style="color: var(--text-2);">추가 수동 검토 없이 서지 및 근거 정합성이 확인되었습니다.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contrast Visual & Switch to D4 Action -->
+            <div class="ce-contrast-action-box">
+              <div class="ce-contrast-head">
+                <span class="contrast-icon">⚖️</span>
+                <strong>대조 시연: reference binding 비교</strong>
+                <button class="btn btn-secondary btn-sm" id="btnSwitchToD4" type="button">
+                  [ [2] 다른 실제 논문 인용(D4)으로 다시 대조 ]
+                </button>
+              </div>
+              <div class="ce-side-by-side-contrast">
+                <div class="contrast-col target-binding">
+                  <div class="contrast-col-head">
+                    <span class="contrast-tag tag-target">근거 source [1]</span>
+                    <span class="contrast-paper-name">Computer simulation on interproximal contacts</span>
+                  </div>
+                  <div class="contrast-col-body">
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003267604</code></div>
+                    <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
+                    <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span></div>
+                  </div>
+                </div>
+
+                <div class="contrast-col-center">
+                  <span class="contrast-center-arr">↔</span>
+                  <span class="contrast-center-label">같은 문장 · reference binding만 변경</span>
+                </div>
+
+                <div class="contrast-col current-binding">
+                  <div class="contrast-col-head">
+                    <span class="contrast-tag tag-current">현재 연결 [2]</span>
+                    <span class="contrast-paper-name">Basketball Player Training System</span>
+                  </div>
+                  <div class="contrast-col-body">
+                    <div class="c-row"><span class="c-k">KCI Record</span><code class="c-v">ART003062835</code></div>
+                    <div class="c-row"><span class="c-k">Citation Integrity</span><span class="source-status qualified">VERIFIED</span></div>
+                    <div class="c-row"><span class="c-k">Claim Evidence</span><span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="contrast-footer-defense">
+                💡 <strong>결론:</strong> "문장은 완전히 동일하지만 [1]에 연결되면 CONSISTENT_WITH_EVIDENCE, [2]에 연결되면 INSUFFICIENT_EVIDENCE가 도출됩니다."
+              </div>
+            </div>
+
+            <!-- Detailed 3-Step Flow -->
+            <div class="ce-3step-card-flow">
+              <div class="ce-flow-step-box citing-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">1. 내가 쓴 인용문 (Citing Statement with Marker)</span>
+                  <span class="rule-tag">Case D4-CONTRAST · Finding ID: claim-4ea2a838ec1d26e7</span>
+                </div>
+                <p class="claim-text">"The simulation results <mark class="mark-grounded">suggest</mark> a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [1]."</p>
+                <div class="ce-display-aid">
+                  <span class="ce-aid-badge">한국어 이해 보조</span>
+                  <span>"시뮬레이션 결과는 대부분의 추가 하중이 제1대구치에서 국소적으로 소산됨에 따라, 인접 접촉면의 하중 분담 능력에 한계가 있음을 <mark class="mark-grounded">시사한다</mark> [1]."</span>
+                </div>
+              </div>
+
+              <div class="ce-flow-arrow-down">↓ 참고문헌 1번 서지 검증 및 공개 초록 대조</div>
+
+              <div class="ce-flow-step-box evidence-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">2. 실제 논문의 공개 근거 (KCI Record &amp; Abstract Evidence)</span>
+                  <span class="source-status qualified">KCI VERIFIED</span>
+                </div>
+                <div class="ce-paper-info">
+                  <span class="ce-paper-id">KCI ID: ART003267604</span>
+                  <span class="ce-paper-title">Computer simulation on the role of interproximal contacts in occlusal force transmission</span>
+                </div>
+                <div class="ce-grounded-span">
+                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span) · Abstract sentence #9</span>
+                  <p class="ce-span-text">"These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, <mark class="mark-grounded">suggesting</mark> a limit in the load-sharing capacity of interproximal contacts."</p>
+                </div>
+                <div class="ce-display-aid">
+                  <span class="ce-aid-badge">한국어 이해 보조</span>
+                  <span>"…인접 접촉면의 하중 분담 능력에 한계가 있음을 <mark class="mark-grounded">시사한다</mark>."</span>
+                </div>
+              </div>
+
+              <div class="ce-flow-arrow-down">↓ 결정론적 관측 결과 도출</div>
+
+              <div class="ce-flow-step-box result-box">
+                <div class="ce-flow-step-head">
+                  <span class="ce-flow-step-num">3. 관측 결과 (Observed Result)</span>
+                  <span class="ce-action-badge">정합 확인</span>
+                </div>
+                <div class="ce-result-status-row">
+                  <span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+                  <span class="rule-tag">규칙 CE-CONSIST-001 (v1.0)</span>
+                </div>
+                <div class="ce-why-box">
+                  <strong>Why?</strong>
+                  <p>"실제 초록 근거의 신중한 유보(suggesting) 표현 강도를 그대로 유지하여 의미가 충실히 보존되었습니다."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CASE DETAIL: D2 표현 강도 강화 -->
+          <div class="ce-case-detail" id="ceCaseDetailD2" hidden>
             <div class="ce-case-hero-banner tone-shift">
               <div class="ce-case-headline-row">
                 <h3 class="ce-case-headline">D2. 표현 강도 강화 (STRESS)</h3>
@@ -1044,77 +1471,6 @@
                 <div class="ce-observer-row">
                   <span class="ce-observer-lbl">Observer:</span>
                   <span class="ce-observer-badge">UNASSESSED (결정론적 규칙만 사용)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CASE DETAIL: D4 실제 논문 ≠ 실제 근거 -->
-          <div class="ce-case-detail" id="ceCaseDetailD4" hidden>
-            <div class="ce-case-hero-banner tone-insufficient">
-              <div class="ce-case-headline-row">
-                <h3 class="ce-case-headline">D4. 실제 논문 ≠ 실제 근거 (REFERENCE BOUNDARY)</h3>
-                <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
-              </div>
-              <p class="ce-case-short-desc">
-                "논문 자체는 실제로 존재하지만, 현재 공개 초록에서 이 인용 문장을 연결할 충분한 근거를 찾지 못했습니다."
-              </p>
-            </div>
-
-            <div class="ce-3step-card-flow">
-              <!-- Step 1: 내가 쓴 인용문 -->
-              <div class="ce-flow-step-box citing-box">
-                <div class="ce-flow-step-head">
-                  <span class="ce-flow-step-num">1. 내가 쓴 인용문 (Citing Statement with Marker)</span>
-                  <span class="rule-tag">Case D4 · Finding ID: claim-d46caafa57abe6b9</span>
-                </div>
-                <p class="claim-text">"The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2]."</p>
-                <div class="ce-display-aid">
-                  <span class="ce-aid-badge">한국어 이해 보조</span>
-                  <span>"시뮬레이션 결과는 대부분의 추가 하중이 제1대구치에서 국소적으로 소산됨에 따라, 인접 접촉면의 하중 분담 능력에 한계가 있음을 시사한다 [2]."</span>
-                </div>
-              </div>
-
-              <div class="ce-flow-arrow-down">↓ 참고문헌 2번 서지 검증 및 공개 초록 대조</div>
-
-              <!-- Step 2: 실제 논문의 공개 근거 -->
-              <div class="ce-flow-step-box evidence-box">
-                <div class="ce-flow-step-head">
-                  <span class="ce-flow-step-num">2. 실제 논문의 공개 근거 (KCI Record &amp; Abstract Evidence)</span>
-                  <span class="source-status qualified">서지 검증: VERIFIED (REF-META-001)</span>
-                </div>
-                <div class="ce-paper-info">
-                  <span class="ce-paper-id">KCI ID: ART003062835 (실제 존재하는 KCI 공식 학술 레코드)</span>
-                  <span class="ce-paper-title">Computer Vision-based Basketball Player Training System (장만, 신승수 2024)</span>
-                </div>
-                <div class="ce-grounded-span">
-                  <span class="ce-span-badge">접지 결과 · 대응 근거 0건 (NO_SENTENCE_MEETS_THRESHOLD)</span>
-                  <p class="ce-span-text">인용된 논문(컴퓨터 비전 기반 농구선수 훈련 시스템)의 공개 초록 전체를 대조했으나, 치과 생체역학 하중 분담 인용문에 대응하는 공유 앵커가 0건입니다.</p>
-                </div>
-                <div class="ce-display-aid">
-                  <span class="ce-aid-badge">핵심 관측 원칙</span>
-                  <span>"논문이 실제로 존재하는 것과 이 문장의 근거인 것은 다릅니다."</span>
-                </div>
-              </div>
-
-              <div class="ce-flow-arrow-down">↓ 결정론적 관측 결과 도출</div>
-
-              <!-- Step 3: 관측 결과 -->
-              <div class="ce-flow-step-box result-box">
-                <div class="ce-flow-step-head">
-                  <span class="ce-flow-step-num">3. 관측 결과 (Observed Result)</span>
-                  <span class="ce-action-badge">사람 검토 권장 (인용 번호/서지 대조)</span>
-                </div>
-                <div class="ce-result-status-row">
-                  <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
-                  <span class="rule-tag">규칙 CE-GROUND-001 (v1.0)</span>
-                </div>
-                <div class="ce-why-box">
-                  <strong>Why? (NO_RELEVANT_EVIDENCE_IN_REFERENCED_RECORD)</strong>
-                  <p>"인용된 논문은 실제 KCI 레코드이지만, 현재 확보된 초록·제목·키워드에는 이 인용 문장을 뒷받침할 관련 근거가 보이지 않습니다. 인용 대상이 맞는지 사람이 확인해야 하는 후보이며, 잘못된 인용이라는 자동 판정이 아닙니다."</p>
-                </div>
-                <div class="ce-prominent-callout neutral">
-                  🛡️ <strong>판정 원칙:</strong> 잘못된 인용이나 거짓 논문이라고 단정하지 않고, 확인 불가(INSUFFICIENT_EVIDENCE) 상태로 남깁니다.
                 </div>
               </div>
             </div>
@@ -1315,7 +1671,7 @@
               </button>
             </div>
             <h1 class="ext-hero-title">Claim–Evidence 검증 방법</h1>
-            <p class="ext-hero-sub">"실제 논문 고정 → 공개 근거 연결 → 표현 차이 관측"</p>
+            <p class="ext-hero-sub">"실제 논문 고정 → 공개 근거 연결 → 표현 / 근거 정합성 관측"</p>
             <div class="ce-hero-flow-questions">
               <span>실제 논문인가?</span>
               <span class="proto-arrow">➔</span>
@@ -1331,7 +1687,7 @@
               "실제 논문이라는 사실과, 그 논문이 특정 문장의 근거라는 사실은 다릅니다."
             </div>
             <div class="boundary-quote-sub">
-              "근거가 불충분하면 틀렸다고 판정하지 않고 INSUFFICIENT_EVIDENCE에서 멈춥니다."
+              "충분한 공개 근거를 연결하지 못하면 틀렸다고 단정하지 않고 INSUFFICIENT_EVIDENCE에서 멈춥니다."
             </div>
           </div>
 
@@ -1401,7 +1757,7 @@
             <div class="ce-step-card">
               <div class="ce-step-num-badge">STEP 3</div>
               <div class="ce-step-question">"표현 강도나 의미 방향이 달라졌는가?"</div>
-              <h3 class="ce-step-title">3. 표현 차이 관측</h3>
+              <h3 class="ce-step-title">3. 표현 / 근거 정합성 관측</h3>
               <div class="ce-step-flow">
                 <span class="cs-node">Citing Claim</span>
                 <span class="cs-arr">↔</span>

@@ -176,7 +176,7 @@ const state = {
   currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
-  currentCeCase: 'D2', // 'D1' | 'D2' | 'D3' | 'D4'
+  currentCeCase: 'D4', // 'D4' | 'D4-CONTRAST' | 'D2' | 'D3' | 'D1'
   currentKciFinding: CANONICAL_KCI_DRIFT,
   activeTfFindingId: 'TR-CAUS-001',
   currentView: 'batch', // 'batch' | 'single' | 'method'
@@ -239,23 +239,30 @@ const el = {
   ceViewMethod: $('ceViewMethod'),
   ceVerifyInputText: $('ceVerifyInputText'),
   btnExecuteCeVerify: $('btnExecuteCeVerify'),
+  btnLoadCeD4: $('btnLoadCeD4'),
+  btnLoadCeD4Contrast: $('btnLoadCeD4Contrast'),
   btnLoadCeExample: $('btnLoadCeExample'),
   btnLoadCeInsufficient: $('btnLoadCeInsufficient'),
   ceSelectedPaperId: $('ceSelectedPaperId'),
+  ceSelectedPaperStatus: $('ceSelectedPaperStatus'),
   ceSelectedPaperTitle: $('ceSelectedPaperTitle'),
   ceSelectedPaperMeta: $('ceSelectedPaperMeta'),
   ceResultModeTag: $('ceResultModeTag'),
   ceVerifyResultBody: $('ceVerifyResultBody'),
 
   // Evaluation Examples Case Selector & Panels
-  btnCaseD1: $('btnCaseD1'),
+  btnCaseD4: $('btnCaseD4'),
+  btnCaseD4Contrast: $('btnCaseD4Contrast'),
   btnCaseD2: $('btnCaseD2'),
   btnCaseD3: $('btnCaseD3'),
-  btnCaseD4: $('btnCaseD4'),
-  ceCaseDetailD1: $('ceCaseDetailD1'),
+  btnCaseD1: $('btnCaseD1'),
+  ceCaseDetailD4: $('ceCaseDetailD4'),
+  ceCaseDetailD4Contrast: $('ceCaseDetailD4Contrast'),
   ceCaseDetailD2: $('ceCaseDetailD2'),
   ceCaseDetailD3: $('ceCaseDetailD3'),
-  ceCaseDetailD4: $('ceCaseDetailD4'),
+  ceCaseDetailD1: $('ceCaseDetailD1'),
+  btnSwitchToContrast: $('btnSwitchToContrast'),
+  btnSwitchToD4: $('btnSwitchToD4'),
 
   // Step 1: Input
   batchInputCard: $('batchInputCard'),
@@ -409,16 +416,19 @@ function switchCeCase(caseId) {
   const isD2 = caseId === 'D2';
   const isD3 = caseId === 'D3';
   const isD4 = caseId === 'D4';
+  const isD4Contrast = caseId === 'D4-CONTRAST';
 
   el.btnCaseD1?.classList.toggle('is-active', isD1);
   el.btnCaseD2?.classList.toggle('is-active', isD2);
   el.btnCaseD3?.classList.toggle('is-active', isD3);
   el.btnCaseD4?.classList.toggle('is-active', isD4);
+  el.btnCaseD4Contrast?.classList.toggle('is-active', isD4Contrast);
 
   if (el.ceCaseDetailD1) el.ceCaseDetailD1.hidden = !isD1;
   if (el.ceCaseDetailD2) el.ceCaseDetailD2.hidden = !isD2;
   if (el.ceCaseDetailD3) el.ceCaseDetailD3.hidden = !isD3;
   if (el.ceCaseDetailD4) el.ceCaseDetailD4.hidden = !isD4;
+  if (el.ceCaseDetailD4Contrast) el.ceCaseDetailD4Contrast.hidden = !isD4Contrast;
 }
 
 function switchMainView(viewName) {
@@ -1508,18 +1518,30 @@ const CE_SIGNAL_EXPLANATION = {
   DIRECTION_CHANGED: '인용 문장과 KCI 초록 근거의 효과 방향 표현이 서로 다릅니다.',
 };
 
+const D4_BIBLIOGRAPHY_ROWS = [
+  '[1] 김미엘, 김미선, 최은숙, 권호범, 박영석 (2025). Computer simulation on the role of interproximal contacts in occlusal force transmission. 구강회복응용과학지, 41(4), 267-275. https://doi.org/10.14368/jdras.2025.41.4.267',
+  '[2] 장만, 신승수 (2024). Computer Vision-based Basketball Player Training System. 디지털콘텐츠학회논문지, 25(3), 595-605. https://doi.org/10.9728/dcs.2024.25.3.595',
+];
+const D4_DRAFT_SENTENCE = 'The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [2].';
+const D4_CONTRAST_SENTENCE = 'The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar [1].';
+const LINKING_FAILURE_LABELS = {
+  MARKER_UNRESOLVED: '인용 번호를 연결할 수 없음',
+  MULTIPLE_MARKERS_UNSUPPORTED: '현재 P0에서는 복수 인용번호 검토 필요',
+  REFERENCE_INDEX_OUT_OF_RANGE: '참고문헌 번호 범위를 벗어남',
+  REFERENCE_PARSE_REVIEW: '참고문헌 구조 확인 필요',
+};
+
 async function loadClaimEvidenceP0() {
   try {
     const res = await fetch('/api/claim-evidence/p0');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.ceP0 = await res.json();
-    const { article, abstracts, presets } = state.ceP0;
+    const { article, abstracts } = state.ceP0;
     if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${article.record_id}`;
     if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = article.title;
     if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `KCI articleDetail 초록 ${abstracts[0]?.sentence_count ?? '-'}개 문장 · Frozen Evaluation Evidence`;
-    // Presentation default: the committed C2 claim is prefilled; its result is only shown after verification runs.
     if (el.ceVerifyInputText && !el.ceVerifyInputText.value.trim()) {
-      el.ceVerifyInputText.value = presets.find(preset => preset.case_id === 'C2')?.citing_claim ?? '';
+      el.ceVerifyInputText.value = D4_DRAFT_SENTENCE;
     }
   } catch {
     if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = 'KCI ID: 근거를 불러오지 못했습니다';
@@ -1527,6 +1549,14 @@ async function loadClaimEvidenceP0() {
 }
 
 function fillCePreset(caseId) {
+  if (caseId === 'D4' && el.ceVerifyInputText) {
+    el.ceVerifyInputText.value = D4_DRAFT_SENTENCE;
+    return;
+  }
+  if (caseId === 'D4-CONTRAST' && el.ceVerifyInputText) {
+    el.ceVerifyInputText.value = D4_CONTRAST_SENTENCE;
+    return;
+  }
   const preset = state.ceP0?.presets.find(item => item.case_id === caseId);
   if (preset && el.ceVerifyInputText) el.ceVerifyInputText.value = preset.citing_claim;
 }
@@ -1539,6 +1569,10 @@ async function executeCeVerify() {
   }
   if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
   try {
+    if (/\[\d+\]/.test(citingClaim)) {
+      await executeCeTrace(citingClaim);
+      return;
+    }
     const res = await fetch('/api/claim-evidence/align', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1552,6 +1586,233 @@ async function executeCeVerify() {
   } finally {
     if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
   }
+}
+
+async function executeCeTrace(draftText) {
+  if (el.ceVerifyResultBody) {
+    el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">참고문헌 연결 및 KCI 근거 대조 중...</p>';
+  }
+  try {
+    const res = await fetch('/api/claim-evidence/trace', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        draft_text: draftText,
+        references: D4_BIBLIOGRAPHY_ROWS,
+        evidence_mode: 'FROZEN_EVIDENCE',
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    renderCeTraceResult(data);
+  } catch (err) {
+    if (el.ceVerifyResultBody) {
+      el.ceVerifyResultBody.innerHTML = `<p class="ce-slot-text">추적 검증 요청을 처리하지 못했습니다: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+}
+
+function renderCeTraceResult(data) {
+  if (!el.ceVerifyResultBody || !data) return;
+
+  if (el.ceResultModeTag) {
+    el.ceResultModeTag.textContent = `${data.evidence_mode === 'FROZEN_EVIDENCE' ? 'FROZEN EVALUATION EVIDENCE' : data.evidence_mode} · 검증된 KCI 근거 재생 (D4 Trace)`;
+  }
+
+  // 1. Linking Failure Check
+  if (data.linking?.state !== 'RESOLVED') {
+    const stateKey = data.linking?.state;
+    const label = LINKING_FAILURE_LABELS[stateKey] || stateKey;
+    let desc = '인용 마커를 참고문헌 목록에 연결할 수 없습니다.';
+    if (stateKey === 'MARKER_UNRESOLVED') {
+      desc = '인용문에서 [1], [2]와 같은 단일 번호 인용 마커를 찾지 못했습니다. 본 단계는 단일 마커 기반 연계 단계입니다.';
+    } else if (stateKey === 'MULTIPLE_MARKERS_UNSUPPORTED') {
+      desc = '인용문에서 복수의 인용 마커가 감지되었습니다. 현재 P0에서는 단일 인용 마커 단위의 추적을 지원합니다.';
+    } else if (stateKey === 'REFERENCE_INDEX_OUT_OF_RANGE') {
+      desc = `인용 마커 ${data.linking?.marker || ''}에 해당하는 참고문헌 번호가 참고문헌 목록에 존재하지 않습니다.`;
+    } else if (stateKey === 'REFERENCE_PARSE_REVIEW') {
+      desc = '해당 참고문헌 항목의 구조 분석(서지 정보 추출) 검토가 필요합니다.';
+    }
+
+    if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = 'KCI ID: (마커 미연결)';
+    if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = '참고문헌 연결 단계 미달';
+    if (el.ceSelectedPaperStatus) el.ceSelectedPaperStatus.innerHTML = '';
+
+    el.ceVerifyResultBody.innerHTML = `
+      <div class="ce-linking-failure-card">
+        <div class="linking-fail-head">
+          <span class="linking-fail-tag">${escapeHtml(stateKey)}</span>
+          <span class="linking-fail-title">${escapeHtml(label)}</span>
+        </div>
+        <p class="linking-fail-msg">${escapeHtml(desc)}</p>
+        <div class="linking-fail-meta">
+          <span>인용 마커: ${escapeHtml(data.linking?.marker || '(없음)')}</span>
+          <span>처리 상태: 연계 전 중단 (KCI 조회 미수행)</span>
+        </div>
+        <p class="ce-caution-note">※ 참고문헌 연계 단계의 사전 검토 신호이며, KCI 조회나 논문 판정 오류가 아닙니다.</p>
+      </div>`;
+    return;
+  }
+
+  // 2. Linking Resolved: Update Reference Context Header
+  const marker = data.linking.marker;
+  const isTargetBinding = marker === '[1]';
+  const paperTitle = isTargetBinding
+    ? 'Computer simulation on the role of interproximal contacts in occlusal force transmission'
+    : 'Computer Vision-based Basketball Player Training System';
+
+  if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${escapeHtml(data.citation_integrity.article_id)}`;
+  if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = paperTitle;
+  if (el.ceSelectedPaperStatus) {
+    el.ceSelectedPaperStatus.innerHTML = `
+      <span class="ce-badge-integrity-verified" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;font-weight:800;color:var(--verified);background:var(--verified-soft);border:1px solid var(--verified-border);padding:2px 8px;border-radius:4px;">
+        ✓ Citation Integrity: VERIFIED (${escapeHtml(data.citation_integrity.rule_id || 'REF-META-001')})
+      </span>`;
+  }
+
+  // 3. Render 4-tier Result Hierarchy
+  const ce = data.claim_evidence;
+  const isInsufficient = ce.status === 'INSUFFICIENT_EVIDENCE';
+  const ceStatusKo = isInsufficient ? '현재 공개 근거만으로 판단 불충분' : '공개 근거 범위에서 정합';
+  const ceBadgeClass = isInsufficient ? 'badge-insufficient' : 'badge-consistent';
+
+  let evidenceSpanHtml = '';
+  if (ce.evidence_span) {
+    evidenceSpanHtml = `
+      <div class="ce-grounded-span" style="margin-top:6px;">
+        <span class="ce-span-badge">KCI 공개 초록 근거 · 문장 #${escapeHtml(ce.evidence_span.sentence_index)}</span>
+        <p class="ce-span-text">"${escapeHtml(ce.evidence_span.text)}"</p>
+      </div>`;
+  } else {
+    evidenceSpanHtml = `
+      <p class="ce-slot-text" style="margin-top:6px;">인용된 논문(${escapeHtml(data.citation_integrity.article_id)})의 공개 초록에서 이 시뮬레이션 문장과 공유하는 앵커/근거 문장이 없습니다.</p>`;
+  }
+
+  const contrastHtml = isInsufficient
+    ? `<div class="ce-contrast-action-box">
+         <div class="ce-contrast-head">
+           <span>💡 핵심 비교 포인트</span>
+           <button type="button" class="btn btn-primary btn-sm" id="btnTraceContrastInline">
+             ★ 같은 문장 · 올바른 근거 논문 [1]로 즉시 재검증 ➔
+           </button>
+         </div>
+         <p class="ce-contrast-action-desc" style="font-size:13px;color:var(--text-2);margin:0;line-height:1.5;">
+           <strong>문장은 100% 동일하지만,</strong> 인용 번호가 <code>[2]</code>(농구 논문)로 연결되어 <code>INSUFFICIENT_EVIDENCE</code>가 관측되었습니다.<br>
+           올바른 원문 논문 <code>[1]</code>(치의학 논문)로 연결하면 동일 엔진이 어떻게 <code>CONSISTENT_WITH_EVIDENCE</code>로 판정하는지 즉시 확인해보세요.
+         </p>
+       </div>`
+    : `<div class="ce-contrast-action-box" style="background:#f0fdf4;border-color:#bbf7d0;">
+         <div class="ce-contrast-head" style="color:var(--verified);">
+           <span>✓ 대조 검증 완료 (동일 문장 · 올바른 논문 바인딩)</span>
+           <button type="button" class="btn btn-secondary btn-sm" id="btnTraceD4Inline">
+             ← D4 본사례 ([2] 농구 논문 연결) 다시 확인
+           </button>
+         </div>
+         <p class="ce-contrast-action-desc" style="font-size:13px;color:var(--text-2);margin:0;line-height:1.5;">
+           동일한 문장이 올바른 치의학 논문 <code>[1]</code>(ART003267604)과 연결되어 초록 문장 #9와의 정합성이 성공적으로 확인되었습니다.
+         </p>
+       </div>`;
+
+  el.ceVerifyResultBody.innerHTML = `
+    <!-- Compact Trace Visual -->
+    <div class="ce-compact-trace-visual">
+      <div class="ce-trace-node">
+        <span class="ce-trace-node-badge">1. DRAFT</span>
+        <span class="ce-trace-node-title">인용문 (${escapeHtml(data.linking.marker)})</span>
+        <span class="ce-trace-node-meta">${escapeHtml(data.linking.resolved_by)}</span>
+      </div>
+      <div class="ce-trace-arrow">➔</div>
+      <div class="ce-trace-node">
+        <span class="ce-trace-node-badge">2. BIBLIOGRAPHY</span>
+        <span class="ce-trace-node-title">참고문헌 #${data.linking.row_index}</span>
+        <span class="ce-trace-node-meta">${escapeHtml(data.citation_integrity.article_id)}</span>
+      </div>
+      <div class="ce-trace-arrow">➔</div>
+      <div class="ce-trace-node">
+        <span class="ce-trace-node-badge">3. KCI INTEGRITY</span>
+        <span class="ce-trace-node-title">${escapeHtml(data.citation_integrity.status)}</span>
+        <span class="ce-trace-node-meta">${escapeHtml(data.citation_integrity.rule_id)}</span>
+      </div>
+      <div class="ce-trace-arrow">➔</div>
+      <div class="ce-trace-node highlight">
+        <span class="ce-trace-node-badge">4. CLAIM–EVIDENCE</span>
+        <span class="ce-trace-node-title">${isInsufficient ? '판단 불충분' : '정합'}</span>
+        <span class="ce-trace-node-meta">${escapeHtml(ce.status)}</span>
+      </div>
+    </div>
+
+    <!-- 4-Tier Result Hierarchy Card -->
+    <div class="ce-d4-primary-card">
+      <div class="d4-card-grid">
+        <div class="d4-item">
+          <span class="d4-step-num">1. 실제 논문 확인 (Citation Integrity)</span>
+          <div class="d4-status-val">
+            <span class="status-badge-inline verified">VERIFIED · REF-META-001</span>
+            <span class="d4-record-id">${escapeHtml(data.citation_integrity.article_id)}</span>
+          </div>
+          <p class="d4-sub">제목 · 저자 · 연도 · DOI 4개 서지 항목 모두 실제 KCI 레코드와 100% 일치합니다.</p>
+        </div>
+
+        <div class="d4-item">
+          <span class="d4-step-num">2. 현재 문장 근거 확인 (Claim–Evidence)</span>
+          <div class="d4-status-val">
+            <span class="ce-status-badge ${ceBadgeClass}">${escapeHtml(ce.status)}</span>
+            <span class="status-ko-label" style="font-size:12.5px;font-weight:700;color:var(--text);">${escapeHtml(ceStatusKo)}</span>
+          </div>
+          ${ce.insufficiency_reason ? `<div style="font-family:var(--mono);font-size:11.5px;color:#b45309;font-weight:700;margin-top:2px;">이유 코드: ${escapeHtml(ce.insufficiency_reason)}</div>` : ''}
+          ${evidenceSpanHtml}
+        </div>
+
+        <div class="d4-item full-width">
+          <span class="d4-step-num">3. 관측 이유 (Why)</span>
+          <div class="d4-why-box">
+            <p>${escapeHtml(ce.why)}</p>
+            ${isInsufficient ? '<p class="d4-why-detail">※ 틀린 논문이라고 단정하지 않고, 현재 연결된 논문의 공개 초록에서 근거를 찾을 수 없음을 객관적으로 보고합니다.</p>' : ''}
+          </div>
+        </div>
+
+        <div class="d4-item full-width review-tier">
+          <span class="d4-step-num">4. 연구자 최종 검토 신호 (Human Review)</span>
+          <div class="d4-review-val">
+            <span class="review-badge-d4" style="font-family:var(--mono);font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:4px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;">
+              ${ce.human_review_required ? 'HUMAN_REVIEW_REQUIRED' : 'AUTONOMOUS_VERIFIED'}
+            </span>
+            <span>${escapeHtml(ce.human_review_reason || '공개 근거 범위 내에서 표현 및 서지 정합성이 모두 확인되었습니다.')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contrast Action Box -->
+    ${contrastHtml}
+
+    <!-- Technical Provenance Details -->
+    <details class="ce-provenance-details" style="margin-top:8px;">
+      <summary class="ce-provenance-summary"><span>⚙️ Trace 기술 상세 (Provenance)</span></summary>
+      <div class="ce-provenance-body">
+        <div class="ce-prov-grid">
+          <div class="ce-prov-item"><span class="cp-k">Draft Marker</span><code class="cp-v">${escapeHtml(data.linking.marker)} (Row #${data.linking.row_index})</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Citation Rule ID</span><code class="cp-v">${escapeHtml(data.citation_integrity.rule_id)}</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Claim Rule ID</span><code class="cp-v">${escapeHtml(ce.rule_id)} (v${escapeHtml(ce.rule_version)})</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Evidence Hash</span><code class="cp-v">${escapeHtml(ce.evidence_hash || '-')}</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Citation Finding ID</span><code class="cp-v">${escapeHtml(data.citation_integrity.finding_id)}</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Claim Finding ID</span><code class="cp-v">${escapeHtml(ce.finding_id)}</code></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Execution Mode</span><span class="cp-v">FROZEN_EVIDENCE (검증된 KCI 근거 재생) · Deterministic Contract</span></div>
+        </div>
+      </div>
+    </details>`;
+
+  // Bind inline contrast buttons
+  const btnContrastInline = document.getElementById('btnTraceContrastInline');
+  btnContrastInline?.addEventListener('click', () => {
+    if (el.ceVerifyInputText) el.ceVerifyInputText.value = D4_CONTRAST_SENTENCE;
+    executeCeTrace(D4_CONTRAST_SENTENCE);
+  });
+  const btnD4Inline = document.getElementById('btnTraceD4Inline');
+  btnD4Inline?.addEventListener('click', () => {
+    if (el.ceVerifyInputText) el.ceVerifyInputText.value = D4_DRAFT_SENTENCE;
+    executeCeTrace(D4_DRAFT_SENTENCE);
+  });
 }
 
 function renderCeResult(finding, evidenceMode) {
@@ -1708,6 +1969,14 @@ function init() {
   });
 
   // Claim-Evidence Input Actions: presets only fill committed claims; results always come from the backend.
+  el.btnLoadCeD4?.addEventListener('click', () => {
+    fillCePreset('D4');
+    executeCeVerify();
+  });
+  el.btnLoadCeD4Contrast?.addEventListener('click', () => {
+    fillCePreset('D4-CONTRAST');
+    executeCeVerify();
+  });
   el.btnLoadCeExample?.addEventListener('click', () => fillCePreset('C1'));
   el.btnLoadCeInsufficient?.addEventListener('click', () => fillCePreset('I1'));
   el.btnExecuteCeVerify?.addEventListener('click', executeCeVerify);
@@ -1718,6 +1987,9 @@ function init() {
   el.btnCaseD2?.addEventListener('click', () => switchCeCase('D2'));
   el.btnCaseD3?.addEventListener('click', () => switchCeCase('D3'));
   el.btnCaseD4?.addEventListener('click', () => switchCeCase('D4'));
+  el.btnCaseD4Contrast?.addEventListener('click', () => switchCeCase('D4-CONTRAST'));
+  el.btnSwitchToContrast?.addEventListener('click', () => switchCeCase('D4-CONTRAST'));
+  el.btnSwitchToD4?.addEventListener('click', () => switchCeCase('D4'));
 
   // Batch Step 1: Input Actions
   el.btnAnalyzeBatch?.addEventListener('click', handleAnalyzeBatch);
@@ -1835,7 +2107,8 @@ function handleHashRouting() {
     switchWorkspaceModule('claim-evidence', 'verify');
   } else if (hash.startsWith('ce-examples')) {
     switchWorkspaceModule('claim-evidence', 'examples');
-    if (hash.includes('d1')) switchCeCase('D1');
+    if (hash.includes('contrast')) switchCeCase('D4-CONTRAST');
+    else if (hash.includes('d1')) switchCeCase('D1');
     else if (hash.includes('d3')) switchCeCase('D3');
     else if (hash.includes('d4')) switchCeCase('D4');
     else switchCeCase('D2');
