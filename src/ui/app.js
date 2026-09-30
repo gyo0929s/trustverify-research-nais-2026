@@ -2680,6 +2680,8 @@ function handleHashRouting() {
     switchWorkspaceModule('citation', 'batch');
   } else if (!hash) {
     switchWorkspaceModule('citation', 'batch');
+  } else {
+    switchWorkspaceModule('citation', 'batch');
   }
 }
 
