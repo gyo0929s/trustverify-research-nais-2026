@@ -6,6 +6,7 @@ import { createCitationAuditService } from './citation/audit.js';
 import { BatchRequestError, createCitationBatchService, MAX_BATCH_SIZE } from './citation/batch.js';
 import { createFrozenEvidenceAdapter } from './citation/frozen-evidence.js';
 import { alignClaimWithEvidence, splitSentences } from './claim-evidence/align.js';
+import { traceDraftCitation } from './claim-evidence/trace.js';
 import { parseReferenceList } from './citation/reference-parser.js';
 import { createKciAdapter } from './kci/adapter.js';
 
@@ -147,6 +148,21 @@ export function createTrustVerifyServer({
     }
     return claimEvidenceP0;
   }
+
+  // Draft → reference → KCI → claim trace over the frozen D4 evidence (both records observed live, then frozen).
+  let traceDeps = null;
+  async function loadTraceDeps() {
+    if (!traceDeps) {
+      const d4 = JSON.parse(await readFile(join(claimEvidenceDir, 'd4-unrelated-reference.json'), 'utf8'));
+      const frozenAdapter = createFrozenEvidenceAdapter(d4);
+      traceDeps = {
+        auditService: createCitationAuditService({ kciAdapter: frozenAdapter }),
+        covers: citation => frozenAdapter.covers(citation),
+        abstractEvidenceFor: recordId => d4.abstract_evidence?.[recordId] ?? null,
+      };
+    }
+    return traceDeps;
+  }
   const auditService = createCitationAuditService({ kciAdapter: configuredAdapter(kciAdapter) });
   const liveBatchService = createCitationBatchService({ auditService, evidenceMode: 'LIVE' });
   let frozenBatchService = null;
@@ -191,6 +207,20 @@ export function createTrustVerifyServer({
         }
         const { evidence } = await loadClaimEvidenceP0();
         return { evidence_mode: 'FROZEN_EVIDENCE', finding: alignClaimWithEvidence({ citingClaim, evidence }) };
+      },
+    },
+    '/api/claim-evidence/trace': {
+      maxBytes: MAX_JSON_BODY_BYTES,
+      invalidMessage: 'Invalid draft citation trace request',
+      failureMessage: 'Draft citation trace failed',
+      handle: async body => {
+        if (!body || typeof body !== 'object' || Array.isArray(body)) throw new TypeError('Body must be an object');
+        // P0 supports frozen evidence only; a LIVE trace is not implemented and is never silently substituted.
+        if ((body.evidence_mode ?? 'FROZEN_EVIDENCE') !== 'FROZEN_EVIDENCE') throw new TypeError('evidence_mode must be FROZEN_EVIDENCE');
+        return traceDraftCitation(
+          { draftText: body.draft_text, references: body.references, evidenceMode: 'FROZEN_EVIDENCE' },
+          await loadTraceDeps(),
+        );
       },
     },
     '/api/references/parse': {
