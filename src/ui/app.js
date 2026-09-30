@@ -15,6 +15,14 @@ let state = {
 };
 
 const elements = {
+  auditForm: document.getElementById('citationAuditForm'),
+  auditTitle: document.getElementById('auditTitle'),
+  auditAuthors: document.getElementById('auditAuthors'),
+  auditYear: document.getElementById('auditYear'),
+  auditDoi: document.getElementById('auditDoi'),
+  auditSubmit: document.getElementById('auditSubmit'),
+  auditFeedback: document.getElementById('auditFeedback'),
+  btnLoadDemo: document.getElementById('btnLoadDemo'),
   draftContainer: document.getElementById('draftContentContainer'),
   findingsContainer: document.getElementById('findingsListContainer'),
   evidenceContainer: document.getElementById('evidenceDetailContainer'),
@@ -28,6 +36,13 @@ const elements = {
   modalJsonContent: document.getElementById('modalJsonContent'),
   modalSnapshotHash: document.getElementById('modalSnapshotHash'),
   btnCopyJson: document.getElementById('btnCopyJson'),
+};
+
+const findingOf = entry => entry?.finding ?? entry;
+const displayOf = entry => entry?.display ?? {};
+const itemIdOf = entry => {
+  const finding = findingOf(entry);
+  return finding?.finding_id || finding?.failure_id;
 };
 
 /**
@@ -69,6 +84,8 @@ async function init() {
  * Setup UI Event Listeners
  */
 function setupEventListeners() {
+  if (elements.auditForm) elements.auditForm.addEventListener('submit', submitLiveAudit);
+  if (elements.btnLoadDemo) elements.btnLoadDemo.addEventListener('click', loadDemoCases);
   // Filter chips in Center Panel
   elements.filterChips.forEach(chip => {
     chip.addEventListener('click', () => {
@@ -117,6 +134,70 @@ function setupEventListeners() {
       }
     });
   }
+}
+
+async function loadDemoCases() {
+  setAuditFeedback('Loading demo fixtures…', 'pending');
+  try {
+    const response = await fetch('/api/findings');
+    if (!response.ok) throw new Error('Demo cases unavailable');
+    const data = await response.json();
+    state.findings = data.findings || [];
+    state.selectedId = itemIdOf(state.findings[0]);
+    updateFilterCounts();
+    renderDraft();
+    renderFindings();
+    renderEvidence();
+    setAuditFeedback('DEMO FIXTURE mode loaded.', 'demo');
+  } catch {
+    setAuditFeedback('Could not load demo cases.', 'error');
+  }
+}
+
+async function submitLiveAudit(event) {
+  event.preventDefault();
+  const citation = { title: elements.auditTitle.value.trim() };
+  const authors = elements.auditAuthors.value.split(',').map(value => value.trim()).filter(Boolean);
+  if (authors.length) citation.authors = authors;
+  if (elements.auditYear.value.trim()) citation.publication_year = elements.auditYear.value.trim();
+  if (elements.auditDoi.value.trim()) citation.doi = elements.auditDoi.value.trim();
+
+  elements.auditSubmit.disabled = true;
+  setAuditFeedback('Querying KCI and applying deterministic rules…', 'pending');
+  try {
+    const response = await fetch('/api/audit/citation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(citation),
+    });
+    const result = await response.json();
+    if (!response.ok || (!result.finding_id && !result.failure_id)) {
+      throw new Error('Audit request failed');
+    }
+    const entry = {
+      finding: result,
+      display: { citation_marker: 'LIVE', file_name: null, index: 0, evidence_mode: 'LIVE' },
+    };
+    const resultId = itemIdOf(entry);
+    state.findings = [entry, ...state.findings.filter(existing => itemIdOf(existing) !== resultId)];
+    state.selectedId = resultId;
+    state.currentFilter = 'all';
+    elements.filterChips.forEach(chip => chip.classList.toggle('active', chip.dataset.filter === 'all'));
+    updateFilterCounts();
+    renderFindings();
+    renderEvidence();
+    setAuditFeedback(`LIVE KCI EVIDENCE · ${result.kind === 'SYSTEM_FAILURE' ? result.system_state : result.status}`, result.kind === 'SYSTEM_FAILURE' ? 'error' : 'live');
+  } catch {
+    setAuditFeedback('Citation audit could not be completed. Load demo cases if KCI is unavailable.', 'error');
+  } finally {
+    elements.auditSubmit.disabled = false;
+  }
+}
+
+function setAuditFeedback(message, mode) {
+  if (!elements.auditFeedback) return;
+  elements.auditFeedback.textContent = message;
+  elements.auditFeedback.className = `audit-feedback ${mode}`;
 }
 
 /**
@@ -197,9 +278,9 @@ function renderDraft() {
         html += escapeHtml(p.text);
 
         if (p.citation_ref) {
-          const item = state.findings.find(f => (f.finding_id || f.failure_id) === p.citation_ref);
-          const marker = p.marker || item?._display?.citation_marker || '[?]';
-          const theme = getItemTheme(item);
+          const entry = state.findings.find(item => itemIdOf(item) === p.citation_ref);
+          const marker = p.marker || displayOf(entry).citation_marker || '[?]';
+          const theme = getItemTheme(findingOf(entry));
           const isSelected = p.citation_ref === state.selectedId ? 'selected' : '';
 
           html += `<span class="citation-pill ${theme} ${isSelected}" data-item-id="${p.citation_ref}" title="Click to view evidence for ${marker}">
@@ -257,7 +338,8 @@ function renderDraft() {
 function renderFindings() {
   if (!elements.findingsContainer) return;
 
-  const filtered = state.findings.filter(item => {
+  const filtered = state.findings.filter(entry => {
+    const item = findingOf(entry);
     if (state.currentFilter === 'all') return true;
     if (state.currentFilter === 'SYSTEM_FAILURE') return item.kind === 'SYSTEM_FAILURE';
     return item.status === state.currentFilter;
@@ -275,12 +357,15 @@ function renderFindings() {
   }
 
   let html = '';
-  filtered.forEach(item => {
+  filtered.forEach(entry => {
+    const item = findingOf(entry);
+    const display = displayOf(entry);
     const isSystemError = item.kind === 'SYSTEM_FAILURE';
     const itemId = item.finding_id || item.failure_id;
     const isSelected = itemId === state.selectedId ? 'selected' : '';
     const theme = getItemTheme(item);
-    const marker = item._display?.citation_marker || '';
+    const marker = display.citation_marker || '';
+    const evidenceMode = display.evidence_mode === 'LIVE' ? 'LIVE' : 'DEMO';
 
     // Title / citation text
     let targetCitationText = '';
@@ -302,6 +387,7 @@ function renderFindings() {
 
     html += `
       <article class="finding-card ${theme} ${isSelected}" data-item-id="${itemId}" role="button" tabindex="0">
+        <div class="evidence-origin-label ${evidenceMode.toLowerCase()}">${evidenceMode === 'LIVE' ? 'LIVE KCI EVIDENCE' : 'DEMO FIXTURE'}</div>
         ${isSystemError ? `
           <div class="system-segregation-banner">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -335,7 +421,7 @@ function renderFindings() {
 
         <div class="card-footer-meta">
           <span>${isSystemError ? `Failure ID: <strong>${escapeHtml(item.failure_id)}</strong>` : `Rule: <strong>${escapeHtml(item.rule_id)}</strong> (v${escapeHtml(item.rule_version)})`}</span>
-          <span>${isSystemError ? 'State: KCI_UNAVAILABLE' : (item.evidence?.[0]?.source_record_id ? `KCI ID: ${escapeHtml(item.evidence[0].source_record_id)}` : 'Zero Records')}</span>
+          <span>${isSystemError ? `State: ${escapeHtml(item.system_state)}` : (item.evidence?.[0]?.source_record_id ? `KCI ID: ${escapeHtml(item.evidence[0].source_record_id)}` : 'Zero Records')}</span>
         </div>
       </article>
     `;
@@ -356,7 +442,8 @@ function renderFindings() {
  */
 function renderEvidence() {
   if (!elements.evidenceContainer) return;
-  const item = state.findings.find(f => (f.finding_id || f.failure_id) === state.selectedId);
+  const entry = state.findings.find(candidate => itemIdOf(candidate) === state.selectedId);
+  const item = findingOf(entry);
 
   if (!item) {
     elements.evidenceContainer.innerHTML = `
@@ -371,7 +458,9 @@ function renderEvidence() {
   }
 
   const isSystemError = item.kind === 'SYSTEM_FAILURE';
-  const marker = item._display?.citation_marker || '';
+  const display = displayOf(entry);
+  const marker = display.citation_marker || '';
+  const evidenceMode = display.evidence_mode === 'LIVE' ? 'LIVE' : 'DEMO';
 
   // Update header status pill
   if (elements.evidenceStatusPill) {
@@ -381,6 +470,7 @@ function renderEvidence() {
 
   // 1. Traceability Header
   let html = `
+    <div class="evidence-origin-banner ${evidenceMode.toLowerCase()}">${evidenceMode === 'LIVE' ? 'LIVE KCI EVIDENCE' : 'DEMO FIXTURE'}</div>
     <div class="evidence-trace-header">
       <div class="trace-chain-row">
         <span class="trace-token">Draft ${escapeHtml(marker)}</span>
@@ -586,11 +676,8 @@ function renderEvidence() {
  */
 function buildFieldComparisonRows(item) {
   const rows = [];
-  const input = item.input || {};
-  const ev = item.evidence?.[0] || {};
-  const evData = ev.data || {};
 
-  // If item has explicit field_comparisons, format them nicely
+  // Render backend comparisons as-is; the frontend never recomputes status or field results.
   if (item.field_comparisons && item.field_comparisons.length > 0) {
     item.field_comparisons.forEach(fc => {
       let diff = null;
@@ -602,41 +689,21 @@ function buildFieldComparisonRows(item) {
 
       rows.push({
         field: formatFieldName(fc.field),
-        supplied: String(fc.input_value ?? '(empty)'),
-        evidence: Array.isArray(fc.evidence_value) ? fc.evidence_value.join(', ') : String(fc.evidence_value ?? '(empty)'),
+        supplied: formatComparisonValue(fc.input_value),
+        evidence: formatComparisonValue(fc.evidence_value),
         result: fc.result,
         diff,
       });
     });
   }
 
-  // Complement with Title if not already in comparison
-  if (input.title && !rows.some(r => r.field.toLowerCase() === 'title')) {
-    const evTitle = evData.title || (item.status === 'NOT_FOUND_IN_KCI' ? 'Zero records returned (No Data)' : null);
-    const matches = evTitle && evTitle.toLowerCase().trim() === input.title.toLowerCase().trim();
-    rows.unshift({
-      field: 'Title',
-      supplied: input.title,
-      evidence: evTitle || (item.status === 'NOT_FOUND_IN_KCI' ? 'No matching record in KCI' : '(Not verified)'),
-      result: matches ? 'MATCH' : (item.status === 'NOT_FOUND_IN_KCI' ? 'NOT_FOUND' : 'UNKNOWN'),
-      diff: null,
-    });
-  }
-
-  // Complement with DOI if supplied
-  if (input.doi && !rows.some(r => r.field.toLowerCase() === 'doi')) {
-    const evDoi = evData.doi_normalized || evData.doi;
-    const matches = evDoi && evDoi.toLowerCase().includes(input.doi.toLowerCase());
-    rows.push({
-      field: 'DOI',
-      supplied: input.doi,
-      evidence: evDoi || '(Unresolved in KCI)',
-      result: matches ? 'MATCH' : (item.status === 'CHIMERA' ? 'INVALID' : 'UNKNOWN'),
-      diff: null,
-    });
-  }
-
   return rows;
+}
+
+function formatComparisonValue(value) {
+  if (value === null || value === undefined || value === '') return '(empty)';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
 }
 
 /**
@@ -656,7 +723,8 @@ function formatFieldName(raw) {
  * Open Evidence Modal
  */
 function openEvidenceModal() {
-  const item = state.findings.find(f => (f.finding_id || f.failure_id) === state.selectedId);
+  const entry = state.findings.find(candidate => itemIdOf(candidate) === state.selectedId);
+  const item = findingOf(entry);
   if (!item || !elements.rawEvidenceModal) return;
 
   const isSystemError = item.kind === 'SYSTEM_FAILURE';
@@ -682,11 +750,11 @@ function closeEvidenceModal() {
  */
 function updateFilterCounts() {
   const total = state.findings.length;
-  const verified = state.findings.filter(f => f.status === 'VERIFIED').length;
-  const drift = state.findings.filter(f => f.status === 'METADATA_DRIFT').length;
-  const chimera = state.findings.filter(f => f.status === 'CHIMERA' || f.status === 'REVIEW_REQUIRED').length;
-  const notFound = state.findings.filter(f => f.status === 'NOT_FOUND_IN_KCI').length;
-  const sysFail = state.findings.filter(f => f.kind === 'SYSTEM_FAILURE').length;
+  const verified = state.findings.filter(entry => findingOf(entry).status === 'VERIFIED').length;
+  const drift = state.findings.filter(entry => findingOf(entry).status === 'METADATA_DRIFT').length;
+  const chimera = state.findings.filter(entry => ['CHIMERA', 'REVIEW_REQUIRED'].includes(findingOf(entry).status)).length;
+  const notFound = state.findings.filter(entry => findingOf(entry).status === 'NOT_FOUND_IN_KCI').length;
+  const sysFail = state.findings.filter(entry => findingOf(entry).kind === 'SYSTEM_FAILURE').length;
 
   const countAll = document.getElementById('countAll');
   const countVerified = document.getElementById('countVerified');

@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrustVerify Research — Explainable Research Integrity Auditor</title>
   <link rel="stylesheet" href="/styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- TOP APP BAR -->
@@ -88,6 +85,36 @@
       Click any inline reference <code class="mini-cite">[1]</code>–<code class="mini-cite">[5]</code> or finding card to trace deterministic evidence.
     </div>
   </div>
+
+  <section class="live-audit-bar" aria-labelledby="liveAuditTitle">
+    <div class="live-audit-heading">
+      <div>
+        <div class="live-audit-kicker">LIVE KCI EVIDENCE</div>
+        <h2 id="liveAuditTitle">Verify one citation with KCI</h2>
+      </div>
+      <button class="btn-secondary" id="btnLoadDemo" type="button">Load Demo Cases</button>
+    </div>
+    <form id="citationAuditForm" class="citation-audit-form">
+      <label class="audit-field audit-field-title">
+        <span>Title *</span>
+        <input id="auditTitle" name="title" type="text" maxlength="2000" required autocomplete="off" placeholder="Exact article title">
+      </label>
+      <label class="audit-field">
+        <span>Authors</span>
+        <input id="auditAuthors" name="authors" type="text" maxlength="2000" autocomplete="off" placeholder="Comma-separated, source order">
+      </label>
+      <label class="audit-field audit-field-small">
+        <span>Year</span>
+        <input id="auditYear" name="publication_year" type="text" maxlength="20" autocomplete="off" placeholder="2024">
+      </label>
+      <label class="audit-field">
+        <span>DOI</span>
+        <input id="auditDoi" name="doi" type="text" maxlength="500" autocomplete="off" placeholder="10.xxxx/…">
+      </label>
+      <button class="btn-primary audit-submit" id="auditSubmit" type="submit">Verify with KCI</button>
+    </form>
+    <div class="audit-feedback demo" id="auditFeedback" aria-live="polite">DEMO FIXTURE mode loaded. Live results remain visually separate.</div>
+  </section>
 
   <!-- MAIN 3-PANEL WORKSPACE -->
   <main class="workspace-grid">

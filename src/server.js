@@ -1,14 +1,15 @@
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { join, extname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, extname, join, resolve, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createCitationAuditService } from './citation/audit.js';
+import { createKciAdapter } from './kci/adapter.js';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const ROOT_DIR = join(__dirname, '..');
-const UI_DIR = join(__dirname, 'ui');
-const FIXTURES_DIR = join(ROOT_DIR, 'test', 'fixtures', 'findings');
-
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const SRC_DIR = dirname(fileURLToPath(import.meta.url));
+const ROOT_DIR = join(SRC_DIR, '..');
+const DEFAULT_UI_DIR = join(SRC_DIR, 'ui');
+const DEFAULT_FIXTURES_DIR = join(ROOT_DIR, 'test', 'fixtures', 'findings');
+export const MAX_JSON_BODY_BYTES = 16 * 1024;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -21,6 +22,15 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
 };
 
+function sendJson(res, status, value) {
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff',
+  });
+  res.end(JSON.stringify(value));
+}
+
 async function sendFile(res, filePath, contentType) {
   try {
     const data = await readFile(filePath);
@@ -30,8 +40,8 @@ async function sendFile(res, filePath, contentType) {
       'X-Content-Type-Options': 'nosniff',
     });
     res.end(data);
-  } catch (err) {
-    if (err.code === 'ENOENT') {
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('404 Not Found');
     } else {
@@ -41,7 +51,42 @@ async function sendFile(res, filePath, contentType) {
   }
 }
 
-async function loadCanonicalFindings() {
+async function readJsonBody(req) {
+  const contentLength = Number(req.headers['content-length']);
+  if (Number.isFinite(contentLength) && contentLength > MAX_JSON_BODY_BYTES) {
+    const error = new Error('Request body too large');
+    error.code = 'BODY_TOO_LARGE';
+    throw error;
+  }
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.byteLength;
+    if (size > MAX_JSON_BODY_BYTES) {
+      const error = new Error('Request body too large');
+      error.code = 'BODY_TOO_LARGE';
+      throw error;
+    }
+    chunks.push(chunk);
+  }
+  let text;
+  try {
+    text = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks));
+  } catch {
+    const error = new Error('Invalid UTF-8');
+    error.code = 'INVALID_JSON';
+    throw error;
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    const error = new Error('Invalid JSON');
+    error.code = 'INVALID_JSON';
+    throw error;
+  }
+}
+
+async function loadCanonicalFindings(fixturesDir) {
   const canonicalFileNames = [
     'verified.json',
     'metadata-drift.json',
@@ -49,129 +94,159 @@ async function loadCanonicalFindings() {
     'not-found.json',
     'system-failure.json',
   ];
-
   const markers = ['[1]', '[2]', '[3]', '[4]', '[5]'];
-  const results = [];
-
-  for (let i = 0; i < canonicalFileNames.length; i++) {
-    const fileName = canonicalFileNames[i];
-    const fullPath = join(FIXTURES_DIR, fileName);
-    const content = JSON.parse(await readFile(fullPath, 'utf8'));
-
-    // Augment with UI display metadata without altering canonical contract fields
-    content._display = {
-      citation_marker: markers[i],
+  return Promise.all(canonicalFileNames.map(async (fileName, index) => ({
+    finding: JSON.parse(await readFile(join(fixturesDir, fileName), 'utf8')),
+    display: {
+      citation_marker: markers[index],
       file_name: fileName,
-      index: i + 1,
-    };
-    results.push(content);
-  }
-  return results;
+      index: index + 1,
+      evidence_mode: 'DEMO',
+    },
+  })));
 }
 
-const server = createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = url.pathname;
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
+function configuredAdapter(adapter) {
+  if (adapter) return adapter;
+  try {
+    return createKciAdapter();
+  } catch {
+    const authFailure = async () => ({
+      state: 'KCI_AUTH_FAILED', messages: [], records: [], total: null,
+      eligible_for_citation_comparison: false,
+      eligible_for_not_found_in_kci: false,
+    });
+    return { articleSearch: authFailure, articleDetail: authFailure };
   }
+}
 
-  if (req.method !== 'GET') {
-    res.writeHead(405, { 'Content-Type': 'text/plain' });
-    res.end('Method Not Allowed');
-    return;
-  }
+export function createTrustVerifyServer({
+  kciAdapter,
+  uiDir = DEFAULT_UI_DIR,
+  fixturesDir = DEFAULT_FIXTURES_DIR,
+} = {}) {
+  const auditService = createCitationAuditService({ kciAdapter: configuredAdapter(kciAdapter) });
 
-  // API Routes
-  if (pathname === '/api/manifest') {
-    return sendFile(res, join(FIXTURES_DIR, 'manifest.json'), 'application/json; charset=utf-8');
-  }
-
-  if (pathname === '/api/draft') {
-    return sendFile(res, join(FIXTURES_DIR, 'draft_manuscript.json'), 'application/json; charset=utf-8');
-  }
-
-  if (pathname === '/api/findings') {
+  return createServer(async (req, res) => {
+    let pathname;
     try {
-      const findings = await loadCanonicalFindings();
-      res.writeHead(200, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'no-cache',
-      });
-      res.end(JSON.stringify({
-        contract_version: 'trustverify-findings-collection-v1',
-        is_mock_data: true,
-        count: findings.length,
-        findings,
-      }, null, 2));
-      return;
-    } catch (err) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: err.message }));
+      pathname = new URL(req.url, 'http://localhost').pathname;
+    } catch {
+      sendJson(res, 400, { error: 'Invalid request' });
       return;
     }
-  }
 
-  if (pathname.startsWith('/api/findings/')) {
-    const queryId = pathname.slice('/api/findings/'.length);
-    try {
-      const findings = await loadCanonicalFindings();
-      const match = findings.find(f =>
-        f.finding_id === queryId ||
-        f.failure_id === queryId ||
-        f._display?.file_name === queryId ||
-        f._display?.file_name === `${queryId}.json`
-      );
-      if (match) {
-        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-        res.end(JSON.stringify(match, null, 2));
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { Allow: 'GET, POST, OPTIONS' });
+      res.end();
+      return;
+    }
+
+    if (pathname === '/api/audit/citation') {
+      if (req.method !== 'POST') {
+        res.writeHead(405, { Allow: 'POST', 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Method Not Allowed');
         return;
       }
-    } catch (err) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: err.message }));
+      const contentType = String(req.headers['content-type'] ?? '').split(';', 1)[0].trim().toLowerCase();
+      if (contentType !== 'application/json') {
+        sendJson(res, 415, { error: 'Content-Type must be application/json' });
+        return;
+      }
+      try {
+        const citation = await readJsonBody(req);
+        const result = await auditService.auditCitation(citation);
+        sendJson(res, 200, result);
+      } catch (error) {
+        if (error?.code === 'BODY_TOO_LARGE') sendJson(res, 413, { error: 'Request body too large' });
+        else if (error?.code === 'INVALID_JSON' || error instanceof TypeError) sendJson(res, 400, { error: 'Invalid citation request' });
+        else sendJson(res, 500, { error: 'Citation audit failed' });
+      }
       return;
     }
-  }
 
-  // Static UI files
-  let safePath = pathname === '/' ? '/index.html' : pathname;
-  const filePath = join(UI_DIR, safePath);
-  const ext = extname(filePath).toLowerCase();
-  const mime = MIME_TYPES[ext] || 'application/octet-stream';
-
-  try {
-    const st = await stat(filePath);
-    if (st.isFile()) {
-      return sendFile(res, filePath, mime);
+    if (req.method !== 'GET') {
+      res.writeHead(405, { Allow: 'GET', 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Method Not Allowed');
+      return;
     }
-  } catch {
-    if (!pathname.startsWith('/api/')) {
-      return sendFile(res, join(UI_DIR, 'index.html'), 'text/html; charset=utf-8');
+
+    if (pathname === '/api/manifest') {
+      await sendFile(res, join(fixturesDir, 'manifest.json'), 'application/json; charset=utf-8');
+      return;
     }
-  }
+    if (pathname === '/api/draft') {
+      await sendFile(res, join(fixturesDir, 'draft_manuscript.json'), 'application/json; charset=utf-8');
+      return;
+    }
+    if (pathname === '/api/findings') {
+      try {
+        const findings = await loadCanonicalFindings(fixturesDir);
+        sendJson(res, 200, {
+          contract_version: 'trustverify-findings-collection-v1',
+          is_mock_data: true,
+          count: findings.length,
+          findings,
+        });
+      } catch {
+        sendJson(res, 500, { error: 'Unable to load demo findings' });
+      }
+      return;
+    }
+    if (pathname.startsWith('/api/findings/')) {
+      const queryId = decodeURIComponent(pathname.slice('/api/findings/'.length));
+      try {
+        const findings = await loadCanonicalFindings(fixturesDir);
+        const match = findings.find(entry => entry.finding.finding_id === queryId
+          || entry.finding.failure_id === queryId
+          || entry.display.file_name === queryId
+          || entry.display.file_name === `${queryId}.json`);
+        if (match) {
+          sendJson(res, 200, match);
+          return;
+        }
+      } catch {
+        sendJson(res, 500, { error: 'Unable to load demo finding' });
+        return;
+      }
+    }
 
-  res.writeHead(404, { 'Content-Type': 'text/plain' });
-  res.end('404 Not Found');
-});
+    const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const filePath = resolve(uiDir, relativePath);
+    const uiRoot = `${resolve(uiDir)}${sep}`;
+    if (filePath !== resolve(uiDir) && !filePath.startsWith(uiRoot)) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('404 Not Found');
+      return;
+    }
+    try {
+      const fileStat = await stat(filePath);
+      if (fileStat.isFile()) {
+        await sendFile(res, filePath, MIME_TYPES[extname(filePath).toLowerCase()] || 'application/octet-stream');
+        return;
+      }
+    } catch {
+      if (!pathname.startsWith('/api/')) {
+        await sendFile(res, join(uiDir, 'index.html'), 'text/html; charset=utf-8');
+        return;
+      }
+    }
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('404 Not Found');
+  });
+}
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`TrustVerify Research UI running at: http://127.0.0.1:${PORT}`);
-  console.log(`Active route: Citation Integrity Audit Workspace`);
-  console.log(`Contract: test/fixtures/findings/*.json (BUILD-02A schemas)`);
-});
-
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.warn(`Port ${PORT} in use, attempting ${PORT + 1}...`);
-    server.listen(PORT + 1, '127.0.0.1');
-  } else {
-    console.error('Server error:', err);
-  }
-});
+const isMain = process.argv[1]
+  && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
+if (isMain) {
+  const parsedPort = Number.parseInt(process.env.PORT ?? '3000', 10);
+  const port = Number.isInteger(parsedPort) && parsedPort >= 0 && parsedPort <= 65535 ? parsedPort : 3000;
+  const server = createTrustVerifyServer();
+  server.listen(port, '127.0.0.1', () => {
+    const address = server.address();
+    console.log(`TrustVerify Research UI running at http://127.0.0.1:${address.port}`);
+  });
+  server.on('error', () => {
+    console.error('TrustVerify server failed to start.');
+  });
+}
