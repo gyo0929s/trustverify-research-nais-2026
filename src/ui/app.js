@@ -1561,18 +1561,24 @@ function fillCePreset(caseId) {
   if (preset && el.ceVerifyInputText) el.ceVerifyInputText.value = preset.citing_claim;
 }
 
-async function executeCeVerify() {
+async function executeCeVerify(triggerBtn) {
   const citingClaim = el.ceVerifyInputText?.value.trim();
   if (!citingClaim) {
     alert('검증할 인용 문장을 입력하세요.');
     return;
   }
+  if (/\[\d+\]/.test(citingClaim)) {
+    await executeCeTrace(citingClaim, triggerBtn || el.btnExecuteCeVerify);
+    return;
+  }
+  const activeBtn = triggerBtn || el.btnExecuteCeVerify;
+  const originalText = activeBtn ? activeBtn.textContent : '';
+  if (activeBtn) activeBtn.textContent = '검증 중...';
   if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
+  if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = true;
+  if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = true;
+  if (el.ceVerifyResultBody) el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">검증 중...</p>';
   try {
-    if (/\[\d+\]/.test(citingClaim)) {
-      await executeCeTrace(citingClaim);
-      return;
-    }
     const res = await fetch('/api/claim-evidence/align', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1582,15 +1588,26 @@ async function executeCeVerify() {
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     renderCeResult(data.finding, data.evidence_mode);
   } catch (err) {
-    if (el.ceVerifyResultBody) el.ceVerifyResultBody.innerHTML = `<p class="ce-slot-text">검증 요청을 처리하지 못했습니다: ${escapeHtml(err.message)} (인용 판정이 아닙니다)</p>`;
+    if (el.ceVerifyResultBody) {
+      el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text" style="color:var(--danger);font-weight:700;padding:16px;text-align:center;">검증 요청 실패 — 연구 판정이 아닙니다.</p>';
+    }
   } finally {
+    if (activeBtn) activeBtn.textContent = originalText;
     if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
+    if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = false;
+    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = false;
   }
 }
 
-async function executeCeTrace(draftText) {
+async function executeCeTrace(draftText, triggerBtn) {
+  const activeBtn = triggerBtn || el.btnExecuteCeVerify;
+  const originalText = activeBtn ? activeBtn.textContent : '';
+  if (activeBtn) activeBtn.textContent = '검증 중...';
+  if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
+  if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = true;
+  if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = true;
   if (el.ceVerifyResultBody) {
-    el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">참고문헌 연결 및 KCI 근거 대조 중...</p>';
+    el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text">검증 중...</p>';
   }
   try {
     const res = await fetch('/api/claim-evidence/trace', {
@@ -1608,8 +1625,13 @@ async function executeCeTrace(draftText) {
     renderCeTraceResult(data);
   } catch (err) {
     if (el.ceVerifyResultBody) {
-      el.ceVerifyResultBody.innerHTML = `<p class="ce-slot-text">추적 검증 요청을 처리하지 못했습니다: ${escapeHtml(err.message)}</p>`;
+      el.ceVerifyResultBody.innerHTML = '<p class="ce-slot-text" style="color:var(--danger);font-weight:700;padding:16px;text-align:center;">검증 요청 실패 — 연구 판정이 아닙니다.</p>';
     }
+  } finally {
+    if (activeBtn) activeBtn.textContent = originalText;
+    if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
+    if (el.btnLoadCeD4) el.btnLoadCeD4.disabled = false;
+    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.disabled = false;
   }
 }
 
@@ -1847,12 +1869,16 @@ function renderCeTraceResult(data) {
   const btnContrastInline = document.getElementById('btnTraceContrastInline');
   btnContrastInline?.addEventListener('click', () => {
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_CONTRAST_SENTENCE;
-    executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE);
+    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.add('is-active');
+    if (el.btnLoadCeD4) el.btnLoadCeD4.classList.remove('is-active');
+    executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, btnContrastInline);
   });
   const btnD4Inline = document.getElementById('btnTraceD4Inline');
   btnD4Inline?.addEventListener('click', () => {
     if (el.ceVerifyInputText) el.ceVerifyInputText.value = FINANCE_D4_DRAFT_SENTENCE;
-    executeCeTrace(FINANCE_D4_DRAFT_SENTENCE);
+    if (el.btnLoadCeD4) el.btnLoadCeD4.classList.add('is-active');
+    if (el.btnLoadCeD4Contrast) el.btnLoadCeD4Contrast.classList.remove('is-active');
+    executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, btnD4Inline);
   });
 }
 
@@ -2010,17 +2036,29 @@ function init() {
   });
 
   // Claim-Evidence Input Actions: presets only fill committed claims; results always come from the backend.
-  el.btnLoadCeD4?.addEventListener('click', () => {
+  el.btnLoadCeD4?.addEventListener('click', async () => {
+    el.btnLoadCeD4.classList.add('is-active');
+    el.btnLoadCeD4Contrast?.classList.remove('is-active');
     fillCePreset('D4');
-    executeCeVerify();
+    await executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, el.btnLoadCeD4);
   });
-  el.btnLoadCeD4Contrast?.addEventListener('click', () => {
+  el.btnLoadCeD4Contrast?.addEventListener('click', async () => {
+    el.btnLoadCeD4Contrast.classList.add('is-active');
+    el.btnLoadCeD4?.classList.remove('is-active');
     fillCePreset('D4-CONTRAST');
-    executeCeVerify();
+    await executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, el.btnLoadCeD4Contrast);
   });
-  el.btnLoadCeExample?.addEventListener('click', () => fillCePreset('C1'));
-  el.btnLoadCeInsufficient?.addEventListener('click', () => fillCePreset('I1'));
-  el.btnExecuteCeVerify?.addEventListener('click', executeCeVerify);
+  el.btnLoadCeExample?.addEventListener('click', () => {
+    el.btnLoadCeD4?.classList.remove('is-active');
+    el.btnLoadCeD4Contrast?.classList.remove('is-active');
+    fillCePreset('C1');
+  });
+  el.btnLoadCeInsufficient?.addEventListener('click', () => {
+    el.btnLoadCeD4?.classList.remove('is-active');
+    el.btnLoadCeD4Contrast?.classList.remove('is-active');
+    fillCePreset('I1');
+  });
+  el.btnExecuteCeVerify?.addEventListener('click', () => executeCeVerify(el.btnExecuteCeVerify));
   loadClaimEvidenceP0();
 
   // Claim-Evidence Evaluation Case Selector

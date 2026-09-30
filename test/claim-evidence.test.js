@@ -218,3 +218,91 @@ test('Claim–Evidence verify panel and preset code hold no hardcoded verdicts o
   assert.ok(fn('renderCeResult').includes('finding.status'));
   assert.equal(/Solar|HALLUCINATION|hallucinat|\bfalse claim|wrong claim/i.test(fn('renderCeResult')), false);
 });
+
+test('Finance D4 preset interaction regression: btnLoadCeD4 and btnLoadCeD4Contrast trigger trace with scenario FINANCE_D4 and live server responds with non-hardcoded findings', async () => {
+  const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
+  assert.ok(html.includes('id="btnLoadCeD4"'));
+  assert.ok(html.includes('★ D4 핵심 사례 실행'));
+  assert.ok(html.includes('id="btnLoadCeD4Contrast"'));
+  assert.ok(html.includes('↔ 올바른 근거로 대조 실행'));
+
+  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
+  // 1. btnLoadCeD4 wires to executeCeTrace with scenario: 'FINANCE_D4'
+  assert.ok(app.includes("el.btnLoadCeD4?.addEventListener('click'"));
+  assert.ok(app.includes("executeCeTrace(FINANCE_D4_DRAFT_SENTENCE, el.btnLoadCeD4)"));
+
+  // 2. btnLoadCeD4Contrast wires to executeCeTrace with scenario: 'FINANCE_D4' and marker [1]
+  assert.ok(app.includes("el.btnLoadCeD4Contrast?.addEventListener('click'"));
+  assert.ok(app.includes("executeCeTrace(FINANCE_D4_CONTRAST_SENTENCE, el.btnLoadCeD4Contrast)"));
+
+  // 3. executeCeTrace calls POST /api/claim-evidence/trace with scenario: 'FINANCE_D4' and evidence_mode: 'FROZEN_EVIDENCE'
+  const fnCeTrace = app.slice(app.indexOf('function executeCeTrace('), app.indexOf('\n}\n', app.indexOf('function executeCeTrace(')));
+  assert.ok(fnCeTrace.includes("fetch('/api/claim-evidence/trace'"));
+  assert.ok(fnCeTrace.includes("scenario: 'FINANCE_D4'"));
+  assert.ok(fnCeTrace.includes("evidence_mode: 'FROZEN_EVIDENCE'"));
+  assert.ok(fnCeTrace.includes("'검증 중...'"));
+  assert.ok(fnCeTrace.includes('검증 요청 실패 — 연구 판정이 아닙니다.'));
+
+  // 4. Live server endpoint interaction verification
+  const { once } = await import('node:events');
+  const { createTrustVerifyServer } = await import('../src/server.js');
+  const liveMustNotRun = { async articleSearch() { throw new Error('no live KCI'); }, async articleDetail() { throw new Error('no live KCI'); } };
+  const server = createTrustVerifyServer({ kciAdapter: liveMustNotRun });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const base = `http://127.0.0.1:${server.address().port}`;
+
+  try {
+    // btnLoadCeD4 -> POST /api/claim-evidence/trace -> scenario FINANCE_D4
+    const d4Res = await fetch(`${base}/api/claim-evidence/trace`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scenario: 'FINANCE_D4',
+        evidence_mode: 'FROZEN_EVIDENCE',
+        draft_text: 'The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [2].',
+        references: [
+          '[1] 김예빈, 조두연 (2023). 텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석. 국제금융연구, 13(1), 5-31. https://doi.org/10.34251/ifadoi.13.1.202305.001',
+          '[2] 이보형, 홍우형 (2019). 금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구. 신용카드리뷰, 13(3), 14-31. https://doi.org/10.35348/ccr.2019.13.3.002',
+        ],
+      }),
+    });
+    assert.equal(d4Res.status, 200);
+    const d4Body = await d4Res.json();
+    assert.equal(d4Body.scenario, 'FINANCE_D4');
+    assert.equal(d4Body.evidence_mode, 'FROZEN_EVIDENCE');
+    assert.equal(d4Body.linking.marker, '[2]');
+    assert.equal(d4Body.citation_integrity.article_id, 'ART002510435');
+    assert.equal(d4Body.citation_integrity.status, 'VERIFIED');
+    assert.equal(d4Body.claim_evidence.status, 'INSUFFICIENT_EVIDENCE');
+
+    // btnLoadCeD4Contrast -> same endpoint -> FINANCE_D4 -> marker [1]
+    const contrastRes = await fetch(`${base}/api/claim-evidence/trace`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scenario: 'FINANCE_D4',
+        evidence_mode: 'FROZEN_EVIDENCE',
+        draft_text: 'The estimation results suggest that equity prices fall in response to a contractionary, hawkish monetary policy shock [1].',
+        references: [
+          '[1] 김예빈, 조두연 (2023). 텍스트 마이닝에 기반한 통화정책 기조가 한국 주식시장 및 부동산시장에 미치는 영향에 대한 분석. 국제금융연구, 13(1), 5-31. https://doi.org/10.34251/ifadoi.13.1.202305.001',
+          '[2] 이보형, 홍우형 (2019). 금융위기 전후 부동산시장과 주식시장의 상호영향에 관한 연구. 신용카드리뷰, 13(3), 14-31. https://doi.org/10.35348/ccr.2019.13.3.002',
+        ],
+      }),
+    });
+    assert.equal(contrastRes.status, 200);
+    const contrastBody = await contrastRes.json();
+    assert.equal(contrastBody.scenario, 'FINANCE_D4');
+    assert.equal(contrastBody.evidence_mode, 'FROZEN_EVIDENCE');
+    assert.equal(contrastBody.linking.marker, '[1]');
+    assert.equal(contrastBody.citation_integrity.article_id, 'ART002961723');
+    assert.equal(contrastBody.citation_integrity.status, 'VERIFIED');
+    assert.equal(contrastBody.claim_evidence.status, 'CONSISTENT_WITH_EVIDENCE');
+
+    // Same citing sentence, only marker differs
+    assert.equal(d4Body.draft_text.replace('[2]', ''), contrastBody.draft_text.replace('[1]', ''));
+  } finally {
+    server.close();
+    await once(server, 'close');
+  }
+});
