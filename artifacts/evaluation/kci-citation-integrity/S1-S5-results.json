@@ -1,0 +1,625 @@
+{
+  "evaluation_id": "KCI-CITATION-INTEGRITY-S1-S5",
+  "observed_on": "2026-10-01",
+  "engine": {
+    "rules": "docs/CITATION_AUDIT_RULES.md",
+    "rule_versions": "1.0",
+    "title_normalization": "v1.0 (NFKC, trim, whitespace collapse, lowercase); v1.1 NOT active"
+  },
+  "method": "Controlled one-variable mutations of one real KCI record. Mutations defined before execution; results recorded as observed, then frozen. No rule was changed.",
+  "runner": "tools/evaluation/run-kci-s1-s5.mjs",
+  "hash_definitions": {
+    "input_hash": "sha256(canonicalJson(supplied citation input))",
+    "evidence_hash": "sha256(canonicalJson({search, detail})) over sanitized bibliographic fields only; excludes retrieved_at, request timestamps, URLs, keys, request ids"
+  },
+  "base_record": {
+    "article_id": "ART003062835",
+    "confirmation": {
+      "search_state": "KCI_OK",
+      "search_total": 1,
+      "search_candidate_ids": [
+        "ART003062835"
+      ],
+      "detail_state": "KCI_OK",
+      "detail_article_id": "ART003062835"
+    },
+    "sanitized_fields": {
+      "article_id": "ART003062835",
+      "titles": [
+        {
+          "value": "Computer Vision-based Basketball Player Training System",
+          "lang": "original"
+        },
+        {
+          "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+          "lang": "foreign"
+        },
+        {
+          "value": "Computer Vision-based Basketball Player Training System",
+          "lang": "english"
+        }
+      ],
+      "authors": [
+        {
+          "name": "장만",
+          "english_name": "Man Zhang",
+          "source_text": null
+        },
+        {
+          "name": "신승수",
+          "english_name": "Seung-Soon Shin",
+          "source_text": null
+        }
+      ],
+      "publication_year": "2024",
+      "journal": "디지털콘텐츠학회논문지",
+      "volume": "25",
+      "issue": "3",
+      "first_page": "595",
+      "last_page": "605",
+      "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+      "doi_normalized": "10.9728/dcs.2024.25.3.595"
+    }
+  },
+  "base_citation_S1": {
+    "title": "Computer Vision-based Basketball Player Training System",
+    "authors": [
+      "장만",
+      "신승수"
+    ],
+    "publication_year": "2024",
+    "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.595"
+  },
+  "cases": [
+    {
+      "case_id": "S1",
+      "base_record_id": "ART003062835",
+      "input_mutation": "none (exact qualified citation)",
+      "question_under_test": "정상적인 실제 인용을 잘못 경고하지 않는가?",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.595"
+      },
+      "execution_mode": "LIVE",
+      "observed_status": "VERIFIED",
+      "rule_id": "REF-META-001",
+      "rule_version": "1.0",
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "field_comparison_values": [
+        {
+          "field": "title",
+          "input_value": "Computer Vision-based Basketball Player Training System",
+          "evidence_value": "Computer Vision-based Basketball Player Training System",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "input_value": [
+            "장만",
+            "신승수"
+          ],
+          "evidence_value": [
+            {
+              "name": "장만",
+              "english_name": "Man Zhang"
+            },
+            {
+              "name": "신승수",
+              "english_name": "Seung-Soon Shin"
+            }
+          ],
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "input_value": "2024",
+          "evidence_value": "2024",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "input_value": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+          "evidence_value": {
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          },
+          "result": "MATCH"
+        }
+      ],
+      "evidence_source": {
+        "kci_article_id": "ART003062835",
+        "search_candidate_ids": [
+          "ART003062835"
+        ],
+        "frozen_evidence_file": "frozen-evidence.json",
+        "frozen_evidence_key": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+      },
+      "human_review_required": true,
+      "finding_id": "finding-3b8a99f307b535f0",
+      "reason": "The supplied bibliographic metadata is consistent with one coherent KCI record under the current rules.",
+      "input_hash": "b6cdd8c2a8f963d31e46ebe43de306d7514cb50a22edb96c47111187ce49c6f2",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+      "frozen_replay": {
+        "execution_mode": "FROZEN_EVIDENCE",
+        "finding_id": "finding-3b8a99f307b535f0",
+        "observed_status": "VERIFIED",
+        "rule_id": "REF-META-001",
+        "identical_to_live": true
+      },
+      "notes": "Control passed: no false warning. human_review_required is true because baseFinding hard-codes it for every research finding, including VERIFIED."
+    },
+    {
+      "case_id": "S2",
+      "base_record_id": "ART003062835",
+      "input_mutation": "publication_year 2024 -> 2023",
+      "question_under_test": "연도가 틀렸을 때 어느 필드가 어긋났는지 특정할 수 있는가?",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2023",
+        "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.595"
+      },
+      "execution_mode": "LIVE",
+      "observed_status": "METADATA_DRIFT",
+      "rule_id": "REF-META-002",
+      "rule_version": "1.0",
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MISMATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "field_comparison_values": [
+        {
+          "field": "title",
+          "input_value": "Computer Vision-based Basketball Player Training System",
+          "evidence_value": "Computer Vision-based Basketball Player Training System",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "input_value": [
+            "장만",
+            "신승수"
+          ],
+          "evidence_value": [
+            {
+              "name": "장만",
+              "english_name": "Man Zhang"
+            },
+            {
+              "name": "신승수",
+              "english_name": "Seung-Soon Shin"
+            }
+          ],
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "input_value": "2023",
+          "evidence_value": "2024",
+          "result": "MISMATCH"
+        },
+        {
+          "field": "doi",
+          "input_value": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+          "evidence_value": {
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          },
+          "result": "MATCH"
+        }
+      ],
+      "evidence_source": {
+        "kci_article_id": "ART003062835",
+        "search_candidate_ids": [
+          "ART003062835"
+        ],
+        "frozen_evidence_file": "frozen-evidence.json",
+        "frozen_evidence_key": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+      },
+      "human_review_required": true,
+      "finding_id": "finding-ce5441bd53fad78c",
+      "reason": "One coherent KCI record was identified, but at least one supplied comparable metadata field differs.",
+      "input_hash": "ab0cec8c032c99abdb3a539174c9037958ecc829371906a96c4b5bbb08f47e2e",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+      "frozen_replay": {
+        "execution_mode": "FROZEN_EVIDENCE",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "observed_status": "METADATA_DRIFT",
+        "rule_id": "REF-META-002",
+        "identical_to_live": true
+      },
+      "notes": "Primary demo. Only publication_year MISMATCH; title, authors, DOI MATCH."
+    },
+    {
+      "case_id": "S3",
+      "base_record_id": "ART003062835",
+      "input_mutation": "authors[1] 신승수 -> Gil-Dong Hong",
+      "question_under_test": "저자 정보가 실제 record와 다를 때 현재 deterministic rule은 어떻게 처리하는가?",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "Gil-Dong Hong"
+        ],
+        "publication_year": "2024",
+        "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.595"
+      },
+      "execution_mode": "LIVE",
+      "observed_status": "REVIEW_REQUIRED",
+      "rule_id": "REF-ID-002",
+      "rule_version": "1.0",
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "UNKNOWN"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MATCH"
+        }
+      ],
+      "field_comparison_values": [
+        {
+          "field": "title",
+          "input_value": "Computer Vision-based Basketball Player Training System",
+          "evidence_value": "Computer Vision-based Basketball Player Training System",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "input_value": [
+            "장만",
+            "Gil-Dong Hong"
+          ],
+          "evidence_value": [
+            {
+              "name": "장만",
+              "english_name": "Man Zhang"
+            },
+            {
+              "name": "신승수",
+              "english_name": "Seung-Soon Shin"
+            }
+          ],
+          "result": "UNKNOWN"
+        },
+        {
+          "field": "publication_year",
+          "input_value": "2024",
+          "evidence_value": "2024",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "input_value": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+          "evidence_value": {
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          },
+          "result": "MATCH"
+        }
+      ],
+      "evidence_source": {
+        "kci_article_id": "ART003062835",
+        "search_candidate_ids": [
+          "ART003062835"
+        ],
+        "frozen_evidence_file": "frozen-evidence.json",
+        "frozen_evidence_key": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+      },
+      "human_review_required": true,
+      "finding_id": "finding-c89ba1981c4f44e3",
+      "reason": "One coherent KCI record was identified, but at least one supplied field lacks deterministic comparable evidence.",
+      "input_hash": "872003ce4189f07565d16a18ad917c83f1894a66c8e10327e7906a95002980d8",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+      "frozen_replay": {
+        "execution_mode": "FROZEN_EVIDENCE",
+        "finding_id": "finding-c89ba1981c4f44e3",
+        "observed_status": "REVIEW_REQUIRED",
+        "rule_id": "REF-ID-002",
+        "identical_to_live": true
+      },
+      "notes": "Not METADATA_DRIFT: compareAuthors returns only MATCH or UNKNOWN (never MISMATCH), and any UNKNOWN routes to REVIEW_REQUIRED / REF-ID-002. Identity was established and articleDetail ran; the author field is flagged UNKNOWN."
+    },
+    {
+      "case_id": "S4",
+      "base_record_id": "ART003062835",
+      "input_mutation": "doi suffix .595 -> .596",
+      "question_under_test": "실제 record와 다른 DOI가 입력되었을 때 현재 deterministic comparison은 어떻게 처리하는가?",
+      "input": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.596"
+      },
+      "execution_mode": "LIVE",
+      "observed_status": "METADATA_DRIFT",
+      "rule_id": "REF-META-002",
+      "rule_version": "1.0",
+      "search_state": "KCI_OK",
+      "detail_state": "KCI_OK",
+      "field_comparisons": [
+        {
+          "field": "title",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "result": "MISMATCH"
+        }
+      ],
+      "field_comparison_values": [
+        {
+          "field": "title",
+          "input_value": "Computer Vision-based Basketball Player Training System",
+          "evidence_value": "Computer Vision-based Basketball Player Training System",
+          "result": "MATCH"
+        },
+        {
+          "field": "authors",
+          "input_value": [
+            "장만",
+            "신승수"
+          ],
+          "evidence_value": [
+            {
+              "name": "장만",
+              "english_name": "Man Zhang"
+            },
+            {
+              "name": "신승수",
+              "english_name": "Seung-Soon Shin"
+            }
+          ],
+          "result": "MATCH"
+        },
+        {
+          "field": "publication_year",
+          "input_value": "2024",
+          "evidence_value": "2024",
+          "result": "MATCH"
+        },
+        {
+          "field": "doi",
+          "input_value": "http://dx.doi.org/10.9728/dcs.2024.25.3.596",
+          "evidence_value": {
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          },
+          "result": "MISMATCH"
+        }
+      ],
+      "evidence_source": {
+        "kci_article_id": "ART003062835",
+        "search_candidate_ids": [
+          "ART003062835"
+        ],
+        "frozen_evidence_file": "frozen-evidence.json",
+        "frozen_evidence_key": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6"
+      },
+      "human_review_required": true,
+      "finding_id": "finding-f9fd67380710d5ba",
+      "reason": "One coherent KCI record was identified, but at least one supplied comparable metadata field differs.",
+      "input_hash": "0b6f2d866fb6d6cd2fec3a824b34d6122b1b15c035ceac10699ed9e9608bbd62",
+      "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+      "frozen_replay": {
+        "execution_mode": "FROZEN_EVIDENCE",
+        "finding_id": "finding-f9fd67380710d5ba",
+        "observed_status": "METADATA_DRIFT",
+        "rule_id": "REF-META-002",
+        "identical_to_live": true
+      },
+      "notes": "DOI suffix change detected as MISMATCH via the adapter DOI normalizer. The supplied DOI uses the dx.doi.org URL form copied from KCI doi_raw."
+    },
+    {
+      "case_id": "S5",
+      "base_record_id": "ART003062835",
+      "input_mutation": "title: removed word \"Player\"",
+      "question_under_test": "제목이 변형되었을 때 record identity를 현재 보수적 규칙이 어떻게 처리하는가?",
+      "input": {
+        "title": "Computer Vision-based Basketball Training System",
+        "authors": [
+          "장만",
+          "신승수"
+        ],
+        "publication_year": "2024",
+        "doi": "http://dx.doi.org/10.9728/dcs.2024.25.3.595"
+      },
+      "execution_mode": "LIVE",
+      "observed_status": "REVIEW_REQUIRED",
+      "rule_id": "REF-ID-002",
+      "rule_version": "1.0",
+      "search_state": "KCI_OK",
+      "detail_state": null,
+      "field_comparisons": [],
+      "field_comparison_values": [],
+      "evidence_source": {
+        "kci_article_id": "ART003062835",
+        "search_candidate_ids": [
+          "ART003062835"
+        ],
+        "frozen_evidence_file": "frozen-evidence.json",
+        "frozen_evidence_key": "ea33f5dbbb033363abbfed696df269822366e1283a8e3c98099ba1771ae13607"
+      },
+      "human_review_required": true,
+      "finding_id": "finding-e468003a93ce4845",
+      "reason": "KCI returned candidates, but none has exact normalized title identity.",
+      "input_hash": "82f0c04837d8e5d56cab38af181e92aa69da59eeafe42378018f8629036958a4",
+      "evidence_hash": "ea33f5dbbb033363abbfed696df269822366e1283a8e3c98099ba1771ae13607",
+      "frozen_replay": {
+        "execution_mode": "FROZEN_EVIDENCE",
+        "finding_id": "finding-e468003a93ce4845",
+        "observed_status": "REVIEW_REQUIRED",
+        "rule_id": "REF-ID-002",
+        "identical_to_live": true
+      },
+      "notes": "Stopped before articleDetail and field comparison. KCI search still returned ART003062835 as the only candidate, but exact normalized title identity failed, so no field_comparisons exist."
+    }
+  ],
+  "primary_demo": {
+    "case_id": "S2",
+    "execution_mode": "LIVE",
+    "sequential_runs": 5,
+    "runs": [
+      {
+        "run_number": 1,
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK",
+        "article_id": "ART003062835",
+        "kind": "RESEARCH_FINDING",
+        "observed_status": "METADATA_DRIFT",
+        "system_state": null,
+        "rule_id": "REF-META-002",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "mismatched_fields": [
+          "publication_year"
+        ],
+        "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+        "elapsed_ms": 211
+      },
+      {
+        "run_number": 2,
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK",
+        "article_id": "ART003062835",
+        "kind": "RESEARCH_FINDING",
+        "observed_status": "METADATA_DRIFT",
+        "system_state": null,
+        "rule_id": "REF-META-002",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "mismatched_fields": [
+          "publication_year"
+        ],
+        "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+        "elapsed_ms": 294
+      },
+      {
+        "run_number": 3,
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK",
+        "article_id": "ART003062835",
+        "kind": "RESEARCH_FINDING",
+        "observed_status": "METADATA_DRIFT",
+        "system_state": null,
+        "rule_id": "REF-META-002",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "mismatched_fields": [
+          "publication_year"
+        ],
+        "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+        "elapsed_ms": 278
+      },
+      {
+        "run_number": 4,
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK",
+        "article_id": "ART003062835",
+        "kind": "RESEARCH_FINDING",
+        "observed_status": "METADATA_DRIFT",
+        "system_state": null,
+        "rule_id": "REF-META-002",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "mismatched_fields": [
+          "publication_year"
+        ],
+        "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+        "elapsed_ms": 308
+      },
+      {
+        "run_number": 5,
+        "search_state": "KCI_OK",
+        "detail_state": "KCI_OK",
+        "article_id": "ART003062835",
+        "kind": "RESEARCH_FINDING",
+        "observed_status": "METADATA_DRIFT",
+        "system_state": null,
+        "rule_id": "REF-META-002",
+        "finding_id": "finding-ce5441bd53fad78c",
+        "mismatched_fields": [
+          "publication_year"
+        ],
+        "evidence_hash": "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6",
+        "elapsed_ms": 245
+      }
+    ]
+  },
+  "real_world_regression": [
+    {
+      "case_id": "REAL-TITLE-FORMAT-001",
+      "category": "REAL-WORLD REGRESSION",
+      "article_id": "ART001298965",
+      "observed_issue": "PDF and KCI represent the same paper, but Unicode quotation marks / spacing differ (U+2018/U+2019 + space vs U+FF02, no space).",
+      "current_behavior": {
+        "observed_status": "REVIEW_REQUIRED",
+        "rule_id": "REF-ID-002"
+      },
+      "execution_mode": "FROZEN_EVIDENCE (static offline title pair)",
+      "evidence": "test/fixtures/kci/real-title-format-001.json; test/real-title-format.test.js",
+      "purpose": "Demonstrates conservative identity handling. title-normalization-v1.1 is not active; this result is intentionally unchanged."
+    }
+  ]
+}

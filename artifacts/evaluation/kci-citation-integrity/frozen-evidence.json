@@ -1,0 +1,139 @@
+{
+  "notice": "Frozen sanitized KCI evidence for offline replay. Bibliographic fields only: no API key, request URL, public_url, source paths, or timestamps. Keyed by evidence_hash = sha256(canonicalJson(evidence)). Not a runtime fallback for LIVE KCI.",
+  "base_record_id": "ART003062835",
+  "evidence": {
+    "9da680754fca9a3b308bfa2ece15dce0e1d77abb8a7a208c5704f601464b7ab6": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": "장만(Dept. of Computer and Media Engineering, Tongmyong University)"
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": "신승수(Dept. of Information Security, Tongmyong University)"
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      },
+      "detail": {
+        "state": "KCI_OK",
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": null
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": null
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      }
+    },
+    "ea33f5dbbb033363abbfed696df269822366e1283a8e3c98099ba1771ae13607": {
+      "search": {
+        "state": "KCI_OK",
+        "total": 1,
+        "records": [
+          {
+            "article_id": "ART003062835",
+            "titles": [
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "original"
+              },
+              {
+                "value": "컴퓨터 비전 기반 농구선수 훈련 시스템",
+                "lang": "foreign"
+              },
+              {
+                "value": "Computer Vision-based Basketball Player Training System",
+                "lang": "english"
+              }
+            ],
+            "authors": [
+              {
+                "name": "장만",
+                "english_name": "Man Zhang",
+                "source_text": "장만(Dept. of Computer and Media Engineering, Tongmyong University)"
+              },
+              {
+                "name": "신승수",
+                "english_name": "Seung-Soon Shin",
+                "source_text": "신승수(Dept. of Information Security, Tongmyong University)"
+              }
+            ],
+            "publication_year": "2024",
+            "journal": "디지털콘텐츠학회논문지",
+            "volume": "25",
+            "issue": "3",
+            "first_page": "595",
+            "last_page": "605",
+            "doi_raw": "http://dx.doi.org/10.9728/dcs.2024.25.3.595",
+            "doi_normalized": "10.9728/dcs.2024.25.3.595"
+          }
+        ]
+      },
+      "detail": null
+    }
+  }
+}
