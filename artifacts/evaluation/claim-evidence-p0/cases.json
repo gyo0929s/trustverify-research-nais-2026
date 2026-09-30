@@ -1,0 +1,124 @@
+{
+  "evaluation_id": "CLAIM-EVIDENCE-P0",
+  "observed_on": "2026-10-01",
+  "processing_version": "claim-evidence-p0-1.0",
+  "method": "Cases fixed before execution; results recorded as observed from the deterministic engine over the frozen abstract, then frozen. C1/C2 are the only presentation cases; I1 is a boundary test.",
+  "record_id": "ART003267604",
+  "cases": [
+    {
+      "case_id": "C1",
+      "role": "PRESENTATION",
+      "design": "Controlled preservation: restates grounded sentence #9 keeping its hedge (suggest).",
+      "citing_claim": "The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.",
+      "execution_mode": "FROZEN_EVIDENCE (abstract confirmed live via articleDetail)",
+      "input_hash": "02feb1106176d746bb3039ad0d0559582184f39ef15a522bfee399ecdda245ac",
+      "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7",
+      "rule_version": "1.0",
+      "observed_status": "CONSISTENT_WITH_EVIDENCE",
+      "signal": null,
+      "signals": [],
+      "rule_id": "CE-CONSIST-001",
+      "evidence_span": {
+        "text": "These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts.",
+        "sentence_index": 9,
+        "abstract_lang": "original"
+      },
+      "grounding": {
+        "grounded": true,
+        "shared_anchors": [
+          "additional",
+          "capacity",
+          "contact",
+          "dissipat",
+          "first",
+          "interproximal",
+          "limit",
+          "load",
+          "locally",
+          "molar",
+          "shar"
+        ],
+        "coverage": 0.917,
+        "citing_anchor_count": 12,
+        "thresholds": {
+          "MIN_SHARED_ANCHORS": 3,
+          "MIN_COVERAGE": 0.6
+        }
+      },
+      "finding_id": "claim-4ea2a838ec1d26e7"
+    },
+    {
+      "case_id": "C2",
+      "role": "PRESENTATION",
+      "design": "Identical to C1 except one word: suggest -> prove (hedged -> strong certainty).",
+      "citing_claim": "The simulation results prove a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.",
+      "execution_mode": "FROZEN_EVIDENCE (abstract confirmed live via articleDetail)",
+      "input_hash": "d568943a3f112d20439320c22d5a9921b5565d5601a7bbb322563f76a4e52a95",
+      "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7",
+      "rule_version": "1.0",
+      "observed_status": "POTENTIAL_CLAIM_SHIFT",
+      "signal": "CERTAINTY_STRENGTHENED",
+      "signals": [
+        "CERTAINTY_STRENGTHENED"
+      ],
+      "rule_id": "CE-SHIFT-001",
+      "evidence_span": {
+        "text": "These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts.",
+        "sentence_index": 9,
+        "abstract_lang": "original"
+      },
+      "grounding": {
+        "grounded": true,
+        "shared_anchors": [
+          "additional",
+          "capacity",
+          "contact",
+          "dissipat",
+          "first",
+          "interproximal",
+          "limit",
+          "load",
+          "locally",
+          "molar",
+          "shar"
+        ],
+        "coverage": 0.917,
+        "citing_anchor_count": 12,
+        "thresholds": {
+          "MIN_SHARED_ANCHORS": 3,
+          "MIN_COVERAGE": 0.6
+        }
+      },
+      "finding_id": "claim-d3f92311ba4fa806"
+    },
+    {
+      "case_id": "I1",
+      "role": "BOUNDARY_TEST",
+      "design": "Proposition not grounded in the abstract (periodontal disease incidence in elderly patients).",
+      "citing_claim": "Interproximal contacts reduce the incidence of periodontal disease in elderly patients.",
+      "execution_mode": "FROZEN_EVIDENCE (abstract confirmed live via articleDetail)",
+      "input_hash": "d6dc0b7d5e2034ea50212e66a5705ce60cbda326aaee76078f7d12c33d6e0e8a",
+      "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7",
+      "rule_version": "1.0",
+      "observed_status": "INSUFFICIENT_EVIDENCE",
+      "signal": null,
+      "signals": [],
+      "rule_id": "CE-GROUND-001",
+      "evidence_span": null,
+      "grounding": {
+        "grounded": false,
+        "reason": "NO_SENTENCE_MEETS_THRESHOLD",
+        "best_shared_anchors": [
+          "contact",
+          "interproximal"
+        ],
+        "citing_anchor_count": 7,
+        "thresholds": {
+          "MIN_SHARED_ANCHORS": 3,
+          "MIN_COVERAGE": 0.6
+        }
+      },
+      "finding_id": "claim-5159e5f3504b3ebe"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "notice": "Sanitized KCI articleDetail abstract evidence for Claim-Evidence Alignment P0. Fields: record_id, title, abstracts, keywords. No API key, request URL, public_url, source paths, or timestamps. evidence_hash = sha256(canonicalJson(record_id, title, abstracts, keywords)).",
+  "provenance": {
+    "system": "KCI Open API",
+    "operation": "articleDetail",
+    "record_id": "ART003267604",
+    "detail_state": "KCI_OK",
+    "retrieved_on": "2026-10-01",
+    "note": "retrieved_on is provenance only and excluded from evidence_hash"
+  },
+  "evidence": {
+    "record_id": "ART003267604",
+    "title": "Computer simulation on the role of interproximal contacts in occlusal force transmission",
+    "abstracts": [
+      {
+        "lang": "original",
+        "value": "Purpose: This study aimed to investigate how interproximal contacts influence occlusal force transmission in the posterior maxilla using computer simulation. Materials and Methods: A three-dimensional model of the right maxillary second premolar, first molar, and second molar was constructed from patient CT data. Teeth and bone were defined as rigid bodies, and periodontal ligaments were represented by axial springs. Dynamic simulations were performed with occlusal forces of 100 N and 200 N applied at three points on the occlusal surface of the first molar for 0.1 s. Displacements of each tooth and the summed ligament forces were recorded and compared. Results: The first molar exhibited the greatest displacement and ligament forces, while the second premolar showed smaller secondary responses. Changes at the second molar were negligible. The peak displacement occurred on the mesial crown of the first molar, directed toward the second premolar. Increasing occlusal force from 100 N to 200 N markedly elevated the ligament forces at the first molar, whereas changes at the second premolar remained relatively small. These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts. Conclusion: Occlusal forces applied to a single molar can be transmitted to adjacent teeth through interproximal contacts, and the extent depends on loading direction and contact geometry. Clinically, establishing proper proximal contacts is essential for controlled distribution of occlusal loads and the long-term stability of the dentition."
+      },
+      {
+        "lang": "english",
+        "value": "Purpose: This study aimed to investigate how interproximal contacts influence occlusal force transmission in the posterior maxilla using computer simulation. Materials and Methods: A three-dimensional model of the right maxillary second premolar, first molar, and second molar was constructed from patient CT data. Teeth and bone were defined as rigid bodies, and periodontal ligaments were represented by axial springs. Dynamic simulations were performed with occlusal forces of 100 N and 200 N applied at three points on the occlusal surface of the first molar for 0.1 s. Displacements of each tooth and the summed ligament forces were recorded and compared. Results: The first molar exhibited the greatest displacement and ligament forces, while the second premolar showed smaller secondary responses. Changes at the second molar were negligible. The peak displacement occurred on the mesial crown of the first molar, directed toward the second premolar. Increasing occlusal force from 100 N to 200 N markedly elevated the ligament forces at the first molar, whereas changes at the second premolar remained relatively small. These findings indicate that most additional load was dissipated locally at the first molar rather than transmitted distally, suggesting a limit in the load-sharing capacity of interproximal contacts. Conclusion: Occlusal forces applied to a single molar can be transmitted to adjacent teeth through interproximal contacts, and the extent depends on loading direction and contact geometry. Clinically, establishing proper proximal contacts is essential for controlled distribution of occlusal loads and the long-term stability of the dentition."
+      }
+    ],
+    "keywords": [
+      "interproximal contact",
+      "occlusal force",
+      "periodontal ligament",
+      "computer simulation",
+      "dental biomechanics",
+      "인접면 접촉",
+      "교합력",
+      "치주인대",
+      "컴퓨터 시뮬레이션",
+      "치과생체역학"
+    ],
+    "evidence_hash": "90686b8be71128abe7354dff928c92e3fb281a5bead9e9611acb3f2f7b5668f7"
+  }
+}
