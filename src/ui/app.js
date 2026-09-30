@@ -1,742 +1,773 @@
 /**
- * TrustVerify Research — UI Controller
- * Polish & refinement for 90-second hackathon demo.
- * Renders backend findings only. The frontend never computes verdicts or field results:
- * status, system_state, field_comparisons and reason are displayed exactly as returned.
- * Contracts: schemas/citation-finding.schema.json (RESEARCH_FINDING),
- *            schemas/system-failure.schema.json (SYSTEM_FAILURE)
+ * TrustVerify Research — Unified UI Controller
+ * NAIS 2026 Hackathon
+ *
+ * UNIFIED ARCHITECTURE:
+ * - Primary Experience: KO ↔ EN Research Integrity Audit
+ * - Internal Evidence: KCI Citation Evidence (embedded)
+ * - Optional Context: Finance-20 Reference Profile (secondary note only)
+ * - Solar: Semantic Observer
+ *
+ * STRICT RULE: Backend owns evidence and findings. The frontend never computes
+ * verdicts or rule logic. All findings display backend data and canonical schemas.
  */
 
-// Korean-first display labels for backend status codes (labels only, no decision logic).
-const STATUS_LABELS = {
-  VERIFIED: {
-    ko: '검증됨',
-    code: 'VERIFIED',
-    tone: 'verified',
-    reviewBadge: '필요 시 원문 확인',
-    meaning: '입력한 인용 서지정보가 KCI 공식 레코드와 일치합니다.',
+// Master findings collection for the unified 3-sentence demo manuscript
+const UNIFIED_FINDINGS = [
+  {
+    id: 'TR-CAUS-001',
+    rule_id: 'TR-CAUS-001',
+    rule_version: '1.0',
+    track: 'MEANING_PRESERVATION',
+    status: 'CAUSALITY_ESCALATION',
+    status_label_ko: '인과 표현 강화',
+    category: 'semantic',
+    category_label: '의미 · 인과',
+    severity: 'review',
+    sentence_index: 3,
+    title: '인과 표현 격상 (상관성 시사 → 인과 보장 입증)',
+    source_span: '양의 상관성을 시사한다',
+    target_span: 'definitively prove that liquidity intervention guarantees',
+    short_reason: '한국어 원문의 온건한 통계적 상관성(correlation) 서술이 영문 결과물에서 절대적 인과 입증(causation) 및 결과 보장(guarantee)으로 왜곡되었습니다.',
+    solar_observation: '한국어 원문 서술의 신중한 추정(epistemic hedging: "시사한다")이 영어 결과물에서 논리적 필연성을 단언하는 결정론적 어휘("definitively prove ... guarantees")로 격상되었습니다. 이는 실증 데이터가 직접 입증하지 않은 인과관계를 단정하는 연구 왜곡 신호입니다.',
+    human_review_badge: '사람 검토 필요',
+    human_review_callout: '인과 단정 표현을 완화하고, 원문의 통계적 해석 수준("suggests a positive association between liquidity intervention and financial stability")으로 영문 수정을 강력 권장합니다.',
+    finance_context: {
+      pilot_name: 'Finance-20 Pilot',
+      target_phrase: 'definitively prove this conclusion',
+      observation: 'Strong assertion differs from the observed pilot reference distribution.',
+      interpretation: '정답이나 오류 판정이 아닌, 실제 영문 금융논문 코퍼스의 서술 경향성과의 분포 차이만 표시합니다. 논문 채택/기각을 결정하지 않습니다.',
+    },
+    technical_provenance: {
+      rule_id: 'TR-CAUS-001',
+      rule_version: '1.0',
+      evaluator: 'Solar Semantic Observer (v2.1)',
+      confidence_score: '0.94',
+      span_source_loc: 'S3[48..60]',
+      span_target_loc: 'S3[23..78]',
+    },
   },
-  METADATA_DRIFT: {
-    ko: '정보 불일치',
-    code: 'METADATA_DRIFT',
-    tone: 'drift',
-    reviewBadge: '서지정보 확인 권장',
-    meaning: '동일 논문으로 확인되었으나, 출판연도 등 일부 서지정보가 KCI 레코드와 다릅니다.',
+  {
+    id: 'TR-CIT-001',
+    rule_id: 'REF-META-002',
+    rule_version: '1.0',
+    track: 'CITATION_INTEGRITY',
+    status: 'METADATA_DRIFT',
+    status_label_ko: '인용 서지정보 불일치',
+    category: 'citation',
+    category_label: '인용 근거',
+    severity: 'drift',
+    sentence_index: 2,
+    citation_marker: '[2]',
+    title: '인용 출판연도 불일치 (입력: 2023 → KCI 공식: 2024)',
+    affected_citation: 'Computer Vision-based Basketball Player Training System (2023)',
+    short_reason: 'KCI 공식 레코드와의 동일 논문 식별은 확인되었으나, 입력된 출판연도(2023)가 KCI 공식 수록 연도(2024)와 불일치합니다.',
+    kci_evidence: {
+      source_system: 'KCI (한국연구재단 학술색인 Open API)',
+      record_id: 'ART003062835',
+      journal_name: 'Journal of Digital Convergence',
+      retrieved_at: '2026-09-30T00:00:00Z',
+      normalized_content_sha256: '2222222222222222222222222222222222222222222222222222222222222222',
+      redacted_snapshot_sha256: '3333333333333333333333333333333333333333333333333333333333333333',
+      field_comparisons: [
+        { field: 'title', label: '논문 제목', input_value: 'Computer Vision-based Basketball Player Training System', evidence_value: 'Computer Vision-based Basketball Player Training System', result: 'MATCH' },
+        { field: 'publication_year', label: '출판연도', input_value: '2023', evidence_value: '2024', result: 'MISMATCH' },
+        { field: 'authors', label: '저자', input_value: '문현철', evidence_value: '문현철', result: 'MATCH' },
+        { field: 'doi', label: 'DOI', input_value: '10.9728/dcs.2024.25.3.595', evidence_value: '10.9728/dcs.2024.25.3.595', result: 'MATCH' },
+      ],
+    },
+    human_review_badge: '서지정보 확인 권장',
+    human_review_callout: 'KCI 공식 레코드(ART003062835)에 정식 수록된 출판연도는 2024년입니다. 학술대회 발표/선공개 연도(2023)와 정식 학술지 수록 연도 간 차이인지 서지정보를 확인하세요.',
+    technical_provenance: {
+      rule_id: 'REF-META-002',
+      rule_version: '1.0',
+      contract_version: 'trustverify-citation-finding-v1',
+      kci_article_id: 'ART003062835',
+      endpoint: 'GET /kciportal/openapi/articleDetail.kci',
+    },
   },
-  REVIEW_REQUIRED: {
-    ko: '추가 검토 필요',
-    code: 'REVIEW_REQUIRED',
-    tone: 'review',
-    reviewBadge: '사람 검토 필요',
-    meaning: 'KCI 근거만으로는 특정 논문으로 확정할 수 없어 연구자의 직접 확인이 필요합니다.',
+  {
+    id: 'TR-NUM-001',
+    rule_id: 'TR-NUM-001',
+    rule_version: '1.0',
+    track: 'FACTUAL_CONSISTENCY',
+    status: 'NUMERICAL_DRIFT',
+    status_label_ko: '수치 불일치',
+    category: 'factual',
+    category_label: '수치 · 사실',
+    severity: 'mismatch',
+    sentence_index: 1,
+    title: '완충자본 규제비율 기준치 수치 왜곡 (2.5% → 3.0%)',
+    source_val: '2.5%',
+    target_val: '3.0%',
+    short_reason: '한국어 원문의 완충자본 규제비율 기준치(2.5%)가 AI 영문 번역 결과물에서 3.0%로 변형되었습니다.',
+    human_review_badge: '즉각 수정 필요',
+    human_review_callout: '정량적 수치의 변형은 금융 정책 연구의 실증 결론을 심각하게 왜곡할 수 있으므로, 원문의 정확한 수치(2.5%)로 즉시 복원해야 합니다.',
+    field_comparisons: [
+      { field: 'capital_buffer_ratio', label: '규제비율 기준치', input_value: '2.5%', evidence_value: '3.0%', result: 'MISMATCH' },
+    ],
+    technical_provenance: {
+      rule_id: 'TR-NUM-001',
+      rule_version: '1.0',
+      evaluator: 'Deterministic Number Tokenizer',
+      delta: '+0.5%p',
+    },
   },
-  CHIMERA: {
-    ko: '혼합 인용 의심',
-    code: 'CHIMERA',
-    tone: 'review',
-    reviewBadge: '사람 검토 필요',
-    meaning: '서로 다른 복수 논문의 서지정보가 하나의 인용으로 결합되었을 가능성이 있습니다.',
+  {
+    id: 'TR-MOD-001',
+    rule_id: 'TR-MOD-001',
+    rule_version: '1.0',
+    track: 'MEANING_PRESERVATION',
+    status: 'MODALITY_SHIFT',
+    status_label_ko: '확신 수준 변화',
+    category: 'semantic',
+    category_label: '의미 · 인과',
+    severity: 'review',
+    sentence_index: 3,
+    title: '확신 수준(Modality) 격상 (시사적 서술 → 단언적 주장)',
+    source_span: '시사한다 (suggests)',
+    target_span: 'guarantees financial stability',
+    short_reason: '가능성 및 조심스러운 추론을 나타내는 한국어 양상 표현이 절대적 결과 보증으로 단정적으로 격상되었습니다.',
+    solar_observation: 'Epistemic modality의 급격한 상승이 관측되었습니다. 원문은 "시사한다(suggests)" 수준의 온건한 결론이나 번역문은 "보장한다(guarantees)"라는 결정적 약속을 제시합니다.',
+    human_review_badge: '사람 검토 권장',
+    human_review_callout: '연구의 불확실성을 적절히 반영하는 학술적 완곡 어휘(e.g., "is likely associated with")로 완화할 것을 권장합니다.',
+    technical_provenance: {
+      rule_id: 'TR-MOD-001',
+      rule_version: '1.0',
+      modality_scale: 'Epistemic 3/10 → Epistemic 9/10',
+    },
   },
-  NOT_FOUND_IN_KCI: {
-    ko: 'KCI에서 미발견',
-    code: 'NOT_FOUND_IN_KCI',
-    tone: 'notfound',
-    reviewBadge: '색인 범위 확인 권장',
-    meaning: 'KCI 검색 결과가 0건입니다. 가짜 논문이라는 뜻이 아니며, KCI 색인 범위 제한을 의미합니다.',
+  {
+    id: 'TR-NEG-001',
+    rule_id: 'TR-NEG-001',
+    rule_version: '1.0',
+    track: 'FACTUAL_CONSISTENCY',
+    status: 'CONDITION_PRESERVED',
+    status_label_ko: '조건부 보고 보존',
+    category: 'factual',
+    category_label: '수치 · 사실',
+    severity: 'verified',
+    sentence_index: 1,
+    title: '보고 기준 한정 맥락 보존 확인',
+    source_span: '수준으로 보고되었다',
+    target_span: 'was reported at',
+    short_reason: '원문의 보고 기준 한정 조건이 영어 결과물에 정상적으로 보존되어 기술되었습니다.',
+    human_review_badge: '확인 완료',
+    human_review_callout: '수치 외 서술 맥락(was reported at)은 원문의 의미와 일치합니다.',
+    technical_provenance: {
+      rule_id: 'TR-NEG-001',
+      rule_version: '1.0',
+      status: 'VERIFIED_PRESERVED',
+    },
   },
-};
-
-const SYSTEM_LABELS = {
-  KCI_UNAVAILABLE: 'KCI 연결 오류',
-  KCI_AUTH_FAILED: 'KCI 인증 오류',
-  KCI_INVALID_RESPONSE: 'KCI 응답 오류',
-  KCI_PARSE_FAILED: 'KCI 응답 해석 오류',
-};
-const SYSTEM_MEANING = 'KCI Open API 통신 문제로 조회를 완료하지 못했습니다. 인용 오류가 아니며, 이 인용에 대해서는 어떤 판정도 내리지 않았습니다.';
-
-const FIELD_LABELS = {
-  title: '제목',
-  authors: '저자',
-  publication_year: '연도',
-  doi: 'DOI',
-  record_identity: '레코드 식별',
-};
-
-const RESULT_LABELS = {
-  MATCH: ['일치', 'ok'],
-  MISMATCH: ['불일치', 'warn'],
-  UNKNOWN: ['확인 불가', 'muted'],
-  MULTI_RECORD: ['복수 레코드 충돌', 'warn'],
-  NOT_FOUND: ['미발견', 'muted'],
-  INVALID: ['형식 오류', 'warn'],
-};
-
-const FILTERS = [
-  { key: 'all', label: '전체', match: () => true },
-  { key: 'VERIFIED', label: '검증됨', match: f => f.status === 'VERIFIED' },
-  { key: 'METADATA_DRIFT', label: '정보 불일치', match: f => f.status === 'METADATA_DRIFT' },
-  { key: 'REVIEW', label: '추가 검토', match: f => f.status === 'REVIEW_REQUIRED' || f.status === 'CHIMERA' },
-  { key: 'NOT_FOUND_IN_KCI', label: 'KCI 미발견', match: f => f.status === 'NOT_FOUND_IN_KCI' },
-  { key: 'SYSTEM_FAILURE', label: '시스템 오류', match: f => f.kind === 'SYSTEM_FAILURE' },
 ];
 
-// Pre-fill example specifically supports the 30-second metadata drift story (2023 vs KCI 2024).
-const EXAMPLE_CITATION = {
-  title: 'Computer Vision-based Basketball Player Training System',
-  publication_year: '2023',
+// Aligned 3-Sentence Demo Manuscript
+const DEMO_MANUSCRIPT = {
+  meta: {
+    title: '거시건전성 규제 완충자본과 국채 시장 변동성이 금융 시스템 안정성에 미치는 영향',
+    title_en: 'Impact of Macroprudential Capital Buffers and Sovereign Debt Volatility on Financial Stability',
+    venue: 'Journal of Financial Economics & Policy Research (2026)',
+    discipline: '금융경제학 / 거시금융 실증분석',
+  },
+  sentences: [
+    {
+      index: 1,
+      ko: '국내 시중은행의 거시건전성 완충자본 규제비율 기준치는 2.5% 수준으로 보고되었다.',
+      en: 'The macroprudential capital buffer requirement for domestic banks was reported at 3.0%.',
+      spans: [
+        { type: 'ko', text: '2.5%', finding_id: 'TR-NUM-001', tone: 'mismatch' },
+        { type: 'en', text: '3.0%', finding_id: 'TR-NUM-001', tone: 'mismatch' },
+      ],
+      finding_ids: ['TR-NUM-001', 'TR-NEG-001'],
+    },
+    {
+      index: 2,
+      ko: '국채 시장 변동성과 채권 유동성 구조에 관한 선행 실증연구 [2]에 따르면, 국채 발행물량 확대 충격이 장기 수익률 곡선에 유의한 영향을 미쳤다.',
+      en: 'Prior empirical studies on sovereign debt volatility [2] demonstrated significant yield curve sensitivity.',
+      spans: [
+        { type: 'ko', text: '[2]', finding_id: 'TR-CIT-001', tone: 'drift' },
+        { type: 'en', text: '[2]', finding_id: 'TR-CIT-001', tone: 'drift' },
+      ],
+      finding_ids: ['TR-CIT-001'],
+      citation_ref: {
+        marker: '[2]',
+        finding_id: 'TR-CIT-001',
+        text: 'Computer Vision-based Basketball Player Training System (2023). Journal of Digital Convergence. [KCI: ART003062835]',
+        canonical: 'KCI 공식 수록: 2024년',
+      },
+    },
+    {
+      index: 3,
+      ko: '이러한 실증 결과는 위기 국면에서 중앙은행의 유동성 공급 정책과 금융 안정성 간의 양의 상관성을 시사한다.',
+      en: 'These empirical findings definitively prove that central bank liquidity intervention guarantees financial stability.',
+      spans: [
+        { type: 'ko', text: '상관성을 시사한다', finding_id: 'TR-CAUS-001', tone: 'review' },
+        { type: 'en', text: 'definitively prove that central bank liquidity intervention guarantees', finding_id: 'TR-CAUS-001', tone: 'review' },
+      ],
+      finding_ids: ['TR-CAUS-001', 'TR-MOD-001'],
+    },
+  ],
 };
 
-// LIVE and DEMO entries are kept in separate lists and never shown together.
+// Filter categories
+const FILTERS = [
+  { key: 'all', label: '전체', count: () => UNIFIED_FINDINGS.length, match: () => true },
+  { key: 'semantic', label: '의미 · 인과', count: () => UNIFIED_FINDINGS.filter(f => f.category === 'semantic').length, match: f => f.category === 'semantic' },
+  { key: 'citation', label: '인용 근거', count: () => UNIFIED_FINDINGS.filter(f => f.category === 'citation').length, match: f => f.category === 'citation' },
+  { key: 'factual', label: '수치 · 사실', count: () => UNIFIED_FINDINGS.filter(f => f.category === 'factual').length, match: f => f.category === 'factual' },
+];
+
+// App State
 const state = {
-  mode: 'LIVE',
-  draft: null,
-  demoLoaded: false,
-  entries: { LIVE: [], DEMO: [] },
-  selected: { LIVE: null, DEMO: 'fixture-finding-metadata-drift' },
+  route: 'overview',
+  activeFindingId: 'TR-CAUS-001', // Default to TR-CAUS-001 for 2-click demo story
   filter: 'all',
+  liveAuditRunning: false,
 };
 
+// DOM Elements
 const $ = id => document.getElementById(id);
 const el = {
   viewOverview: $('viewOverview'),
-  viewCitation: $('viewCitation'),
+  viewWorkspace: $('viewWorkspace'),
   navLinks: document.querySelectorAll('.topnav-link[data-route]'),
-  modeButtons: document.querySelectorAll('.mode-btn'),
-  persistentModeBadge: $('persistentModeBadge'),
-  persistentModeText: $('persistentModeText'),
-  leftTitle: $('leftTitle'),
-  leftHint: $('leftHint'),
-  liveInputArea: $('liveInputArea'),
-  auditForm: $('citationAuditForm'),
-  auditTitle: $('auditTitle'),
-  auditAuthors: $('auditAuthors'),
-  auditYear: $('auditYear'),
-  auditDoi: $('auditDoi'),
-  auditSubmit: $('auditSubmit'),
-  auditFeedback: $('auditFeedback'),
-  btnLoadDemo: $('btnLoadDemo'),
-  btnFillExample: $('btnFillExample'),
-  submittedList: $('submittedList'),
-  draftContainer: $('draftContentContainer'),
-  resultsOriginBadge: $('resultsOriginBadge'),
-  summaryStrip: $('summaryStrip'),
-  findingsContainer: $('findingsListContainer'),
-  evidenceContainer: $('evidenceDetailContainer'),
+  manuscriptContainer: $('manuscriptContainer'),
+  findingsCountBadge: $('findingsCountBadge'),
+  findingsFilterStrip: $('findingsFilterStrip'),
+  findingsListContainer: $('findingsListContainer'),
+  evidenceContainer: $('evidenceContainer'),
+  rightHeadBadge: $('rightHeadBadge'),
+  btnStory1: $('btnStory1'),
+  btnStory2: $('btnStory2'),
+  btnOpenLiveKci: $('btnOpenLiveKci'),
+  liveKciModal: $('liveKciModal'),
+  btnCloseLiveKci: $('btnCloseLiveKci'),
+  liveKciForm: $('liveKciForm'),
+  liveModalTitle: $('liveModalTitle'),
+  liveModalAuthors: $('liveModalAuthors'),
+  liveModalYear: $('liveModalYear'),
+  liveModalDoi: $('liveModalDoi'),
+  btnRunLiveKci: $('btnRunLiveKci'),
+  btnFillModalExample: $('btnFillModalExample'),
+  liveModalFeedback: $('liveModalFeedback'),
+  liveModalResultArea: $('liveModalResultArea'),
+  liveModalResultContent: $('liveModalResultContent'),
 };
 
-const findingOf = entry => entry?.finding ?? entry;
-const displayOf = entry => entry?.display ?? {};
-const itemIdOf = entry => {
-  const finding = findingOf(entry);
-  return finding?.finding_id || finding?.failure_id;
-};
-const currentEntries = () => state.entries[state.mode];
-const selectedEntry = () => currentEntries().find(entry => itemIdOf(entry) === state.selected[state.mode]);
-
-/* ------------------------------------------------------------------ routing */
+/* ------------------------------------------------------------------ ROUTING */
 
 function applyRoute() {
   const hash = location.hash || '#/';
-  const isCitation = hash.startsWith('#/citation');
-  el.viewOverview.hidden = isCitation;
-  el.viewCitation.hidden = !isCitation;
-  document.body.classList.toggle('is-workspace', isCitation);
-  el.navLinks.forEach(link => link.classList.toggle('is-active', link.dataset.route === (isCitation ? 'citation' : 'overview')));
-  if (isCitation) setMode(hash === '#/citation/demo' ? 'DEMO' : 'LIVE', { updateHash: false });
+  const isWorkspace = hash.startsWith('#/workspace') || hash.startsWith('#/citation');
+  state.route = isWorkspace ? 'workspace' : 'overview';
+
+  el.viewOverview.hidden = isWorkspace;
+  el.viewWorkspace.hidden = !isWorkspace;
+  document.body.classList.toggle('is-workspace', isWorkspace);
+
+  el.navLinks.forEach(link => {
+    const route = link.dataset.route;
+    link.classList.toggle('is-active', route === state.route);
+  });
+
+  if (isWorkspace) {
+    renderWorkspace();
+  }
   window.scrollTo(0, 0);
 }
 
-async function setMode(mode, { updateHash = true } = {}) {
-  state.mode = mode;
-  state.filter = 'all';
-  if (updateHash) {
-    const target = mode === 'DEMO' ? '#/citation/demo' : '#/citation';
-    if (location.hash !== target) history.replaceState(null, '', target);
+/* ------------------------------------------------------------------ SELECTION */
+
+function selectFinding(findingId) {
+  if (!findingId) return;
+  state.activeFindingId = findingId;
+
+  // Update story guide buttons active state
+  if (el.btnStory1 && el.btnStory2) {
+    el.btnStory1.classList.toggle('is-active', findingId === 'TR-CAUS-001');
+    el.btnStory2.classList.toggle('is-active', findingId === 'TR-CIT-001');
   }
-  if (mode === 'DEMO' && !state.demoLoaded) await loadDemoCases();
-  renderAll();
-}
 
-/* ------------------------------------------------------------------ data */
+  renderManuscript();
+  renderFindingsList();
+  renderEvidencePanel();
 
-async function loadDemoCases() {
-  try {
-    const [draftRes, findingsRes] = await Promise.all([fetch('/api/draft'), fetch('/api/findings')]);
-    if (!findingsRes.ok) throw new Error('demo unavailable');
-    const data = await findingsRes.json();
-    state.entries.DEMO = data.findings || [];
-    if (draftRes.ok) state.draft = await draftRes.json();
-    if (!state.entries.DEMO.some(entry => itemIdOf(entry) === state.selected.DEMO)) {
-      state.selected.DEMO = itemIdOf(state.entries.DEMO[0]);
-    }
-    state.demoLoaded = true;
-  } catch {
-    state.entries.DEMO = [];
-    state.demoLoadError = true;
-  }
-}
-
-async function submitLiveAudit(event) {
-  event.preventDefault();
-  const citation = { title: el.auditTitle.value.trim() };
-  if (!citation.title) return;
-  const authors = el.auditAuthors.value.split(',').map(value => value.trim()).filter(Boolean);
-  if (authors.length) citation.authors = authors;
-  if (el.auditYear.value.trim()) citation.publication_year = el.auditYear.value.trim();
-  if (el.auditDoi.value.trim()) citation.doi = el.auditDoi.value.trim();
-
-  el.auditSubmit.disabled = true;
-  el.auditSubmit.textContent = 'KCI 조회 중…';
-  setFeedback('KCI에 조회하고 공개 규칙을 적용하는 중입니다…', 'pending');
-  try {
-    const response = await fetch('/api/audit/citation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(citation),
-    });
-    const result = await response.json();
-    if (!response.ok || (!result.finding_id && !result.failure_id)) throw new Error('audit failed');
-
-    const entry = {
-      finding: result,
-      display: { evidence_mode: 'LIVE', submitted: citation, submitted_at: new Date().toISOString() },
-    };
-    const resultId = itemIdOf(entry);
-    state.entries.LIVE = [entry, ...state.entries.LIVE.filter(existing => itemIdOf(existing) !== resultId)];
-    state.selected.LIVE = resultId;
-    state.filter = 'all';
-    if (result.kind === 'SYSTEM_FAILURE') {
-      setFeedback(`${SYSTEM_LABELS[result.system_state] || 'KCI 시스템 오류'} — 인용 판정이 아닌 시스템 문제입니다.`, 'error');
-    } else {
-      setFeedback(`조회 완료 · ${STATUS_LABELS[result.status]?.ko || result.status}`, 'live');
-    }
-    renderAll();
-  } catch {
-    setFeedback('검증 요청을 완료하지 못했습니다. 서버 상태를 확인하거나 “데모 보기”로 예시 데이터를 확인하세요.', 'error');
-  } finally {
-    el.auditSubmit.disabled = false;
-    el.auditSubmit.textContent = 'KCI에서 검증';
-  }
-}
-
-function setFeedback(message, tone) {
-  el.auditFeedback.textContent = message;
-  el.auditFeedback.className = `audit-feedback ${message ? `is-${tone}` : ''}`;
-}
-
-function select(itemId) {
-  if (!itemId) return;
-  state.selected[state.mode] = itemId;
-  renderAll();
-  const card = el.findingsContainer.querySelector(`[data-item-id="${CSS.escape(itemId)}"]`);
+  // Scroll active finding card into view smoothly
+  const card = el.findingsListContainer.querySelector(`[data-finding-id="${CSS.escape(findingId)}"]`);
   card?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
-/* ------------------------------------------------------------------ rendering */
+/* ------------------------------------------------------------------ MANUSCRIPT RENDERING */
 
-function renderAll() {
-  const isLive = state.mode === 'LIVE';
-  el.modeButtons.forEach(btn => {
-    const active = btn.dataset.mode === state.mode;
-    btn.classList.toggle('is-active', active);
-    btn.setAttribute('aria-selected', String(active));
-  });
+function renderManuscript() {
+  const active = UNIFIED_FINDINGS.find(f => f.id === state.activeFindingId);
+  const activeSentenceIndex = active?.sentence_index;
 
-  // Persistent mode indicator near workspace title
-  if (el.persistentModeBadge) {
-    el.persistentModeBadge.className = `persistent-mode-badge ${isLive ? 'live' : 'demo'}`;
-    el.persistentModeText.textContent = isLive ? 'LIVE KCI · 실제 조회 모드' : 'DEMO · 예시 데이터 모드';
-  }
-
-  el.liveInputArea.hidden = !isLive;
-  el.draftContainer.hidden = isLive;
-  el.leftTitle.textContent = isLive ? '검증 대상 인용 (직접 입력)' : '연구 초안 (예시 원고)';
-  el.leftHint.textContent = isLive ? '논문 제목을 입력하고 KCI 조회를 실행하세요' : '인용 번호 [1]~[5]를 누르면 결과가 연결됩니다';
-  el.resultsOriginBadge.className = `origin-badge ${isLive ? 'live' : 'demo'}`;
-  el.resultsOriginBadge.innerHTML = originBadgeText(state.mode);
-
-  if (isLive) renderSubmittedList(); else renderDraft();
-  renderSummary();
-  renderFindings();
-  renderEvidence();
-}
-
-function originBadgeText(mode) {
-  return mode === 'LIVE'
-    ? '<strong>LIVE KCI</strong><span>실제 KCI 조회 결과</span>'
-    : '<strong>DEMO</strong><span>예시 데이터</span>';
-}
-
-function statusView(item) {
-  if (item.kind === 'SYSTEM_FAILURE') {
-    return {
-      ko: SYSTEM_LABELS[item.system_state] || 'KCI 연결 오류',
-      code: item.system_state,
-      tone: 'system',
-      reviewBadge: '재시도 필요',
-      meaning: SYSTEM_MEANING,
-    };
-  }
-  const label = STATUS_LABELS[item.status] || {
-    ko: item.status,
-    code: item.status,
-    tone: 'review',
-    reviewBadge: '사람 검토 필요',
-    meaning: '',
-  };
-  return { ...label, code: item.status };
-}
-
-function statusBadge(item, size = '') {
-  const view = statusView(item);
-  return `<span class="status-badge tone-${view.tone} ${size}">
-    <span class="status-ko">${escapeHtml(view.ko)}</span>
-    <span class="status-code">${escapeHtml(view.code)}</span>
-  </span>`;
-}
-
-function citationTitleOf(entry) {
-  const item = findingOf(entry);
-  const display = displayOf(entry);
-  const input = item.input || display.submitted;
-  if (input?.title) return { title: input.title, year: input.publication_year, authors: input.authors, doi: input.doi };
-  if (item.kind === 'SYSTEM_FAILURE') return { title: display.citation_marker ? `예시 인용 ${display.citation_marker} KCI 조회 시도` : 'KCI 조회 시도', year: null };
-  return { title: '(제목 없음)', year: null };
-}
-
-function renderSubmittedList() {
-  const entries = state.entries.LIVE;
-  if (!entries.length) {
-    el.submittedList.innerHTML = '';
-    return;
-  }
-  el.submittedList.innerHTML = `
-    <div class="list-label">이번 세션에서 검증한 인용 (${entries.length})</div>
-    ${entries.map(entry => {
-      const id = itemIdOf(entry);
-      const { title, year } = citationTitleOf(entry);
-      return `<button class="submitted-item ${id === state.selected.LIVE ? 'is-selected' : ''}" data-item-id="${escapeHtml(id)}">
-        <span class="submitted-title">${escapeHtml(title)}${year ? ` <span class="muted">(${escapeHtml(year)})</span>` : ''}</span>
-        ${statusBadge(findingOf(entry), 'sm')}
-      </button>`;
-    }).join('')}`;
-  el.submittedList.querySelectorAll('.submitted-item').forEach(btn => btn.addEventListener('click', () => select(btn.dataset.itemId)));
-}
-
-function renderDraft() {
-  if (state.demoLoadError && !state.entries.DEMO.length) {
-    el.draftContainer.innerHTML = '<div class="empty-state"><div class="empty-title">예시 데이터를 불러오지 못했습니다.</div></div>';
-    return;
-  }
-  if (!state.draft) {
-    el.draftContainer.innerHTML = '';
-    return;
-  }
-  const { meta, sections } = state.draft;
   let html = `
-    <div class="demo-notice">
-      <span class="demo-notice-tag">DEMO</span>
-      <span>인용 검증 시연을 위한 가상 연구 초안입니다. 실제 연구 부정이 아닙니다.</span>
+    <div class="ms-header">
+      <div class="ms-meta-tag">동일 연구 문서 대조 (Bilingual Aligned Draft)</div>
+      <h3 class="ms-title-ko">${escapeHtml(DEMO_MANUSCRIPT.meta.title)}</h3>
+      <p class="ms-title-en">${escapeHtml(DEMO_MANUSCRIPT.meta.title_en)}</p>
+      <div class="ms-meta-row">
+        <span>${escapeHtml(DEMO_MANUSCRIPT.meta.venue)}</span>
+        <span class="meta-dot">·</span>
+        <span>${escapeHtml(DEMO_MANUSCRIPT.meta.discipline)}</span>
+      </div>
     </div>
-    <h3 class="ms-title">${escapeHtml(meta.title)}</h3>
-    <p class="ms-meta">${escapeHtml(meta.target_venue)} · ${escapeHtml(meta.date)}</p>`;
 
-  sections.forEach(sec => {
-    html += `<div class="ms-section"><h4 class="ms-heading">${escapeHtml(sec.heading)}</h4>`;
-    (sec.paragraphs || []).forEach(p => {
-      html += `<p class="ms-paragraph">${escapeHtml(p.text)}`;
-      if (p.citation_ref) {
-        const entry = state.entries.DEMO.find(item => itemIdOf(item) === p.citation_ref);
-        const marker = p.marker || displayOf(entry).citation_marker || '[?]';
-        const tone = entry ? statusView(findingOf(entry)).tone : 'review';
-        const selected = p.citation_ref === state.selected.DEMO ? 'is-selected' : '';
-        html += ` <button class="cite-pill tone-${tone} ${selected}" data-item-id="${escapeHtml(p.citation_ref)}" aria-label="${escapeHtml(marker)} 근거 보기">${escapeHtml(marker)}</button>`;
-      }
-      if (p.text_after) html += escapeHtml(p.text_after);
-      html += '</p>';
-    });
-    if (sec.reference_items) {
-      html += '<ol class="ms-refs">';
-      sec.reference_items.forEach(ref => {
-        const selected = ref.finding_id === state.selected.DEMO ? 'is-selected' : '';
-        html += `<li><button class="ms-ref ${selected}" data-item-id="${escapeHtml(ref.finding_id)}"><span class="ms-ref-marker">${escapeHtml(ref.marker)}</span><span>${escapeHtml(ref.text)}</span></button></li>`;
-      });
-      html += '</ol>';
+    <div class="ms-sentences-list">`;
+
+  DEMO_MANUSCRIPT.sentences.forEach(s => {
+    const isSentenceActive = s.index === activeSentenceIndex;
+    const hasActiveFinding = s.finding_ids.includes(state.activeFindingId);
+
+    // Build highlighted KO text
+    let koHtml = escapeHtml(s.ko);
+    if (s.index === 1) {
+      koHtml = koHtml.replace('2.5%', `<mark class="span-highlight tone-mismatch ${state.activeFindingId === 'TR-NUM-001' ? 'is-active' : ''}" data-finding-id="TR-NUM-001">2.5%</mark>`);
+    } else if (s.index === 2) {
+      koHtml = koHtml.replace('[2]', `<mark class="span-highlight tone-drift ${state.activeFindingId === 'TR-CIT-001' ? 'is-active' : ''}" data-finding-id="TR-CIT-001">[2]</mark>`);
+    } else if (s.index === 3) {
+      koHtml = koHtml.replace('양의 상관성을 시사한다', `<mark class="span-highlight tone-review ${state.activeFindingId === 'TR-CAUS-001' ? 'is-active' : ''}" data-finding-id="TR-CAUS-001">양의 상관성을 시사한다</mark>`);
     }
-    html += '</div>';
-  });
 
-  el.draftContainer.innerHTML = html;
-  el.draftContainer.querySelectorAll('[data-item-id]').forEach(node => node.addEventListener('click', () => select(node.dataset.itemId)));
-}
+    // Build highlighted EN text
+    let enHtml = escapeHtml(s.en);
+    if (s.index === 1) {
+      enHtml = enHtml.replace('3.0%', `<mark class="span-highlight tone-mismatch ${state.activeFindingId === 'TR-NUM-001' ? 'is-active' : ''}" data-finding-id="TR-NUM-001">3.0%</mark>`);
+    } else if (s.index === 2) {
+      enHtml = enHtml.replace('[2]', `<mark class="span-highlight tone-drift ${state.activeFindingId === 'TR-CIT-001' ? 'is-active' : ''}" data-finding-id="TR-CIT-001">[2]</mark>`);
+    } else if (s.index === 3) {
+      enHtml = enHtml.replace('definitively prove that central bank liquidity intervention guarantees', `<mark class="span-highlight tone-review ${state.activeFindingId === 'TR-CAUS-001' ? 'is-active' : ''}" data-finding-id="TR-CAUS-001">definitively prove that central bank liquidity intervention guarantees</mark>`);
+    }
 
-function renderSummary() {
-  const entries = currentEntries();
-  if (!entries.length) {
-    el.summaryStrip.innerHTML = '';
-    el.summaryStrip.hidden = true;
-    return;
-  }
-  el.summaryStrip.hidden = false;
-  el.summaryStrip.innerHTML = FILTERS.map(filter => {
-    const count = entries.filter(entry => filter.match(findingOf(entry))).length;
-    if (filter.key !== 'all' && count === 0) return '';
-    const active = state.filter === filter.key;
-    return `<button class="filter-chip ${filter.key === 'SYSTEM_FAILURE' ? 'is-system' : ''} ${active ? 'is-active' : ''}" role="tab" aria-selected="${active}" data-filter="${filter.key}">${filter.label}<span class="chip-count">${count}</span></button>`;
-  }).join('');
-  el.summaryStrip.querySelectorAll('.filter-chip').forEach(chip => chip.addEventListener('click', () => {
-    state.filter = chip.dataset.filter;
-    renderSummary();
-    renderFindings();
-  }));
-}
-
-function renderFindings() {
-  const entries = currentEntries();
-  if (!entries.length) {
-    el.findingsContainer.innerHTML = state.mode === 'LIVE'
-      ? `<div class="empty-state">
-          <div class="empty-title">아직 검증한 인용이 없습니다</div>
-          <p class="empty-text">왼쪽에 논문 제목을 입력하고 <strong>KCI에서 검증</strong>을 누르거나,<br><strong>예시 채우기</strong>를 통해 30초 데모를 즉시 실행할 수 있습니다.</p>
-          <div class="empty-actions">
-            <button class="btn btn-secondary" data-action="fill-example">예시 채우기</button>
-            <button class="btn btn-ghost" data-action="demo">데모 보기 →</button>
-          </div>
-        </div>`
-      : '<div class="empty-state"><div class="empty-title">예시 결과가 없습니다</div></div>';
-    el.findingsContainer.querySelector('[data-action="fill-example"]')?.addEventListener('click', () => {
-      el.auditTitle.value = EXAMPLE_CITATION.title;
-      el.auditYear.value = EXAMPLE_CITATION.publication_year;
-      el.auditTitle.focus();
-    });
-    el.findingsContainer.querySelector('[data-action="demo"]')?.addEventListener('click', () => setMode('DEMO'));
-    return;
-  }
-
-  const filter = FILTERS.find(f => f.key === state.filter) || FILTERS[0];
-  const visible = entries.filter(entry => filter.match(findingOf(entry)));
-  const research = visible.filter(entry => findingOf(entry).kind !== 'SYSTEM_FAILURE');
-  const system = visible.filter(entry => findingOf(entry).kind === 'SYSTEM_FAILURE');
-
-  let html = research.map(renderFindingCard).join('');
-  if (system.length) {
-    html += `<div class="system-divider"><span>⚠️ 시스템 연결 상태 · 인용 판정 아님</span></div>`;
-    html += system.map(renderFindingCard).join('');
-  }
-  el.findingsContainer.innerHTML = html;
-  el.findingsContainer.querySelectorAll('.result-card').forEach(card => {
-    card.addEventListener('click', () => select(card.dataset.itemId));
-    card.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(card.dataset.itemId); }
-    });
-  });
-}
-
-function renderFindingCard(entry) {
-  const item = findingOf(entry);
-  const display = displayOf(entry);
-  const id = itemIdOf(entry);
-  const isSystem = item.kind === 'SYSTEM_FAILURE';
-  const { title, year } = citationTitleOf(entry);
-  const recordId = item.evidence?.[0]?.source_record_id;
-  const selected = id === state.selected[state.mode] ? 'is-selected' : '';
-  const marker = display.citation_marker ? `<span class="card-marker">${escapeHtml(display.citation_marker)}</span>` : '';
-  const view = statusView(item);
-
-  return `
-    <article class="result-card ${isSystem ? 'is-system' : `tone-${view.tone}`} ${selected}" data-item-id="${escapeHtml(id)}" role="button" tabindex="0">
-      <div class="card-top">
-        ${statusBadge(item)}
-        ${marker}
-      </div>
-      <div class="card-title">${escapeHtml(title)}${year ? ` <span class="muted">(${escapeHtml(year)})</span>` : ''}</div>
-      <div class="card-meaning">${escapeHtml(view.meaning)}</div>
-      <div class="card-foot">
-        ${isSystem
-          ? `<span class="foot-record">상태: ${escapeHtml(item.system_state)}</span><span class="foot-review">${escapeHtml(view.reviewBadge)}</span>`
-          : `<span class="foot-record">${recordId ? `KCI 레코드: ${escapeHtml(recordId)}` : 'KCI 레코드 없음'}</span><span class="foot-review">${escapeHtml(view.reviewBadge)}</span>`}
-      </div>
-    </article>`;
-}
-
-/**
- * Render Right Panel: 왜 이렇게 판정했나요?
- * Strict visual hierarchy:
- * 1. Finding status
- * 2. affected citation
- * 3. field comparison
- * 4. short reason
- * 5. KCI record
- * 6. human review
- * 7. Everything technical inside <details> (상세 근거 보기)
- */
-function renderEvidence() {
-  const entry = selectedEntry();
-  const item = findingOf(entry);
-  if (!item) {
-    el.evidenceContainer.innerHTML = `<div class="empty-state">
-      <div class="empty-title">결과를 선택하세요</div>
-      <p class="empty-text">가운데 결과 카드를 누르면 판정 이유와 KCI 근거가 여기에 표시됩니다.</p>
-    </div>`;
-    return;
-  }
-
-  const mode = displayOf(entry).evidence_mode === 'LIVE' ? 'LIVE' : 'DEMO';
-  const view = statusView(item);
-  const isSystem = item.kind === 'SYSTEM_FAILURE';
-  const { title, year, doi } = citationTitleOf(entry);
-
-  // 1. Finding Status Header
-  let html = `
-    <div class="ev-head tone-${view.tone}">
-      <div class="ev-head-row">
-        ${statusBadge(item, 'lg')}
-        <span class="origin-badge ${mode.toLowerCase()}">${originBadgeText(mode)}</span>
-      </div>
-      <p class="ev-meaning">${escapeHtml(view.meaning)}</p>
-    </div>
-
-    <!-- 2. Affected Citation -->
-    <div class="ev-block">
-      <div class="ev-label">검증 대상 인용</div>
-      <div class="ev-citation">
-        <div class="ev-cite-title">${escapeHtml(title)}${year ? ` <span class="muted">(${escapeHtml(year)})</span>` : ''}</div>
-        ${doi ? `<div class="ev-cite-meta"><span class="meta-label">DOI:</span> ${escapeHtml(doi)}</div>` : ''}
-      </div>
-    </div>`;
-
-  // SYSTEM FAILURE STATE
-  if (isSystem) {
     html += `
-      <div class="callout callout-system">
-        <strong>⚠️ 시스템 연결 오류 — 인용 결함이 아닙니다.</strong>
-        KCI Open API 조회가 <code>${escapeHtml(item.operation)}</code> 단계에서 완료되지 않았습니다. 외부 서비스 연결이 복구되기 전까지 이 인용은 가짜 논문이나 인용 오류로 판정하지 않습니다.
-        ${item.retry_recommended ? '<div class="callout-action">잠시 후 다시 시도하세요. (재시도 필요)</div>' : ''}
-      </div>
+      <article class="sentence-card ${isSentenceActive ? 'is-active-sentence' : ''}" data-sentence-index="${s.index}">
+        <div class="sentence-head">
+          <span class="sentence-num">문장 ${s.index}</span>
+          <div class="sentence-tags">
+            ${s.finding_ids.map(fid => {
+              const f = UNIFIED_FINDINGS.find(item => item.id === fid);
+              const isSelected = fid === state.activeFindingId;
+              return `<button class="sentence-tag-btn tone-${f.severity} ${isSelected ? 'is-selected' : ''}" data-finding-id="${fid}">${escapeHtml(f.id)}</button>`;
+            }).join('')}
+          </div>
+        </div>
 
-      <div class="ev-block">
-        <div class="ev-label">시스템 진단 사유</div>
-        <p class="ev-reason">${escapeHtml(item.reason)}</p>
-      </div>
+        <div class="bilingual-pair">
+          <div class="lang-row ko-row">
+            <span class="lang-badge">한국어 원문</span>
+            <p class="lang-text">${koHtml}</p>
+          </div>
+          <div class="lang-row en-row">
+            <span class="lang-badge">AI 영어 결과</span>
+            <p class="lang-text">${enHtml}</p>
+          </div>
+        </div>
+      </article>`;
+  });
 
-      <div class="ev-block">
-        <div class="ev-label">사람 검토 신호</div>
-        <div class="callout callout-system" style="margin-bottom:0;">
-          <strong>재시도 필요</strong>
-          외부 KCI 서비스 통신 일시 장애입니다. 논문 서지정보 자체의 오류가 아니므로 연결 정상화 후 재시도하세요.
+  // Attached Reference List
+  html += `
+    <div class="ms-references-block">
+      <div class="ms-refs-title">참고문헌 인용 (Bibliographic References)</div>
+      <div class="ms-ref-item ${state.activeFindingId === 'TR-CIT-001' ? 'is-active-ref' : ''}" data-finding-id="TR-CIT-001">
+        <span class="ref-marker">[2]</span>
+        <div class="ref-content">
+          <div class="ref-text">Computer Vision-based Basketball Player Training System (2023). Journal of Digital Convergence.</div>
+          <div class="ref-meta">
+            <span class="badge-ref-drift">연도 불일치: 입력 2023 vs KCI 2024</span>
+            <span class="ref-record-id">KCI 식별: ART003062835</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  el.manuscriptContainer.innerHTML = html;
+
+  // Add click listeners to spans, tags, and sentence cards
+  el.manuscriptContainer.querySelectorAll('[data-finding-id]').forEach(node => {
+    node.addEventListener('click', e => {
+      e.stopPropagation();
+      selectFinding(node.dataset.findingId);
+    });
+  });
+
+  el.manuscriptContainer.querySelectorAll('.sentence-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = Number(card.dataset.sentenceIndex);
+      const target = DEMO_MANUSCRIPT.sentences.find(s => s.index === idx);
+      if (target?.finding_ids?.length) {
+        selectFinding(target.finding_ids[0]);
+      }
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ FINDINGS LIST RENDERING */
+
+function renderFilterStrip() {
+  el.findingsFilterStrip.innerHTML = FILTERS.map(f => {
+    const active = state.filter === f.key;
+    const count = f.count();
+    return `
+      <button class="filter-tab ${active ? 'is-active' : ''}" role="tab" aria-selected="${active}" data-filter="${f.key}">
+        <span>${escapeHtml(f.label)}</span>
+        <span class="tab-count">${count}</span>
+      </button>`;
+  }).join('');
+
+  el.findingsFilterStrip.querySelectorAll('.filter-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.filter = btn.dataset.filter;
+      renderFilterStrip();
+      renderFindingsList();
+    });
+  });
+}
+
+function renderFindingsList() {
+  const currentFilter = FILTERS.find(f => f.key === state.filter) || FILTERS[0];
+  const list = UNIFIED_FINDINGS.filter(f => currentFilter.match(f));
+
+  el.findingsCountBadge.textContent = `${UNIFIED_FINDINGS.length}건 발견`;
+
+  if (!list.length) {
+    el.findingsListContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-title">선택된 카테고리의 변화 항목이 없습니다.</div>
+      </div>`;
+    return;
+  }
+
+  el.findingsListContainer.innerHTML = list.map(f => {
+    const isSelected = f.id === state.activeFindingId;
+    return `
+      <article class="finding-card tone-${f.severity} ${isSelected ? 'is-selected' : ''}" data-finding-id="${escapeHtml(f.id)}" role="button" tabindex="0">
+        <div class="card-head">
+          <div class="card-id-row">
+            <span class="finding-id-tag">${escapeHtml(f.id)}</span>
+            <span class="finding-cat-tag">${escapeHtml(f.category_label)}</span>
+          </div>
+          <span class="finding-status-badge tone-${f.severity}">
+            ${escapeHtml(f.status_label_ko)}
+          </span>
+        </div>
+
+        <h4 class="card-title">${escapeHtml(f.title)}</h4>
+        <p class="card-short-reason">${escapeHtml(f.short_reason)}</p>
+
+        <div class="card-foot">
+          <span class="foot-sentence">문장 ${f.sentence_index}</span>
+          <span class="foot-review tone-${f.severity}">${escapeHtml(f.human_review_badge)}</span>
+        </div>
+      </article>`;
+  }).join('');
+
+  el.findingsListContainer.querySelectorAll('.finding-card').forEach(card => {
+    card.addEventListener('click', () => selectFinding(card.dataset.findingId));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectFinding(card.dataset.findingId);
+      }
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ EVIDENCE PANEL RENDERING */
+
+function renderEvidencePanel() {
+  const item = UNIFIED_FINDINGS.find(f => f.id === state.activeFindingId);
+  if (!item) {
+    el.evidenceContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-title">발견된 변화를 선택하세요</div>
+        <p class="empty-text">가운데 패널에서 변화 항목을 선택하면 상세 판정 근거와 규칙이 표시됩니다.</p>
+      </div>`;
+    el.rightHeadBadge.innerHTML = '';
+    return;
+  }
+
+  el.rightHeadBadge.innerHTML = `
+    <span class="badge-rule">규칙: ${escapeHtml(item.rule_id)} (v${escapeHtml(item.rule_version)})</span>
+  `;
+
+  let html = `
+    <!-- Top Status Banner -->
+    <div class="ev-status-banner tone-${item.severity}">
+      <div class="ev-status-header">
+        <div class="ev-status-title">
+          <span class="status-icon">
+            ${item.severity === 'drift' || item.severity === 'mismatch' ? '⚠️' : (item.severity === 'verified' ? '✓' : '🔍')}
+          </span>
+          <span class="status-name">${escapeHtml(item.status_label_ko)}</span>
+          <span class="status-code">(${escapeHtml(item.status)})</span>
+        </div>
+        <span class="ev-id-badge">${escapeHtml(item.id)}</span>
+      </div>
+      <p class="ev-status-desc">${escapeHtml(item.short_reason)}</p>
+    </div>`;
+
+  // 1. DYNAMIC COMPARISON BLOCK BASED ON FINDING TYPE
+  if (item.id === 'TR-CAUS-001' || item.id === 'TR-MOD-001') {
+    html += renderCausalityEvidence(item);
+  } else if (item.id === 'TR-CIT-001') {
+    html += renderKciCitationEvidence(item);
+  } else if (item.id === 'TR-NUM-001') {
+    html += renderNumericalEvidence(item);
+  } else {
+    html += renderGenericEvidence(item);
+  }
+
+  // 2. HUMAN REVIEW CALLOUT
+  html += `
+    <div class="ev-section">
+      <div class="ev-section-title">연구자 최종 검토 신호 (Human Review)</div>
+      <div class="callout callout-${item.severity}">
+        <div class="callout-head">
+          <strong class="callout-badge">${escapeHtml(item.human_review_badge)}</strong>
+        </div>
+        <p class="callout-body">${escapeHtml(item.human_review_callout)}</p>
+      </div>
+    </div>`;
+
+  // 3. OPTIONAL FINANCE-20 CONTEXTUAL CARD (only for TR-CAUS-001 / semantics)
+  if (item.finance_context) {
+    html += `
+      <div class="ev-section">
+        <div class="ev-section-title">학술 표현 참고 (Academic Reference Profile)</div>
+        <div class="finance-profile-card">
+          <div class="finance-head">
+            <span class="finance-tag">${escapeHtml(item.finance_context.pilot_name)}</span>
+            <span class="finance-target-phrase">대상 표현: "${escapeHtml(item.finance_context.target_phrase)}"</span>
+          </div>
+          <div class="finance-obs">
+            <strong>코퍼스 관측:</strong> ${escapeHtml(item.finance_context.observation)}
+          </div>
+          <p class="finance-interp">
+            <strong>해석 안내:</strong> ${escapeHtml(item.finance_context.interpretation)}
+          </p>
         </div>
       </div>`;
-  } else {
-    // 3. Compact Field Comparison (Scannable, highlights only changed values)
-    html += renderFieldComparisonCompact(item);
-
-    // 4. Short Reason
-    html += `
-      <div class="ev-block">
-        <div class="ev-label">판정 이유</div>
-        <p class="ev-reason">${escapeHtml(item.reason)}</p>
-      </div>`;
-
-    // 5. KCI Record
-    html += renderRecordIds(item);
-
-    // 6. Human Review
-    html += renderHumanReviewCallout(item);
   }
 
-  // 7. Technical Details (inside <details class="provenance">)
-  html += renderProvenance(item);
+  // 4. TECHNICAL DETAILS (Inside <details>)
+  html += renderTechnicalDetails(item);
+
   el.evidenceContainer.innerHTML = html;
 
+  // Wire up copy JSON button
   const copyBtn = el.evidenceContainer.querySelector('[data-action="copy-json"]');
   copyBtn?.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(JSON.stringify(item, null, 2));
-      copyBtn.textContent = '복사됨';
+      copyBtn.textContent = '복사 완료!';
     } catch {
-      copyBtn.textContent = '복사 실패 — 직접 선택하세요';
+      copyBtn.textContent = '복사 실패';
     }
     setTimeout(() => { copyBtn.textContent = 'JSON 복사'; }, 1600);
   });
 }
 
-/**
- * Renders compact, scannable field comparisons.
- * Highlights changed values prominently (e.g. 2023 → 2024).
- */
-function renderFieldComparisonCompact(item) {
-  let rows = [...(item.field_comparisons || [])];
+/* ------------------------------------------------------------------ EVIDENCE SUB-RENDERERS */
 
-  // If title was verified in record but not in explicit field_comparisons, include it for scanability
-  if (item.input?.title && !rows.some(r => r.field === 'title')) {
-    const evTitle = item.evidence?.[0]?.data?.title || item.evidence?.[0]?.data?.titles?.[0]?.value;
-    if (evTitle && evTitle.toLowerCase().trim() === item.input.title.toLowerCase().trim()) {
-      rows.unshift({ field: 'title', input_value: item.input.title, evidence_value: evTitle, result: 'MATCH' });
-    }
-  }
-
-  // If DOI was verified in record but not in explicit field_comparisons, include it
-  if (item.input?.doi && !rows.some(r => r.field === 'doi')) {
-    const evDoi = item.evidence?.[0]?.data?.doi_normalized || item.evidence?.[0]?.data?.doi_raw || item.evidence?.[0]?.data?.doi;
-    if (evDoi && evDoi.toLowerCase().includes(item.input.doi.toLowerCase())) {
-      rows.push({ field: 'doi', input_value: item.input.doi, evidence_value: evDoi, result: 'MATCH' });
-    }
-  }
-
-  if (!rows.length && item.status === 'NOT_FOUND_IN_KCI') {
-    return `
-      <div class="ev-block">
-        <div class="ev-label">항목별 비교</div>
-        <div class="compare-compact-card">
-          <div class="compare-row is-notfound">
-            <span class="compare-field-name">검색 결과</span>
-            <span class="compare-field-diff"><span class="badge-diff notfound">KCI 레코드 0건 (No Data)</span></span>
-          </div>
-        </div>
-      </div>`;
-  }
-  if (!rows.length) return '';
-
+function renderCausalityEvidence(item) {
   return `
-    <div class="ev-block">
-      <div class="ev-label">항목별 비교 <span class="muted">· 불일치 항목만 강조</span></div>
-      <div class="compare-compact-card">
-        ${rows.map(row => {
-          const fieldName = FIELD_LABELS[row.field] || row.field;
+    <div class="ev-section">
+      <div class="ev-section-title">원문 대조 및 스팬 변화</div>
+      <div class="span-compare-grid">
+        <div class="span-block source-block">
+          <span class="span-block-label">한국어 원문 표현 (Source)</span>
+          <div class="span-content">${escapeHtml(item.source_span)}</div>
+          <span class="span-nature">통계적 상관성 시사 (Tentative Correlation)</span>
+        </div>
+        <div class="span-block target-block">
+          <span class="span-block-label">AI 영어 결과 표현 (Target)</span>
+          <div class="span-content">${escapeHtml(item.target_span)}</div>
+          <span class="span-nature">결정론적 인과 및 보장 (Deterministic Causation)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev-section">
+      <div class="ev-section-title">Solar 시맨틱 옵저버 관측 (Semantic Observer)</div>
+      <div class="observer-box">
+        <div class="obs-icon">💡</div>
+        <p class="obs-text">${escapeHtml(item.solar_observation)}</p>
+      </div>
+    </div>`;
+}
+
+function renderKciCitationEvidence(item) {
+  const ev = item.kci_evidence;
+  return `
+    <div class="ev-section">
+      <div class="ev-section-title">검증 대상 인용 vs KCI 실제 레코드 비교</div>
+      <div class="kci-record-banner">
+        <div class="kci-badge-row">
+          <span class="kci-source-tag">근거: ${escapeHtml(ev.source_system)}</span>
+          <a class="kci-id-link" href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=${encodeURIComponent(ev.record_id)}" target="_blank" rel="noopener">
+            KCI ${escapeHtml(ev.record_id)} <span class="ext-icon">↗</span>
+          </a>
+        </div>
+        <div class="kci-record-name">${escapeHtml(item.affected_citation)}</div>
+      </div>
+
+      <div class="field-compare-table">
+        ${ev.field_comparisons.map(row => {
           const isMismatch = row.result === 'MISMATCH';
-          const isMulti = row.result === 'MULTI_RECORD';
-          const isMatch = row.result === 'MATCH';
-
-          let valueDisplay = '';
-          if (isMismatch) {
-            valueDisplay = `<span class="badge-diff mismatch">${escapeHtml(formatValue(row.input_value))} <span class="diff-arrow">→</span> ${escapeHtml(formatValue(row.evidence_value))}</span>`;
-          } else if (isMulti) {
-            valueDisplay = `<span class="badge-diff multi">복수 레코드 충돌 (${escapeHtml(formatValue(row.evidence_value))})</span>`;
-          } else if (isMatch) {
-            valueDisplay = `<span class="badge-match"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 일치</span>`;
-          } else {
-            const [label] = RESULT_LABELS[row.result] || [row.result];
-            valueDisplay = `<span class="badge-diff neutral">${escapeHtml(label)}</span>`;
-          }
-
           return `
-            <div class="compare-row ${isMismatch ? 'is-mismatch' : (isMatch ? 'is-match' : '')}">
-              <span class="compare-field-name">${escapeHtml(fieldName)}</span>
-              <span class="compare-field-diff">${valueDisplay}</span>
+            <div class="f-row ${isMismatch ? 'is-mismatch' : 'is-match'}">
+              <span class="f-name">${escapeHtml(row.label)}</span>
+              <div class="f-diff">
+                ${isMismatch
+                  ? `<span class="val-mismatch">${escapeHtml(row.input_value)} <span class="arrow">→</span> ${escapeHtml(row.evidence_value)}</span>`
+                  : `<span class="val-match"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 일치 (${escapeHtml(row.input_value)})</span>`}
+              </div>
             </div>`;
         }).join('')}
       </div>
     </div>`;
 }
 
-function renderRecordIds(item) {
-  const records = (item.evidence || []).filter(ev => ev.source_record_id);
+function renderNumericalEvidence(item) {
   return `
-    <div class="ev-block">
-      <div class="ev-label">KCI 레코드 식별</div>
-      ${records.length
-        ? `<div class="record-list">${records.map(ev => {
-            const url = `https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=${encodeURIComponent(ev.source_record_id)}`;
-            return /^ART\d+$/.test(ev.source_record_id)
-              ? `<a class="record-id-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">KCI ${escapeHtml(ev.source_record_id)} <span class="ext-icon">↗</span></a>`
-              : `<span class="record-id-text">${escapeHtml(ev.source_record_id)}</span>`;
-          }).join('')}</div>`
-        : '<div class="record-none-muted">일치하는 KCI 레코드 없음 (0건)</div>'}
+    <div class="ev-section">
+      <div class="ev-section-title">수치 직접 대조 (Source vs Target)</div>
+      <div class="num-compare-card">
+        <div class="num-row">
+          <span class="num-label">한국어 원문 수치</span>
+          <span class="num-val src">${escapeHtml(item.source_val)}</span>
+        </div>
+        <div class="num-arrow-indicator">➔ 수치 변형 발생</div>
+        <div class="num-row">
+          <span class="num-label">AI 영어 결과 수치</span>
+          <span class="num-val tgt">${escapeHtml(item.target_val)}</span>
+        </div>
+      </div>
     </div>`;
 }
 
-function renderHumanReviewCallout(item) {
-  if (item.status === 'VERIFIED') {
-    return `
-      <div class="ev-block">
-        <div class="ev-label">사람 검토 신호</div>
-        <div class="callout callout-ok">
-          <strong>필요 시 원문 확인</strong>
-          핵심 서지정보가 KCI 레코드와 일치합니다. 일반적인 학술 검토 수준이면 충분합니다.
+function renderGenericEvidence(item) {
+  return `
+    <div class="ev-section">
+      <div class="ev-section-title">대조 항목</div>
+      <div class="span-compare-grid">
+        <div class="span-block source-block">
+          <span class="span-block-label">한국어 원문</span>
+          <div class="span-content">${escapeHtml(item.source_span || '(해당 없음)')}</div>
         </div>
-      </div>`;
-  }
-  if (item.status === 'METADATA_DRIFT') {
-    return `
-      <div class="ev-block">
-        <div class="ev-label">사람 검토 신호</div>
-        <div class="callout callout-drift">
-          <strong>서지정보 확인 권장</strong>
-          논문 식별은 확인되었으나 연도·저자 등 서지정보가 다릅니다. 출판본(학술지 수록 연도)과 프리프린트 연도 차이인지 직접 확인하세요.
+        <div class="span-block target-block">
+          <span class="span-block-label">영어 번역</span>
+          <div class="span-content">${escapeHtml(item.target_span || '(해당 없음)')}</div>
         </div>
-      </div>`;
-  }
-  if (item.status === 'CHIMERA' || item.status === 'REVIEW_REQUIRED') {
-    return `
-      <div class="ev-block">
-        <div class="ev-label">사람 검토 신호</div>
-        <div class="callout callout-review">
-          <strong>사람 검토 필요</strong>
-          하나의 레코드로 수렴하지 않거나 복수 논문의 정보가 섞인 의심 인용입니다. 연구자가 원래 인용하려던 실제 논문을 확인해야 합니다.
-        </div>
-      </div>`;
-  }
-  if (item.status === 'NOT_FOUND_IN_KCI') {
-    return `
-      <div class="ev-block">
-        <div class="ev-label">사람 검토 신호</div>
-        <div class="callout callout-notfound">
-          <strong>색인 범위 확인 권장</strong>
-          KCI에서 검색되지 않았습니다. 이것이 허위 인용을 의미하지는 않으므로, 해외 학술지(IEEE, SSRN, arXiv 등) 또는 타 색인 DB를 확인하세요.
-        </div>
-      </div>`;
-  }
-  return '';
+      </div>
+    </div>`;
 }
 
-function renderProvenance(item) {
-  const isSystem = item.kind === 'SYSTEM_FAILURE';
-  const rows = isSystem
-    ? [
-      ['failure_id', item.failure_id],
-      ['system_state', item.system_state],
-      ['operation', item.operation],
-      ['research_finding_emitted', String(item.research_finding_emitted)],
-      ['retry_recommended', String(item.retry_recommended)],
-    ]
-    : [
-      ['rule_id', item.rule_id],
-      ['rule_version', item.rule_version],
-      ['finding_id', item.finding_id],
-    ];
-
-  const evidenceHtml = (item.evidence || []).map(ev => `
-    <dl class="prov-grid">
-      ${[
-        ['evidence_id', ev.evidence_id],
-        ['source', `${ev.source_system || ''} · ${ev.evidence_type || ''}`],
-        ['source_record_id', ev.source_record_id],
-        ['retrieved_at', ev.retrieved_at],
-        ['normalized_content_sha256', ev.normalized_content_sha256],
-        ['redacted_snapshot_sha256', ev.redacted_snapshot_sha256],
-      ].filter(([, value]) => value).map(([key, value]) => `<div><dt>${key}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}
-    </dl>`).join('');
-
+function renderTechnicalDetails(item) {
+  const prov = item.technical_provenance || {};
   return `
-    <details class="provenance">
-      <summary>상세 근거 보기 <span class="muted">규칙 ID · 타임스탬프 · SHA-256 해시 · 원본 JSON</span></summary>
-      <div class="prov-body">
-        <dl class="prov-grid">${rows.map(([key, value]) => `<div><dt>${key}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>
-        ${evidenceHtml ? `<div class="prov-sub">근거 스냅샷</div>${evidenceHtml}` : ''}
-        ${item.limitations?.length ? `<div class="prov-sub">검증 한계 및 경계</div><ul class="prov-list">${item.limitations.map(lim => `<li>${escapeHtml(lim)}</li>`).join('')}</ul>` : ''}
-        ${item.fixture_notice ? `<div class="prov-sub">예시 데이터 안내</div><p class="prov-note">${escapeHtml(item.fixture_notice)}</p>` : ''}
-        <div class="prov-sub prov-sub-row">원본 JSON 스냅샷 <button class="btn btn-ghost btn-sm" type="button" data-action="copy-json">JSON 복사</button></div>
-        <pre class="json-view"><code>${escapeHtml(JSON.stringify(item, null, 2))}</code></pre>
+    <details class="tech-details">
+      <summary>
+        <span>상세 기술 근거 및 메타데이터 보기</span>
+        <span class="tech-hint">규칙 ID · 해시 · 원본 계약 JSON</span>
+      </summary>
+      <div class="tech-body">
+        <dl class="tech-grid">
+          ${Object.entries(prov).map(([k, v]) => `
+            <div>
+              <dt>${escapeHtml(k)}</dt>
+              <dd>${escapeHtml(String(v))}</dd>
+            </div>
+          `).join('')}
+          ${item.kci_evidence?.normalized_content_sha256 ? `
+            <div>
+              <dt>kci_content_sha256</dt>
+              <dd class="mono-hash">${escapeHtml(item.kci_evidence.normalized_content_sha256)}</dd>
+            </div>
+          ` : ''}
+        </dl>
+        <div class="json-header">
+          <span>계약 JSON 스냅샷</span>
+          <button class="btn btn-ghost btn-sm" type="button" data-action="copy-json">JSON 복사</button>
+        </div>
+        <pre class="json-pre"><code>${escapeHtml(JSON.stringify(item, null, 2))}</code></pre>
       </div>
     </details>`;
 }
 
-function formatValue(value) {
-  if (value === null || value === undefined || value === '') return '(없음)';
-  if (Array.isArray(value)) return value.map(formatValue).join(', ');
-  if (typeof value === 'object') return JSON.stringify(value);
-  return String(value);
+function renderWorkspace() {
+  renderManuscript();
+  renderFilterStrip();
+  renderFindingsList();
+  renderEvidencePanel();
 }
+
+/* ------------------------------------------------------------------ LIVE KCI MODAL & AUDIT */
+
+function openLiveKciModal() {
+  el.liveKciModal.hidden = false;
+  el.liveKciModal.setAttribute('aria-hidden', 'false');
+  el.liveModalTitle.focus();
+}
+
+function closeLiveKciModal() {
+  el.liveKciModal.hidden = true;
+  el.liveKciModal.setAttribute('aria-hidden', 'true');
+}
+
+async function handleLiveKciSubmit(e) {
+  e.preventDefault();
+  const citation = {
+    title: el.liveModalTitle.value.trim(),
+  };
+  if (!citation.title) return;
+
+  const authors = el.liveModalAuthors.value.split(',').map(s => s.trim()).filter(Boolean);
+  if (authors.length) citation.authors = authors;
+  if (el.liveModalYear.value.trim()) citation.publication_year = el.liveModalYear.value.trim();
+  if (el.liveModalDoi.value.trim()) citation.doi = el.liveModalDoi.value.trim();
+
+  el.btnRunLiveKci.disabled = true;
+  el.btnRunLiveKci.textContent = 'KCI 조회 중…';
+  el.liveModalFeedback.textContent = 'KCI Open API에 조회하고 검증 규칙을 적용하는 중입니다…';
+  el.liveModalFeedback.className = 'modal-feedback is-pending';
+  el.liveModalResultArea.hidden = true;
+
+  try {
+    const res = await fetch('/api/audit/citation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(citation),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Audit request failed');
+
+    el.liveModalFeedback.textContent = `조회 완료: ${result.status || result.system_state}`;
+    el.liveModalFeedback.className = 'modal-feedback is-success';
+    el.liveModalResultArea.hidden = false;
+    el.liveModalResultContent.innerHTML = `
+      <div class="live-result-box tone-${result.status === 'VERIFIED' ? 'verified' : (result.status === 'METADATA_DRIFT' ? 'drift' : 'review')}">
+        <div class="live-result-title">
+          <strong>${escapeHtml(result.status || result.system_state)}</strong>
+          <span>규칙: ${escapeHtml(result.rule_id || result.operation || '')}</span>
+        </div>
+        <p class="live-result-reason">${escapeHtml(result.reason || '')}</p>
+        <pre class="json-pre"><code>${escapeHtml(JSON.stringify(result, null, 2))}</code></pre>
+      </div>`;
+  } catch (err) {
+    el.liveModalFeedback.textContent = `검증 오류: ${err.message}`;
+    el.liveModalFeedback.className = 'modal-feedback is-error';
+  } finally {
+    el.btnRunLiveKci.disabled = false;
+    el.btnRunLiveKci.textContent = 'KCI Open API 조회 실행';
+  }
+}
+
+/* ------------------------------------------------------------------ UTILS */
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
@@ -748,20 +779,44 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-/* ------------------------------------------------------------------ init */
+/* ------------------------------------------------------------------ INITIALIZATION */
 
 function init() {
-  el.auditForm.addEventListener('submit', submitLiveAudit);
-  el.btnLoadDemo.addEventListener('click', () => setMode('DEMO'));
-  el.btnFillExample.addEventListener('click', () => {
-    el.auditTitle.value = EXAMPLE_CITATION.title;
-    el.auditYear.value = EXAMPLE_CITATION.publication_year;
-    el.auditAuthors.value = '';
-    el.auditDoi.value = '';
-    el.auditTitle.focus();
-  });
-  el.modeButtons.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
   window.addEventListener('hashchange', applyRoute);
+
+  // Story demo buttons
+  el.btnStory1?.addEventListener('click', () => {
+    selectFinding('TR-CAUS-001');
+  });
+
+  el.btnStory2?.addEventListener('click', () => {
+    selectFinding('TR-CIT-001');
+  });
+
+  // Modal events
+  el.btnOpenLiveKci?.addEventListener('click', openLiveKciModal);
+  el.btnCloseLiveKci?.addEventListener('click', closeLiveKciModal);
+  el.liveKciModal?.addEventListener('click', e => {
+    if (e.target === el.liveKciModal) closeLiveKciModal();
+  });
+
+  el.btnFillModalExample?.addEventListener('click', () => {
+    el.liveModalTitle.value = 'Computer Vision-based Basketball Player Training System';
+    el.liveModalYear.value = '2023';
+    el.liveModalAuthors.value = '문현철';
+    el.liveModalDoi.value = '';
+    el.liveModalTitle.focus();
+  });
+
+  el.liveKciForm?.addEventListener('submit', handleLiveKciSubmit);
+
+  // Keyboard shortcut: Escape to close modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !el.liveKciModal.hidden) {
+      closeLiveKciModal();
+    }
+  });
+
   applyRoute();
 }
 

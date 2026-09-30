@@ -11,208 +11,259 @@
   <header class="topbar">
     <a class="brand" href="#/" aria-label="TrustVerify Research 개요로 이동">
       <span class="brand-mark" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
       </span>
-      <span class="brand-name">TrustVerify Research</span>
+      <div class="brand-text">
+        <span class="brand-name">TrustVerify Research</span>
+        <span class="brand-sub">Explainable Research Integrity Auditor</span>
+      </div>
     </a>
+
     <nav class="topnav" aria-label="주요 메뉴">
       <a class="topnav-link" href="#/" data-route="overview">프로젝트 개요</a>
-      <a class="topnav-link" href="#/citation" data-route="citation">레퍼런스 검증</a>
-      <span class="topnav-link is-disabled" aria-disabled="true">번역 충실도 <span class="tag-dev">개발 중</span></span>
-      <span class="topnav-link is-disabled" aria-disabled="true">학술 표현 참조 <span class="tag-dev">개발 중</span></span>
+      <a class="topnav-link" href="#/workspace" data-route="workspace">연구 산출물 검증</a>
+      <button class="topnav-btn" id="btnOpenLiveKci" type="button">
+        <span class="kci-dot"></span>
+        <span>KCI 직접 검증</span>
+      </button>
     </nav>
-    <span class="event-tag">NAIS 2026</span>
+
+    <div class="topbar-right">
+      <span class="event-tag">NAIS 2026</span>
+    </div>
   </header>
 
-  <!-- ============================== OVERVIEW ============================== -->
+  <!-- ============================== VIEW 1: OVERVIEW ============================== -->
   <main class="view view-overview" id="viewOverview" data-view="overview">
     <section class="hero">
       <p class="hero-kicker">TrustVerify Research</p>
-      <h1 class="hero-title">AI 연구 산출물의<br>근거 · 의미 · 학술 표현을<br>검증합니다.</h1>
-      <p class="hero-subtitle">"생성형 AI의 답을 다시 AI에게 믿게 하는 대신,<br>외부 근거와 명시적 검증 규칙을 보여줍니다."</p>
-      <p class="hero-core-msg">AI 연구 산출물이 다음 단계로 넘어갈 때 근거와 의미가 변형되지 않는지 검증합니다.</p>
-    </section>
+      <h1 class="hero-title">
+        AI가 한국어 연구 산출물을 영어로 재생성할 때<br>
+        <span class="hero-highlight">숫자 · 의미 · 인용 근거</span>가 그대로 보존되는지 검증합니다.
+      </h1>
+      <p class="hero-subtitle">
+        "생성형 AI의 답을 다시 AI에게 믿게 하는 대신,<br>
+        외부 근거와 명시적 검증 규칙을 보여줍니다."
+      </p>
 
-    <section class="track-cards" aria-label="검증 트랙">
-      <!-- CARD 1 -->
-      <article class="track-card is-live">
-        <div class="track-card-head">
-          <span class="track-num">01 · KCI Citation Evidence</span>
-          <span class="track-state state-live">LIVE</span>
-        </div>
-        <h2 class="track-title">레퍼런스 무결성</h2>
-        <p class="track-problem">AI 참고문헌의<br>제목 · 저자 · 연도 · DOI를<br>실제 KCI 레코드와 비교</p>
-        <dl class="track-facts">
-          <div><dt>근거</dt><dd>KCI Open API (한국연구재단 학술색인)</dd></div>
-          <div><dt>판정</dt><dd class="code-list">
-            <span class="code-chip c-verified">검증됨 VERIFIED</span>
-            <span class="code-chip c-drift">정보 불일치 METADATA_DRIFT</span>
-            <span class="code-chip c-review">추가 검토 REVIEW_REQUIRED</span>
-            <span class="code-chip c-notfound">KCI 미발견 NOT_FOUND_IN_KCI</span>
-          </dd></div>
-        </dl>
-        <a class="btn btn-primary btn-block" href="#/citation">KCI 검증 시작 →</a>
-      </article>
-
-      <!-- CARD 2 -->
-      <article class="track-card is-dev">
-        <div class="track-card-head">
-          <span class="track-num">02 · KO ↔ EN Translation Fidelity</span>
-          <span class="track-state state-dev">개발 중</span>
-        </div>
-        <h2 class="track-title">번역 충실도</h2>
-        <p class="track-problem">한국어 → 영어 변환 중<br>숫자 · 부정 · 불확실성 · 인과관계<br>변화를 추적</p>
-        <dl class="track-facts">
-          <div><dt>방법</dt><dd>한국어 원문 ↔ 영어 결과 직접 비교</dd></div>
-          <div><dt>신호</dt><dd>modality · causality · uncertainty 변화 신호</dd></div>
-        </dl>
-        <div class="dev-note">현재 파이프라인 개발 중입니다 (결과 미생성).</div>
-      </article>
-
-      <!-- CARD 3 -->
-      <article class="track-card is-dev">
-        <div class="track-card-head">
-          <span class="track-num">03 · Finance-20 Reference Profile</span>
-          <span class="track-state state-dev">Pilot / 개발 중</span>
-        </div>
-        <h2 class="track-title">학술 표현 참조</h2>
-        <p class="track-problem">실제 영문 금융논문 기반<br>Finance-20 Reference Profile과<br>표현 차이를 비교</p>
-        <dl class="track-facts">
-          <div><dt>방법</dt><dd>Finance-20 참조 분포 <span class="clarification-badge">정답 기준이 아닌 참조 분포</span></dd></div>
-          <div><dt>신호</dt><dd>대상 원고와 참조 분포 사이의 기술적(descriptive) 차이</dd></div>
-        </dl>
-        <div class="dev-note">현재 파이프라인 개발 중입니다 (결과 미생성).</div>
-      </article>
-    </section>
-
-    <!-- ARCHITECTURE FLOW -->
-    <section class="architecture" aria-labelledby="archTitle">
-      <h2 class="section-label" id="archTitle">시스템 아키텍처 흐름</h2>
-      <div class="arch-row">
-        <div class="arch-block is-live">
-          <div class="arch-name">KCI</div>
-          <div class="arch-role">Citation Evidence</div>
-          <div class="arch-state">LIVE · 구현됨</div>
-        </div>
-        <div class="arch-block">
-          <div class="arch-name">KO ↔ EN</div>
-          <div class="arch-role">Translation Fidelity</div>
-          <div class="arch-state">개발 중</div>
-        </div>
-        <div class="arch-block">
-          <div class="arch-name">Finance-20</div>
-          <div class="arch-role">Academic Reference Profile</div>
-          <div class="arch-state">Pilot / 개발 중</div>
-        </div>
-        <div class="arch-block">
-          <div class="arch-name">Solar</div>
-          <div class="arch-role">Semantic Observer</div>
-          <div class="arch-state">개발 중</div>
-        </div>
-      </div>
-
-      <!-- Linear pipeline flow indicator -->
-      <div class="pipeline-flow-bar" aria-label="판정 파이프라인 흐름">
-        <div class="flow-step"><span class="flow-step-en">Evidence</span><span class="flow-step-ko">외부 근거</span></div>
-        <span class="flow-arrow">➔</span>
-        <div class="flow-step"><span class="flow-step-en">Signal</span><span class="flow-step-ko">차이 신호</span></div>
-        <span class="flow-arrow">➔</span>
-        <div class="flow-step"><span class="flow-step-en">Why?</span><span class="flow-step-ko">판정 이유</span></div>
-        <span class="flow-arrow">➔</span>
-        <div class="flow-step flow-final"><span class="flow-step-en">Human Review</span><span class="flow-step-ko">사람이 최종 검토</span></div>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#/workspace" id="btnStartAudit">
+          연구 산출물 검증 시작 →
+        </a>
       </div>
     </section>
 
-    <p class="boundary-note">KCI Open API는 인용 서지정보의 일치 여부만 확인하는 근거입니다. 연구 내용의 진위나 논문의 최종 채택·기각을 결정하지 않으며, 사람의 비판적 검토가 최종적입니다.</p>
-  </main>
-
-  <!-- ============================== CITATION WORKSPACE ============================== -->
-  <main class="view view-citation" id="viewCitation" data-view="citation" hidden>
-    <div class="ws-bar">
-      <div class="ws-title-group">
-        <div class="ws-title-row">
-          <h1 class="ws-title">레퍼런스 검증</h1>
-          <span class="persistent-mode-badge" id="persistentModeBadge">
-            <span class="badge-dot"></span>
-            <span class="badge-text" id="persistentModeText">LIVE KCI · 실제 조회</span>
-          </span>
+    <!-- CORE WORKFLOW PIPELINE -->
+    <section class="workflow-section" aria-label="검증 흐름">
+      <div class="core-flow-card">
+        <div class="flow-pill-banner">
+          <div class="flow-stage"><span class="flow-stage-tag">원문</span> 한국어 연구 원고</div>
+          <span class="flow-sep">➔</span>
+          <div class="flow-stage"><span class="flow-stage-tag">생성</span> AI 영어 번역·재생성</div>
+          <span class="flow-sep">➔</span>
+          <div class="flow-stage is-tv"><span class="flow-stage-tag">검증</span> <strong>TrustVerify Research</strong></div>
         </div>
-        <p class="ws-sub">인용 서지정보를 KCI 실제 레코드와 비교하고, 판정 이유와 근거를 투명하게 보여줍니다.</p>
-      </div>
-      <div class="mode-switch" role="tablist" aria-label="데이터 모드 전환">
-        <button class="mode-btn" role="tab" data-mode="LIVE" id="modeLive">
-          <span class="mode-dot live"></span>
-          <span class="mode-btn-label"><strong>LIVE KCI</strong> · 실제 조회</span>
-        </button>
-        <button class="mode-btn" role="tab" data-mode="DEMO" id="modeDemo">
-          <span class="mode-dot demo"></span>
-          <span class="mode-btn-label"><strong>DEMO</strong> · 예시 데이터</span>
-        </button>
-      </div>
-    </div>
 
-    <div class="ws-grid">
-      <!-- LEFT: 연구 초안 / 검증 대상 -->
-      <section class="panel" aria-labelledby="leftTitle">
-        <header class="panel-head">
-          <h2 class="panel-title" id="leftTitle">검증 대상 인용</h2>
-          <span class="panel-hint" id="leftHint">논문 제목을 입력하고 KCI 조회를 실행하세요</span>
-        </header>
-        <div class="panel-body">
-          <!-- LIVE: compact form -->
-          <div id="liveInputArea">
-            <form id="citationAuditForm" class="audit-form" autocomplete="off">
-              <label class="field">
-                <span class="field-label">논문 제목 <em>*</em></span>
-                <input id="auditTitle" name="title" type="text" maxlength="2000" required placeholder="검증할 논문 제목 (필수)">
-              </label>
-              <label class="field">
-                <span class="field-label">저자</span>
-                <input id="auditAuthors" name="authors" type="text" maxlength="2000" placeholder="쉼표로 구분 (선택)">
-              </label>
-              <div class="field-row">
-                <label class="field">
-                  <span class="field-label">출판연도</span>
-                  <input id="auditYear" name="publication_year" type="text" maxlength="20" inputmode="numeric" placeholder="예: 2024">
-                </label>
-                <label class="field">
-                  <span class="field-label">DOI</span>
-                  <input id="auditDoi" name="doi" type="text" maxlength="500" placeholder="10.xxxx/…">
-                </label>
-              </div>
-              <div class="form-actions">
-                <button class="btn btn-primary" id="auditSubmit" type="submit">KCI에서 검증</button>
-                <button class="btn btn-secondary" id="btnFillExample" type="button">예시 채우기</button>
-                <button class="btn btn-ghost" id="btnLoadDemo" type="button">데모 보기 →</button>
-              </div>
-            </form>
-            <div class="audit-feedback" id="auditFeedback" aria-live="polite"></div>
-            <div class="submitted-list" id="submittedList"></div>
+        <div class="compact-layers-grid">
+          <!-- Layer 1 -->
+          <div class="layer-card">
+            <div class="layer-header">
+              <span class="layer-icon" aria-hidden="true">🔢</span>
+              <div class="layer-title">숫자 · 인용</div>
+            </div>
+            <div class="layer-subtitle">규칙 기반 직접 비교</div>
+            <p class="layer-desc">원문 수치의 왜곡(예: 2.5% → 3.0%) 및 인용 서지정보의 직접 일치 여부를 정밀 대조합니다.</p>
           </div>
-          <!-- DEMO: draft manuscript -->
-          <div id="draftContentContainer" class="manuscript" hidden></div>
+
+          <!-- Layer 2 -->
+          <div class="layer-card">
+            <div class="layer-header">
+              <span class="layer-icon" aria-hidden="true">⚖️</span>
+              <div class="layer-title">인과 · 확신</div>
+            </div>
+            <div class="layer-subtitle">의미 변화 신호</div>
+            <p class="layer-desc">상관성 기술이 인과성 보장으로 강화되거나, 확신 수준(modality)이 과도하게 격상되는 신호를 포착합니다.</p>
+          </div>
+
+          <!-- Layer 3 -->
+          <div class="layer-card">
+            <div class="layer-header">
+              <span class="layer-icon" aria-hidden="true">📚</span>
+              <div class="layer-title">참고문헌</div>
+            </div>
+            <div class="layer-subtitle">KCI 실제 근거 확인</div>
+            <p class="layer-desc">한국연구재단 KCI Open API를 통해 실제 학술 레코드와 대조하여 서지정보 불일치 및 가짜 인용을 감지합니다.</p>
+          </div>
+        </div>
+
+        <!-- LINEAR PIPELINE BAR -->
+        <div class="pipeline-flow-bar" aria-label="판정 파이프라인 흐름">
+          <div class="flow-step">
+            <span class="flow-step-en">Evidence</span>
+            <span class="flow-step-ko">외부 근거 확보</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step">
+            <span class="flow-step-en">Signal</span>
+            <span class="flow-step-ko">변화 신호 감지</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step">
+            <span class="flow-step-en">Why?</span>
+            <span class="flow-step-ko">투명한 판정 이유</span>
+          </div>
+          <span class="flow-arrow">➔</span>
+          <div class="flow-step flow-final">
+            <span class="flow-step-en">Human Review</span>
+            <span class="flow-step-ko">연구자의 최종 검토</span>
+          </div>
+        </div>
+
+        <!-- SECONDARY FINANCE-20 NOTE -->
+        <div class="finance-pilot-note">
+          <span class="pilot-badge">Finance-20 Pilot</span>
+          <span class="pilot-text">실제 영문 금융논문의 표현 분포를 보조적으로 참고합니다. <span class="muted">(정답 기준이 아닌 참조 분포)</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOUNDARY POLICY NOTICE -->
+    <footer class="overview-footer">
+      <p class="boundary-note">
+        <strong>검증 한계 및 원칙:</strong> TrustVerify Research는 논문의 최종 채택이나 기각을 결정하지 않습니다.
+        AI 산출물의 근거와 의미 보존 여부를 명시적 규칙으로 설명하며, 최종 학술적 판단은 연구자 본인의 비판적 검토에 따릅니다.
+      </p>
+    </footer>
+  </main>
+
+  <!-- ============================== VIEW 2: UNIFIED WORKSPACE ============================== -->
+  <main class="view view-workspace" id="viewWorkspace" data-view="workspace" hidden>
+    <!-- WORKSPACE TOP SUBBAR -->
+    <div class="ws-subbar">
+      <div class="ws-header-info">
+        <h1 class="ws-page-title">연구 산출물 무결성 검증</h1>
+        <p class="ws-page-sub">단일 원고 안에서 한국어 원문 ↔ AI 영어 결과 비교, 발견된 변화 신호, 그리고 KCI 외부 근거를 통합 검토합니다.</p>
+      </div>
+      <div class="ws-actions">
+        <div class="demo-story-guide">
+          <span class="guide-tag">추천 시연 순서</span>
+          <button class="btn btn-chip is-active" id="btnStory1" type="button">① TR-CAUS-001 (인과 표현)</button>
+          <button class="btn btn-chip" id="btnStory2" type="button">② TR-CIT-001 (KCI 인용)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THREE-COLUMN MAIN AUDIT WORKSPACE -->
+    <div class="ws-grid">
+      <!-- COLUMN 1: LEFT — 원문 / 영어 결과 (Aligned Research Draft) -->
+      <section class="panel panel-left" aria-labelledby="leftColTitle">
+        <header class="panel-head">
+          <div class="panel-head-left">
+            <h2 class="panel-title" id="leftColTitle">원문 / 영어 결과 대조</h2>
+            <span class="doc-badge">금융경제학 실증연구 초안 (3문장 예시)</span>
+          </div>
+          <span class="panel-hint">문장 또는 강조 태그를 클릭하면 해당 검증 결과로 이동합니다</span>
+        </header>
+
+        <div class="panel-body manuscript-body" id="manuscriptContainer">
+          <!-- Injected dynamically by app.js: 3 aligned sentence pairs + citations -->
         </div>
       </section>
 
-      <!-- CENTER: 검증 결과 -->
-      <section class="panel" aria-labelledby="centerTitle">
+      <!-- COLUMN 2: CENTER — 발견된 변화 (Findings List) -->
+      <section class="panel panel-center" aria-labelledby="centerColTitle">
         <header class="panel-head">
-          <h2 class="panel-title" id="centerTitle">검증 결과</h2>
-          <span class="origin-badge" id="resultsOriginBadge"></span>
+          <div class="panel-head-left">
+            <h2 class="panel-title" id="centerColTitle">발견된 변화</h2>
+            <span class="findings-count-badge" id="findingsCountBadge">5건 발견</span>
+          </div>
+          <span class="panel-hint">선택 시 우측 패널에 상세 근거 표시</span>
         </header>
-        <div class="summary-strip" id="summaryStrip" role="tablist" aria-label="결과 필터"></div>
-        <div class="panel-body" id="findingsListContainer"></div>
+
+        <!-- Category Filter Strip -->
+        <div class="findings-filter-strip" id="findingsFilterStrip" role="tablist" aria-label="변화 유형 필터">
+          <!-- Filter chips generated by app.js -->
+        </div>
+
+        <div class="panel-body findings-list-body" id="findingsListContainer">
+          <!-- Finding cards injected dynamically -->
+        </div>
       </section>
 
-      <!-- RIGHT: 왜 이렇게 판정했나요? -->
-      <section class="panel" aria-labelledby="rightTitle">
+      <!-- COLUMN 3: RIGHT — 근거와 판정 이유 (Dynamic Evidence Panel) -->
+      <section class="panel panel-right" aria-labelledby="rightColTitle">
         <header class="panel-head">
-          <h2 class="panel-title" id="rightTitle">왜 이렇게 판정했나요?</h2>
+          <div class="panel-head-left">
+            <h2 class="panel-title" id="rightColTitle">근거와 판정 이유</h2>
+          </div>
+          <div class="panel-head-right" id="rightHeadBadge">
+            <!-- Dynamic origin/mode badge -->
+          </div>
         </header>
-        <div class="panel-body" id="evidenceDetailContainer"></div>
+
+        <div class="panel-body evidence-body" id="evidenceContainer">
+          <!-- Dynamic evidence view injected dynamically based on selected finding -->
+        </div>
       </section>
     </div>
   </main>
+
+  <!-- ============================== LIVE KCI TOOL MODAL ============================== -->
+  <div class="modal-backdrop" id="liveKciModal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-head-title">
+          <span class="kci-dot live"></span>
+          <h2 class="modal-title" id="modalTitle">KCI 실시간 인용 검증기</h2>
+        </div>
+        <button class="modal-close" id="btnCloseLiveKci" type="button" aria-label="닫기">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc">
+          한국연구재단 KCI Open API와 연동된 백엔드(<code>POST /api/audit/citation</code>)를 직접 호출하여 실제 논문 서지정보를 실시간으로 대조합니다.
+        </p>
+
+        <form id="liveKciForm" class="audit-form" autocomplete="off">
+          <label class="field">
+            <span class="field-label">논문 제목 <em>*</em></span>
+            <input id="liveModalTitle" name="title" type="text" maxlength="2000" required placeholder="검증할 논문 제목 (예: Computer Vision-based Basketball Player Training System)">
+          </label>
+
+          <label class="field">
+            <span class="field-label">저자</span>
+            <input id="liveModalAuthors" name="authors" type="text" maxlength="2000" placeholder="쉼표로 구분 (선택)">
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field-label">출판연도</span>
+              <input id="liveModalYear" name="publication_year" type="text" maxlength="20" inputmode="numeric" placeholder="예: 2023">
+            </label>
+            <label class="field">
+              <span class="field-label">DOI</span>
+              <input id="liveModalDoi" name="doi" type="text" maxlength="500" placeholder="10.xxxx/…">
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btnRunLiveKci" type="submit">KCI Open API 조회 실행</button>
+            <button class="btn btn-secondary" id="btnFillModalExample" type="button">예시 채우기 (2023 불일치 케이스)</button>
+          </div>
+        </form>
+
+        <div class="modal-feedback" id="liveModalFeedback" aria-live="polite"></div>
+
+        <div class="modal-result-area" id="liveModalResultArea" hidden>
+          <div class="modal-result-head">KCI 조회 결과 스냅샷</div>
+          <div id="liveModalResultContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="/app.js" type="module"></script>
 </body>
