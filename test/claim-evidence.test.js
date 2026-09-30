@@ -167,3 +167,54 @@ test('Claim–Evidence UI shows only the evaluated P0 cases, labeled as frozen e
     [c1.observed_status, c2.observed_status, caseById('I1').observed_status].sort());
   assert.equal(results.includes('CAUSALITY_STRENGTHENED'), false);
 });
+
+test('Layer 3 routes replay the real engine over frozen evidence; presets carry claims, never results', async () => {
+  const { once } = await import('node:events');
+  const { createTrustVerifyServer } = await import('../src/server.js');
+  const liveMustNotRun = { async articleSearch() { throw new Error('no live KCI'); }, async articleDetail() { throw new Error('no live KCI'); } };
+  const server = createTrustVerifyServer({ kciAdapter: liveMustNotRun });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const p0 = await (await fetch(`${base}/api/claim-evidence/p0`)).json();
+    assert.equal(p0.evidence_mode, 'FROZEN_EVIDENCE');
+    assert.deepEqual(p0.article, { record_id: evidence.record_id, title: evidence.title });
+    assert.deepEqual(p0.presets.map(preset => preset.citing_claim), observed.cases.map(item => item.citing_claim));
+    assert.equal(/observed_status|CONSISTENT_WITH_EVIDENCE|POTENTIAL_CLAIM_SHIFT|INSUFFICIENT_EVIDENCE|finding_id/.test(JSON.stringify(p0.presets)), false);
+    for (const expected of observed.cases) {
+      const response = await fetch(`${base}/api/claim-evidence/align`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ citing_claim: expected.citing_claim }),
+      });
+      const body = await response.json();
+      assert.equal(response.status, 200);
+      assert.equal(body.evidence_mode, 'FROZEN_EVIDENCE');
+      assert.equal(body.finding.status, expected.observed_status);
+      assert.equal(body.finding.signal, expected.signal);
+      assert.equal(body.finding.rule_id, expected.rule_id);
+      assert.equal(body.finding.finding_id, expected.finding_id);
+    }
+    for (const bad of [{}, { citing_claim: '' }, { citing_claim: 42 }, { citing_claim: 'x'.repeat(2001) }]) {
+      const response = await fetch(`${base}/api/claim-evidence/align`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bad) });
+      assert.equal(response.status, 400);
+      assert.deepEqual(Object.keys(await response.json()), ['error']);
+    }
+  } finally { server.close(); await once(server, 'close'); }
+});
+
+test('Claim–Evidence verify panel and preset code hold no hardcoded verdicts or article', async () => {
+  const html = await readFile(new URL('../src/ui/index.html', import.meta.url), 'utf8');
+  const panel = html.slice(html.indexOf('id="ceViewVerify"'), html.indexOf('id="ceViewExamples"'));
+  assert.equal(/CONSISTENT_WITH_EVIDENCE|POTENTIAL_CLAIM_SHIFT|INSUFFICIENT_EVIDENCE|_STRENGTHENED|_CHANGED|ART\d{9}|\bLIVE\b|Solar|HALLUCINATION|FALSE\b/.test(panel), false);
+  assert.ok(panel.includes('FROZEN EVALUATION EVIDENCE'));
+  for (const id of ['ceVerifyInputText', 'btnExecuteCeVerify', 'btnLoadCeExample', 'btnLoadCeInsufficient', 'ceVerifyResultBody']) assert.ok(panel.includes(`id="${id}"`), id);
+
+  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
+  const fn = name => app.slice(app.indexOf(`function ${name}(`), app.indexOf('\n}\n', app.indexOf(`function ${name}(`)));
+  for (const name of ['fillCePreset', 'loadClaimEvidenceP0', 'executeCeVerify']) {
+    assert.equal(/CONSISTENT_WITH_EVIDENCE|POTENTIAL_CLAIM_SHIFT|INSUFFICIENT_EVIDENCE|renderCeResult\(\{/.test(fn(name)), false, name);
+  }
+  assert.ok(fn('executeCeVerify').includes("fetch('/api/claim-evidence/align'"));
+  assert.ok(fn('renderCeResult').includes('finding.status'));
+  assert.equal(/Solar|HALLUCINATION|hallucinat|\bfalse claim|wrong claim/i.test(fn('renderCeResult')), false);
+});

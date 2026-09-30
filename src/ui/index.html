@@ -842,11 +842,10 @@
           <section class="ext-workspace-hero">
             <div class="ext-hero-top">
               <div class="ce-method-badges">
-                <span class="rail-badge badge-expansion">EXPANSION / P0</span>
-                <span class="ce-tag-pill">RESEARCH WORKFLOW</span>
+                <span class="rail-badge badge-expansion">NEXT VERIFICATION LAYER · EXPANSION / P0</span>
                 <span class="ce-tag-pill">ABSTRACT-ONLY</span>
                 <span class="ce-tag-pill">DETERMINISTIC-FIRST</span>
-                <span class="ce-tag-pill">HUMAN REVIEW</span>
+                <span class="ce-tag-pill">FROZEN EVALUATION EVIDENCE</span>
               </div>
               <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromCe" type="button">
                 ← Citation Integrity (인용 무결성)으로 돌아가기
@@ -866,7 +865,7 @@
                 <span class="batch-step-pill">INPUT</span>
                 <h3 class="batch-title">인용 문장 검증 입력</h3>
               </div>
-              <span class="ce-integration-badge">EXPANSION / P0 · 실시간 입력 연동 준비</span>
+              <span class="ce-integration-badge">P0 · FROZEN EVALUATION EVIDENCE (KCI 초록 고정본)</span>
             </div>
 
             <!-- 1. Selected Paper -->
@@ -874,11 +873,11 @@
               <label class="ce-field-label">선택된 논문 (Selected Paper)</label>
               <div class="ce-selected-paper-card">
                 <div class="ce-paper-badge-row">
-                  <span class="ce-paper-id">KCI ID: ART003267604</span>
+                  <span class="ce-paper-id" id="ceSelectedPaperId">KCI ID: 불러오는 중…</span>
                   <span class="source-status qualified">KCI VERIFIED</span>
                 </div>
-                <div class="ce-paper-title">Computer simulation on the role of interproximal contacts in occlusal force transmission</div>
-                <div class="ce-paper-meta-sub">KCI 공식 수록 초록(9개 문장) 확보 완료</div>
+                <div class="ce-paper-title" id="ceSelectedPaperTitle"></div>
+                <div class="ce-paper-meta-sub" id="ceSelectedPaperMeta"></div>
               </div>
             </div>
 
@@ -892,62 +891,18 @@
               <button class="btn btn-primary btn-lg" id="btnExecuteCeVerify" type="button">
                 <span class="btn-icon">🔍</span> 인용 내용 검증
               </button>
-              <button class="btn btn-secondary btn-lg" id="btnLoadCeExample" type="button">
-                예시 문장 입력
-              </button>
+              <button class="btn btn-secondary" id="btnLoadCeExample" type="button">보존된 인용 예시</button>
+              <button class="btn btn-secondary" id="btnLoadCeInsufficient" type="button">현재 초록으로 확인 어려운 예시</button>
             </div>
           </div>
 
-          <!-- Reserved Result Blocks (Empty Shells / Layout Slots) -->
+          <!-- Result: rendered only from the finding returned by POST /api/claim-evidence/align -->
           <div class="ce-reserved-results-wrap" id="ceReservedResults">
             <div class="ce-results-header">
-              <h3 class="ce-results-title">검증 결과 영역 (Reserved Layout Slots)</h3>
-              <span class="ce-pending-tag">Layer 3 Contract 연동 대기 슬롯</span>
+              <h3 class="ce-results-title">검증 결과</h3>
+              <span class="ce-pending-tag" id="ceResultModeTag">인용 문장을 입력하고 [인용 내용 검증]을 누르세요</span>
             </div>
-
-            <div class="ce-three-col-layout">
-              <!-- Block 1: 내가 쓴 인용문 -->
-              <div class="ce-col">
-                <div class="ce-col-label">
-                  <span class="ce-col-tag">1. 내가 쓴 인용문</span>
-                  <span class="ce-col-sub">Citing Statement</span>
-                </div>
-                <div class="ce-statement-box ce-slot-box">
-                  <div class="ce-slot-placeholder">
-                    <span class="ce-slot-icon">📝</span>
-                    <p class="ce-slot-text">인용 내용 검증 실행 시 입력된 인용문이 정규화되어 표시됩니다.</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Block 2: KCI 공개 초록 근거 -->
-              <div class="ce-col">
-                <div class="ce-col-label">
-                  <span class="ce-col-tag">2. KCI 공개 초록 근거</span>
-                  <span class="ce-col-sub">Abstract Grounded Span</span>
-                </div>
-                <div class="ce-evidence-box ce-slot-box">
-                  <div class="ce-slot-placeholder">
-                    <span class="ce-slot-icon">📑</span>
-                    <p class="ce-slot-text">선택된 논문의 공개 초록에서 접지(Grounding)된 근거 문장이 매칭되어 표시됩니다.</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Block 3: 관측 결과 -->
-              <div class="ce-col">
-                <div class="ce-col-label">
-                  <span class="ce-col-tag">3. 관측 결과</span>
-                  <span class="ce-col-sub">Observation & Verdict</span>
-                </div>
-                <div class="ce-result-box ce-slot-box">
-                  <div class="ce-slot-placeholder">
-                    <span class="ce-slot-icon">⚖️</span>
-                    <p class="ce-slot-text">결정론적 5대 차원 비교 결과(정규 상태, 신호 뱃지, Why 근거)가 표시됩니다.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div id="ceVerifyResultBody"></div>
           </div>
         </div>
 

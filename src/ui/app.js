@@ -172,6 +172,7 @@ const EXAMPLE_BIBLIOGRAPHY_TEXT = `1. 대운해 (2024). Exploring AI-Assisted Wr
 
 // UI State
 const state = {
+  ceP0: null, // Claim–Evidence P0: article + committed preset claims from GET /api/claim-evidence/p0 (no results)
   currentModule: 'citation', // 'citation' | 'claim-evidence' | 'translation' | 'academic-reference'
   currentCitationView: 'batch', // 'batch' | 'single' | 'method'
   currentCeView: 'verify', // 'verify' | 'examples' | 'method'
@@ -238,6 +239,12 @@ const el = {
   ceVerifyInputText: $('ceVerifyInputText'),
   btnExecuteCeVerify: $('btnExecuteCeVerify'),
   btnLoadCeExample: $('btnLoadCeExample'),
+  btnLoadCeInsufficient: $('btnLoadCeInsufficient'),
+  ceSelectedPaperId: $('ceSelectedPaperId'),
+  ceSelectedPaperTitle: $('ceSelectedPaperTitle'),
+  ceSelectedPaperMeta: $('ceSelectedPaperMeta'),
+  ceResultModeTag: $('ceResultModeTag'),
+  ceVerifyResultBody: $('ceVerifyResultBody'),
 
   // Step 1: Input
   batchInputCard: $('batchInputCard'),
@@ -1449,6 +1456,160 @@ function escapeHtml(str) {
 
 /* ------------------------------------------------------------------ INITIALIZATION */
 
+/* ------------------------------------------------------------------ CLAIM–EVIDENCE P0 (LAYER 3) */
+
+// Display labels only. The status and signals themselves come from POST /api/claim-evidence/align.
+const CE_STATUS_LABELS = {
+  CONSISTENT_WITH_EVIDENCE: { ko: '공개 근거 범위에서 정합', badge: 'badge-consistent' },
+  POTENTIAL_CLAIM_SHIFT: { ko: '주장 강도 변화 가능성', badge: 'badge-shift' },
+  INSUFFICIENT_EVIDENCE: { ko: '현재 공개 근거만으로 판단 불충분', badge: 'badge-insufficient' },
+};
+const CE_SIGNAL_DIMENSION = {
+  CAUSALITY_STRENGTHENED: 'causality',
+  MODALITY_STRENGTHENED: 'modality',
+  CERTAINTY_STRENGTHENED: 'certainty',
+  NEGATION_CHANGED: 'negation',
+  DIRECTION_CHANGED: 'direction',
+};
+const CE_SIGNAL_EXPLANATION = {
+  CAUSALITY_STRENGTHENED: '인용 문장이 현재 확보된 KCI 초록 근거보다 더 강한 인과 표현을 사용합니다.',
+  MODALITY_STRENGTHENED: '인용 문장이 현재 확보된 KCI 초록 근거보다 더 강한 양태(가능성 → 필연) 표현을 사용합니다.',
+  CERTAINTY_STRENGTHENED: '인용 문장이 현재 확보된 KCI 초록 근거보다 더 강한 확신 표현을 사용합니다.',
+  NEGATION_CHANGED: '인용 문장과 KCI 초록 근거의 부정 표현이 서로 다릅니다.',
+  DIRECTION_CHANGED: '인용 문장과 KCI 초록 근거의 효과 방향 표현이 서로 다릅니다.',
+};
+
+async function loadClaimEvidenceP0() {
+  try {
+    const res = await fetch('/api/claim-evidence/p0');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state.ceP0 = await res.json();
+    const { article, abstracts, presets } = state.ceP0;
+    if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = `KCI ID: ${article.record_id}`;
+    if (el.ceSelectedPaperTitle) el.ceSelectedPaperTitle.textContent = article.title;
+    if (el.ceSelectedPaperMeta) el.ceSelectedPaperMeta.textContent = `KCI articleDetail 초록 ${abstracts[0]?.sentence_count ?? '-'}개 문장 · Frozen Evaluation Evidence`;
+    // Presentation default: the committed C2 claim is prefilled; its result is only shown after verification runs.
+    if (el.ceVerifyInputText && !el.ceVerifyInputText.value.trim()) {
+      el.ceVerifyInputText.value = presets.find(preset => preset.case_id === 'C2')?.citing_claim ?? '';
+    }
+  } catch {
+    if (el.ceSelectedPaperId) el.ceSelectedPaperId.textContent = 'KCI ID: 근거를 불러오지 못했습니다';
+  }
+}
+
+function fillCePreset(caseId) {
+  const preset = state.ceP0?.presets.find(item => item.case_id === caseId);
+  if (preset && el.ceVerifyInputText) el.ceVerifyInputText.value = preset.citing_claim;
+}
+
+async function executeCeVerify() {
+  const citingClaim = el.ceVerifyInputText?.value.trim();
+  if (!citingClaim) {
+    alert('검증할 인용 문장을 입력하세요.');
+    return;
+  }
+  if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = true;
+  try {
+    const res = await fetch('/api/claim-evidence/align', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ citing_claim: citingClaim }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    renderCeResult(data.finding, data.evidence_mode);
+  } catch (err) {
+    if (el.ceVerifyResultBody) el.ceVerifyResultBody.innerHTML = `<p class="ce-slot-text">검증 요청을 처리하지 못했습니다: ${escapeHtml(err.message)} (인용 판정이 아닙니다)</p>`;
+  } finally {
+    if (el.btnExecuteCeVerify) el.btnExecuteCeVerify.disabled = false;
+  }
+}
+
+function renderCeResult(finding, evidenceMode) {
+  if (!el.ceVerifyResultBody || !finding) return;
+  const label = CE_STATUS_LABELS[finding.status] ?? { ko: finding.status, badge: 'badge-insufficient' };
+  const abstract = state.ceP0?.abstracts.find(item => item.lang === finding.evidence_source?.abstract_lang) ?? state.ceP0?.abstracts[0];
+  if (el.ceResultModeTag) el.ceResultModeTag.textContent = `${evidenceMode === 'FROZEN_EVIDENCE' ? 'FROZEN EVALUATION EVIDENCE' : evidenceMode} · 결정론적 규칙 ${finding.rule_id}`;
+
+  // Observed marker transitions for each signaled dimension, straight from finding.observed.
+  const transitions = (finding.signals || []).map(signal => {
+    const observed = finding.observed?.[CE_SIGNAL_DIMENSION[signal]];
+    if (!observed) return '';
+    const from = observed.evidence_markers?.length ? observed.evidence_markers.join(', ') : String(observed.evidence);
+    const to = observed.citing_markers?.length ? observed.citing_markers.join(', ') : String(observed.citing);
+    return `<div class="ce-obs-summary"><span class="ce-obs-val"><strong>${escapeHtml(from)}</strong> → <strong>${escapeHtml(to)}</strong></span></div>`;
+  }).join('');
+
+  let resultDetail = '';
+  if (finding.status === 'POTENTIAL_CLAIM_SHIFT') {
+    resultDetail = `
+      ${transitions}
+      <div class="ce-signals-list">${finding.signals.map(signal => `<span class="ce-signal-badge">${escapeHtml(signal)}</span>`).join('')}</div>
+      <div class="ce-why-box"><p>${escapeHtml(finding.signals.map(signal => CE_SIGNAL_EXPLANATION[signal]).filter(Boolean).join(' '))}</p></div>`;
+  } else if (finding.status === 'CONSISTENT_WITH_EVIDENCE') {
+    resultDetail = `
+      <div class="ce-why-box"><p>✓ 관련 evidence span 확보<br>✓ monitored dimensions에서 material shift 없음</p></div>`;
+  } else {
+    resultDetail = `
+      <div class="ce-why-box"><p>현재 확보된 KCI 초록만으로 이 인용 문장을 충분히 확인할 수 없습니다.</p></div>`;
+  }
+
+  const evidenceBlock = finding.evidence_span
+    ? `<div class="ce-grounded-span">
+         <span class="ce-span-badge">KCI 공개 초록 근거 · 문장 #${escapeHtml(finding.evidence_span.sentence_index)}</span>
+         <p class="ce-span-text">"${escapeHtml(finding.evidence_span.text)}"</p>
+       </div>`
+    : '<p class="ce-slot-text">현재 확보된 KCI 초록에서 이 인용 문장에 대응하는 근거 문장을 특정하지 못했습니다.</p>';
+
+  const grounding = finding.grounding || {};
+  const groundingText = grounding.grounded
+    ? `공유 앵커 ${grounding.shared_anchors.length}/${grounding.citing_anchor_count} · coverage ${grounding.coverage} (기준: 앵커 ≥ ${grounding.thresholds.MIN_SHARED_ANCHORS}, coverage ≥ ${grounding.thresholds.MIN_COVERAGE})`
+    : `근거 미확보 (${grounding.reason}) · 최대 공유 앵커 ${grounding.best_shared_anchors?.length ?? 0}/${grounding.citing_anchor_count ?? '-'} (기준: 앵커 ≥ ${grounding.thresholds?.MIN_SHARED_ANCHORS}, coverage ≥ ${grounding.thresholds?.MIN_COVERAGE})`;
+
+  el.ceVerifyResultBody.innerHTML = `
+    <div class="ce-three-col-layout">
+      <div class="ce-col">
+        <div class="ce-col-label"><span class="ce-col-tag">A. 내가 쓴 인용문</span></div>
+        <div class="ce-statement-box"><p class="ce-statement-text">"${escapeHtml(finding.citing_claim)}"</p></div>
+      </div>
+      <div class="ce-col">
+        <div class="ce-col-label"><span class="ce-col-tag">B. KCI 공개 초록 근거</span><span class="ce-col-sub">${escapeHtml(finding.citation_record_id)}</span></div>
+        <div class="ce-evidence-box">
+          ${evidenceBlock}
+          ${abstract ? `<details class="ce-full-abstract-details"><summary class="ce-full-abstract-summary"><span>전체 초록 보기</span></summary><div class="ce-full-abstract-body">${escapeHtml(abstract.value)}</div></details>` : ''}
+        </div>
+      </div>
+      <div class="ce-col">
+        <div class="ce-col-label"><span class="ce-col-tag">C. 관측 결과</span></div>
+        <div class="ce-result-box">
+          <div class="ce-result-status-row">
+            <span class="ce-status-ko">${escapeHtml(label.ko)}</span>
+          </div>
+          <div class="ce-result-status-row">
+            <span class="ce-status-badge ${label.badge}">${escapeHtml(finding.status)}</span>
+            ${finding.human_review_required ? '<span class="ce-action-badge">사람 검토 필요</span>' : ''}
+          </div>
+          ${resultDetail}
+        </div>
+      </div>
+    </div>
+    <details class="ce-provenance-details">
+      <summary class="ce-provenance-summary"><span>⚙️ 기술 상세</span></summary>
+      <div class="ce-provenance-body">
+        <div class="ce-prov-grid">
+          <div class="ce-prov-item"><span class="cp-k">Rule ID / Version</span><code class="cp-v">${escapeHtml(finding.rule_id)} (v${escapeHtml(finding.rule_version)})</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Evidence Hash</span><code class="cp-v" title="${escapeHtml(finding.evidence_hash)}">sha256:${escapeHtml(String(finding.evidence_hash).slice(0, 8))}…${escapeHtml(String(finding.evidence_hash).slice(-4))}</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Processing Version</span><code class="cp-v">${escapeHtml(finding.processing_version)}</code></div>
+          <div class="ce-prov-item"><span class="cp-k">Finding ID</span><code class="cp-v">${escapeHtml(finding.finding_id)}</code></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Evidence Grounding</span><span class="cp-v">${escapeHtml(groundingText)}</span></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Human Review Reason</span><span class="cp-v">${escapeHtml(finding.human_review_reason || '없음 (공개 근거 범위에서 표현 보존)')}</span></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Observer</span><span class="cp-v">${escapeHtml(finding.observer?.state || 'UNASSESSED')}</span></div>
+          <div class="ce-prov-item full-width"><span class="cp-k">Scope</span><span class="cp-v">${escapeHtml((finding.uncertainty || []).join(' '))}</span></div>
+        </div>
+      </div>
+    </details>`;
+}
+
 function init() {
   // Extension Rail Module Switching
   el.railBtnCitation?.addEventListener('click', () => {
@@ -1517,16 +1678,11 @@ function init() {
     switchCeView('method');
   });
 
-  // Claim-Evidence Input Actions
-  el.btnLoadCeExample?.addEventListener('click', () => {
-    if (el.ceVerifyInputText) {
-      el.ceVerifyInputText.value = 'The simulation results suggest a limit in the load-sharing capacity of interproximal contacts, as most additional load was dissipated locally at the first molar.';
-    }
-  });
-
-  el.btnExecuteCeVerify?.addEventListener('click', () => {
-    alert('실시간 입력 연동 준비 단계입니다. 상단 [평가 예시] 탭에서 동결 검증된 기준 사례(C1, C2, I1)를 확인하세요.');
-  });
+  // Claim-Evidence Input Actions: presets only fill committed claims; results always come from the backend.
+  el.btnLoadCeExample?.addEventListener('click', () => fillCePreset('C1'));
+  el.btnLoadCeInsufficient?.addEventListener('click', () => fillCePreset('I1'));
+  el.btnExecuteCeVerify?.addEventListener('click', executeCeVerify);
+  loadClaimEvidenceP0();
 
   // Batch Step 1: Input Actions
   el.btnAnalyzeBatch?.addEventListener('click', handleAnalyzeBatch);
