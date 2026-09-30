@@ -31,14 +31,14 @@
       <a class="topnav-link highlight-kci" href="#kci-live" data-target="kci-live">
         <span class="time-tag">0:35</span>
         <span class="dot-live"></span>
-        <span>LIVE KCI 검증</span>
+        <span>핵심 KCI 검증 (3분)</span>
       </a>
       <a class="topnav-link" href="#translation" data-target="translation">
-        <span class="time-tag">2:30</span>
-        <span>번역 충실도 확장</span>
+        <span class="time-tag">3:35</span>
+        <span>번역 충실도 확장 (2분)</span>
       </a>
       <a class="topnav-link" href="#architecture" data-target="architecture">
-        <span class="time-tag">3:20</span>
+        <span class="time-tag">4:30</span>
         <span>아키텍처</span>
       </a>
     </nav>
@@ -56,10 +56,15 @@
       <div class="hero">
         <p class="hero-kicker">TrustVerify Research · 핵심 검증 철학</p>
         <h1 class="hero-title">
-          "먼저 인용이 실제 근거와 일치하는지 확인하고,<br>
+          "TrustVerify는 먼저 인용이 실제 근거와 일치하는지 확인하고,<br>
           그다음 연구물이 영어로 발전하는 과정에서<br>
           <span class="hero-highlight">그 근거와 의미가 그대로 보존되는지</span> 추적합니다."
         </h1>
+
+        <div class="core-question-pill">
+          <span class="pill-label">핵심 질문</span>
+          <span class="pill-text">"이 인용은 실제로 존재하고, 하나의 실제 학술 레코드와 정합적인가?"</span>
+        </div>
 
         <div class="language-independent-quote">
           <div class="quote-icon" aria-hidden="true">💡</div>
@@ -72,7 +77,7 @@
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="#kci-live" id="btnGoLiveKci">
             <span class="btn-dot-live"></span>
-            LIVE KCI 레퍼런스 검증 시작 ↓
+            LIVE KCI 레퍼런스 검증 [핵심 시연] ↓
           </a>
           <a class="btn-text-secondary" href="#translation" id="btnGoTranslation">
             번역 충실도 확장 보기 →
@@ -80,95 +85,129 @@
         </div>
       </div>
 
-      <!-- 3-LAYER CONCEPTUAL HIERARCHY -->
-      <div class="layers-hierarchy-grid">
-        <!-- Layer 1 (Core LIVE) -->
-        <article class="layer-card is-primary-live">
-          <div class="layer-head">
-            <span class="layer-badge live">Layer 1 · 핵심 시연 (LIVE)</span>
-            <span class="layer-lang-tag">언어 무관 공통</span>
+      <!-- TWO-LEVEL CONCISE PRODUCT HIERARCHY -->
+      <div class="two-tier-hierarchy">
+        <!-- Level 1: CORE EVIDENCE VERIFICATION (Visually Dominant) -->
+        <article class="tier-card tier-core">
+          <div class="tier-badge-row">
+            <span class="tier-badge core">CORE EVIDENCE VERIFICATION</span>
+            <span class="tier-status-tag live">LIVE · 구현 완료</span>
           </div>
-          <h2 class="layer-title">Citation Integrity</h2>
-          <div class="layer-question">"Is the reference real and coherent?"</div>
-          <p class="layer-body">
-            생성형 AI의 의견이 아닌, 한국연구재단(NRF) KCI 실제 공식 레코드와 결정론적 규칙으로 대조하여 가짜 논문 및 서지 왜곡을 실시간 적발합니다.
+          <h2 class="tier-title">KCI Citation Integrity (레퍼런스 무결성)</h2>
+          <div class="tier-question">"Is the reference real and coherent?" (언어 무관 기본 검증층)</div>
+          <p class="tier-desc">
+            생성형 AI의 의견이 아닌 한국연구재단(NRF) KCI 실제 공식 레코드와 3단계 결정론적 프로토콜(실재 확인 ➔ 레코드 고정 ➔ 필드 정합성)로 검증합니다.
           </p>
-          <div class="layer-foot">
-            <span class="layer-state-tag">현재 구현됨 · LIVE OPEN API</span>
+          <div class="tier-features-list">
+            <span>✓ 실시간 KCI Open API 연동</span>
+            <span>✓ 결정론적 필드 일치 대조</span>
+            <span>✓ 검증 경로(Verification Path) 추적</span>
           </div>
         </article>
 
-        <!-- Layer 2 (Expansion) -->
-        <article class="layer-card is-expansion">
-          <div class="layer-head">
-            <span class="layer-badge">Layer 2 · 독창성 확장</span>
-            <span class="layer-lang-tag">KO → EN 연구 발전</span>
-          </div>
-          <h2 class="layer-title">Translation Fidelity</h2>
-          <div class="layer-question">"Did the reference and meaning survive translation?"</div>
-          <p class="layer-body">
-            한국어 원문이 영어 논문으로 재생성될 때, 인용 번호 mapping이 보존되는지 및 상관성 서술이 인과성 보장으로 과도하게 격상되지 않는지 감지합니다.
-          </p>
-          <div class="layer-foot">
-            <span class="layer-state-tag">확장 검증 계층 (Semantic Observer)</span>
-          </div>
-        </article>
+        <!-- Level 2: EXPANSION & ROADMAP LAYERS (Visually Secondary) -->
+        <div class="tier-sub-col">
+          <!-- Expansion: Translation Fidelity -->
+          <article class="tier-card tier-expansion">
+            <div class="tier-badge-row">
+              <span class="tier-badge expansion">EXPANSION LAYER</span>
+              <span class="tier-status-tag">독창성 시연</span>
+            </div>
+            <h3 class="tier-sub-title">KO ↔ EN Translation Fidelity</h3>
+            <div class="tier-question">"Did the reference and meaning survive translation?"</div>
+            <p class="tier-desc-sm">
+              한국어 연구물이 영어로 변환될 때 인용 번호 mapping이 왜곡되거나 상관성이 과장된 인과로 격상되는 신호를 Solar 시맨틱 옵저버로 감지합니다.
+            </p>
+          </article>
 
-        <!-- Layer 3 (Roadmap Context) -->
-        <article class="layer-card is-roadmap">
-          <div class="layer-head">
-            <span class="layer-badge muted">Layer 3 · 참조 컨텍스트</span>
-            <span class="layer-lang-tag">Pilot / 보조 분석</span>
-          </div>
-          <h2 class="layer-title">Finance-20 Reference Context</h2>
-          <div class="layer-question">"Is the English expression unusual relative to reference?"</div>
-          <p class="layer-body">
-            실제 영문 금융논문 코퍼스의 서술 경향성을 보조적으로 비교합니다. 정답표나 writing-quality score가 아닌 순수 참조 분포입니다.
-          </p>
-          <div class="layer-foot">
-            <span class="layer-state-tag muted">참조 분포 프로파일 (비평가/점수 아님)</span>
-          </div>
-        </article>
+          <!-- Context: Finance-20 Pilot -->
+          <article class="tier-card tier-context">
+            <div class="tier-badge-row">
+              <span class="tier-badge context">REFERENCE CONTEXT</span>
+              <span class="tier-status-tag muted">Roadmap / Pilot</span>
+            </div>
+            <h3 class="tier-sub-title">Finance-20 Pilot</h3>
+            <div class="tier-question">"Is the expression unusual relative to reference?"</div>
+            <p class="tier-desc-sm">
+              실제 영문 금융논문 코퍼스의 서술 경향성을 보조적으로 참고합니다. (정답표 · writing-quality score가 아님)
+            </p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <!-- ============================== SECTION 2: PRIMARY LIVE KCI DEMO (0:35–2:30) ============================== -->
+    <!-- ============================== SECTION 2: PRIMARY LIVE KCI DEMO (0:35–3:35) ============================== -->
     <section class="pres-section section-kci-live" id="kci-live">
       <div class="section-header">
         <div class="section-title-wrap">
           <div class="section-num-tag">
-            <span class="num-time">0:35–2:30</span>
-            <span class="num-label">CORE DEMO</span>
+            <span class="num-time">0:35–3:35</span>
+            <span class="num-label">CORE DEMONSTRATION</span>
           </div>
-          <h2 class="section-title">Layer 1 · KCI 레퍼런스 무결성 검증 (LIVE)</h2>
+          <h2 class="section-title">CORE · KCI 레퍼런스 무결성 검증 (LIVE)</h2>
         </div>
         <p class="section-sub">
-          <strong>원칙:</strong> 외부 실제 근거(한국연구재단 KCI Open API) ➔ 결정론적 규칙(Deterministic Rules) ➔ 판정 이유 공개 ➔ 연구자 최종 검토
+          <strong>핵심 질문:</strong> "이 인용은 실제로 존재하고, 하나의 실제 학술 레코드와 정합적인가?"
         </p>
       </div>
 
-      <!-- KCI LIVE PIPELINE BAR -->
-      <div class="kci-flow-bar" aria-label="KCI 검증 파이프라인">
-        <div class="kci-step"><span class="step-num">01</span><span class="step-txt">Citation Input</span></div>
-        <span class="kci-arrow">➔</span>
-        <div class="kci-step"><span class="step-num">02</span><span class="step-txt">KCI articleSearch</span></div>
-        <span class="kci-arrow">➔</span>
-        <div class="kci-step"><span class="step-num">03</span><span class="step-txt">KCI articleDetail</span></div>
-        <span class="kci-arrow">➔</span>
-        <div class="kci-step"><span class="step-num">04</span><span class="step-txt">Field Comparison</span></div>
-        <span class="kci-arrow">➔</span>
-        <div class="kci-step"><span class="step-num">05</span><span class="step-txt">Finding & Why?</span></div>
-        <span class="kci-arrow">➔</span>
-        <div class="kci-step is-human"><span class="step-num">06</span><span class="step-txt">Human Review</span></div>
+      <!-- COMPACT STAGED PROTOCOL (VISUAL CENTER) -->
+      <div class="staged-protocol-banner">
+        <div class="proto-step">
+          <div class="proto-step-num">STEP 1</div>
+          <div class="proto-step-title">실재 여부 확인</div>
+          <div class="proto-step-desc">KCI articleSearch ➔ 후보 레코드 발견</div>
+          <span class="proto-status live">LIVE · TESTED</span>
+        </div>
+        <span class="proto-arrow">➔</span>
+        <div class="proto-step">
+          <div class="proto-step-num">STEP 2</div>
+          <div class="proto-step-title">실제 레코드 고정</div>
+          <div class="proto-step-desc">KCI articleDetail ➔ canonical 레코드 고정</div>
+          <span class="proto-status live">LIVE · TESTED</span>
+        </div>
+        <span class="proto-arrow">➔</span>
+        <div class="proto-step">
+          <div class="proto-step-num">STEP 3</div>
+          <div class="proto-step-title">필드 단위 정합성</div>
+          <div class="proto-step-desc">Title · Author · Year · DOI ➔ 결정론적 비교</div>
+          <span class="proto-status live">LIVE · TESTED</span>
+        </div>
+        <span class="proto-arrow">➔</span>
+        <div class="proto-step proto-outcomes">
+          <div class="proto-step-num">판정 도출</div>
+          <div class="outcomes-chips">
+            <span class="oc-chip verified">VERIFIED</span>
+            <span class="oc-chip drift">METADATA_DRIFT</span>
+            <span class="oc-chip review">REVIEW_REQUIRED</span>
+            <span class="oc-chip notfound">NOT_FOUND_IN_KCI</span>
+          </div>
+        </div>
       </div>
 
       <!-- KCI LIVE CONSOLE -->
       <div class="kci-console-grid">
-        <!-- Console Left: Citation Input & Execution -->
+        <!-- Console Left: Citation Input & Presets -->
         <div class="kci-input-panel">
           <div class="panel-header-row">
             <h3 class="panel-box-title">인용 서지정보 입력 (Citation Input)</h3>
-            <span class="live-pill">실제 KCI API 연결됨</span>
+            <span class="live-pill">실제 KCI Open API 연동</span>
+          </div>
+
+          <!-- Quick Presets for Mentor Demonstration -->
+          <div class="preset-buttons-group">
+            <span class="preset-label">30초 시연 프리셋:</span>
+            <div class="preset-btns">
+              <button class="btn btn-preset is-active" id="presetDrift" type="button">
+                ① 2023 연도 불일치 (METADATA_DRIFT)
+              </button>
+              <button class="btn btn-preset" id="presetNotFound" type="button">
+                ② 색인 경계 (NOT_FOUND + Crossref)
+              </button>
+              <button class="btn btn-preset" id="presetSysFail" type="button">
+                ③ 통신 장애 ➔ OAI 스냅샷 백업
+              </button>
+            </div>
           </div>
 
           <form id="liveAuditForm" class="kci-audit-form" autocomplete="off">
@@ -197,9 +236,6 @@
               <button class="btn btn-primary" id="btnExecuteLiveAudit" type="submit">
                 <span class="btn-icon">⚡</span> KCI 실시간 검증 실행
               </button>
-              <button class="btn btn-secondary" id="btnFillPresetDrift" type="button">
-                30초 시연용 예시 채우기 (2023 연도 불일치)
-              </button>
             </div>
           </form>
 
@@ -207,27 +243,108 @@
             <span class="status-indicator-dot"></span>
             <span class="status-msg" id="liveStatusMsg">준비 완료 — 버튼을 누르면 KCI Open API를 실시간 조회합니다.</span>
           </div>
+
+          <!-- OAI-PMH Frozen Snapshot Fallback Trigger -->
+          <div class="oai-fallback-box" id="oaiFallbackBox" hidden>
+            <div class="oai-fallback-head">
+              <span class="oai-icon">📦</span>
+              <strong>LIVE 장애 대응: 사전에 고정된 Evidence Snapshot (OAI-PMH)</strong>
+            </div>
+            <p class="oai-fallback-desc">
+              KCI 통신 장애 발생 시, 가짜 성공이 아닌 사전 고정 스냅샷임을 명시하고 재현성을 확보합니다.
+            </p>
+            <button class="btn btn-secondary btn-sm" id="btnLoadOaiSnapshot" type="button">
+              사전 저장 Evidence Snapshot 열기
+            </button>
+          </div>
         </div>
 
-        <!-- Console Right: Live Evidence & Finding Result -->
+        <!-- Console Right: Verification Path & Live Evidence -->
         <div class="kci-result-panel" id="kciResultPanel">
-          <!-- Dynamically populated by app.js (Default shows METADATA_DRIFT demonstration) -->
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </div>
+
+      <!-- DELIBERATELY SELECTED EVIDENCE SOURCES DEPTH -->
+      <div class="evidence-sources-depth-card">
+        <div class="depth-head">
+          <div class="depth-title">신중히 선별된 외부 근거 레이어 (Deliberately Selected Evidence Depth)</div>
+          <span class="depth-badge">무분별한 기능 확장이 아닌 근거의 깊이 확보</span>
+        </div>
+        <p class="depth-sub">
+          모든 API를 얕게 나열하지 않고, 핵심 인용 무결성을 심화하는 공식 근거원만 실 구현 상태에 맞추어 엄격히 분류했습니다.
+        </p>
+
+        <div class="sources-status-grid">
+          <!-- 1. KCI Search -->
+          <div class="source-item">
+            <div class="source-top">
+              <span class="source-name">KCI articleSearch</span>
+              <span class="source-status live">LIVE · TESTED</span>
+            </div>
+            <p class="source-detail">후보 검색 및 단일/복수 후보 식별 (실시간 API 검증 완료)</p>
+          </div>
+
+          <!-- 2. KCI Detail -->
+          <div class="source-item">
+            <div class="source-top">
+              <span class="source-name">KCI articleDetail</span>
+              <span class="source-status live">LIVE · TESTED</span>
+            </div>
+            <p class="source-detail">canonical 레코드 ID 고정 및 다국어·저자·연도 추출</p>
+          </div>
+
+          <!-- 3. KCI ReferenceSearch -->
+          <div class="source-item">
+            <div class="source-top">
+              <span class="source-name">KCI referenceSearch</span>
+              <span class="source-status qualified">QUALIFIED</span>
+            </div>
+            <p class="source-detail">참고문헌 메타데이터 근거 (인용 관계 입증용으로 과장하지 않음)</p>
+          </div>
+
+          <!-- 4. Crossref DOI -->
+          <div class="source-item">
+            <div class="source-top">
+              <span class="source-name">Crossref DOI Lookup</span>
+              <span class="source-status qualified">QUALIFIED</span>
+            </div>
+            <p class="source-detail">독립 DOI 메타데이터 교차확인 (KCI 대체가 아닌 실재성 보조)</p>
+          </div>
+
+          <!-- 5. KCI OAI-PMH -->
+          <div class="source-item">
+            <div class="source-top">
+              <span class="source-name">KCI OAI-PMH Snapshot</span>
+              <span class="source-status progress">IN PROGRESS</span>
+            </div>
+            <p class="source-detail">Frozen Evidence Snapshot (장애 격리 및 데모 재현성 보장)</p>
+          </div>
+
+          <!-- 6. Roadmap -->
+          <div class="source-item is-roadmap">
+            <div class="source-top">
+              <span class="source-name">OpenAlex · ORCID · Zotero</span>
+              <span class="source-status roadmap">ROADMAP</span>
+            </div>
+            <p class="source-detail">글로벌 학술 DB 및 저자 식별자 연계 (현재 데모 제외)</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ============================== SECTION 3: TRANSLATION FIDELITY EXPANSION (2:30–3:20) ============================== -->
+    <!-- ============================== SECTION 3: TRANSLATION FIDELITY EXPANSION (3:35–4:30) ============================== -->
     <section class="pres-section section-translation" id="translation">
       <div class="section-header">
         <div class="section-title-wrap">
           <div class="section-num-tag">
-            <span class="num-time">2:30–3:20</span>
+            <span class="num-time">3:35–4:30</span>
             <span class="num-label">EXPANSION LAYER</span>
           </div>
-          <h2 class="section-title">Layer 2 · KO ↔ EN 번역 충실도 확장 (Translation Fidelity)</h2>
+          <h2 class="section-title">EXPANSION · KO ↔ EN 번역 충실도 확장</h2>
         </div>
         <p class="section-sub">
-          <strong>독창성 확장:</strong> KCI 인용 무결성 위에 구축되는 계층으로, 연구물이 영문화될 때 인용 mapping과 주장 의미의 보존 여부를 감지합니다.
+          <strong>핵심 질문:</strong> "실제 근거와 의미가 AI 영어화 과정에서도 보존되는가?"
         </p>
       </div>
 
@@ -294,12 +411,12 @@
       </div>
     </section>
 
-    <!-- ============================== SECTION 4: ARCHITECTURE & ORIGINALITY (3:20–5:00) ============================== -->
+    <!-- ============================== SECTION 4: ARCHITECTURE & ORIGINALITY (4:30–5:00) ============================== -->
     <section class="pres-section section-architecture" id="architecture">
       <div class="section-header">
         <div class="section-title-wrap">
           <div class="section-num-tag">
-            <span class="num-time">3:20–5:00</span>
+            <span class="num-time">4:30–5:00</span>
             <span class="num-label">SYSTEM ARCHITECTURE</span>
           </div>
           <h2 class="section-title">시스템 구현 아키텍처 및 독창성</h2>
@@ -315,7 +432,7 @@
           <div class="node-icon">🏛️</div>
           <div class="node-title">KCI Open API</div>
           <div class="node-role">External Bibliographic Evidence</div>
-          <div class="node-desc">한국연구재단 공식 서지 데이터베이스 실시간 연동</div>
+          <div class="node-desc">한국연구재단 공식 서지 데이터베이스 실시간 연동 (LIVE · TESTED)</div>
         </div>
 
         <div class="arch-node node-rules">
