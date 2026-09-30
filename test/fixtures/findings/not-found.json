@@ -1,0 +1,36 @@
+{
+  "contract_version": "trustverify-citation-finding-v1",
+  "kind": "RESEARCH_FINDING",
+  "finding_id": "fixture-finding-not-found",
+  "track": "CITATION_INTEGRITY",
+  "status": "NOT_FOUND_IN_KCI",
+  "rule_id": "REF-KCI-ZERO-001",
+  "rule_version": "1.0",
+  "input": {
+    "citation_id": "fixture-citation-4",
+    "title": "Intentionally Improbable Synthetic Fixture Title"
+  },
+  "evidence": [
+    {
+      "evidence_id": "fixture-evidence-4",
+      "evidence_type": "KCI_SEARCH_RESULT",
+      "source_system": "KCI",
+      "source_record_id": null,
+      "retrieved_at": "2026-09-30T00:00:00Z",
+      "normalized_content_sha256": null,
+      "redacted_snapshot_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "data": {
+        "runtime_state": "KCI_ZERO_RESULTS",
+        "messages": ["No Data"],
+        "record_count": 0,
+        "total": null
+      }
+    }
+  ],
+  "field_comparisons": [],
+  "reason": "Fixture example: a successful KCI search returned the recognized zero-result envelope.",
+  "limitations": ["Not found in KCI does not prove that a paper is fake or nonexistent elsewhere."],
+  "human_review_required": true,
+  "fixture": true,
+  "fixture_notice": "Synthetic UI fixture; not an executed citation finding."
+}

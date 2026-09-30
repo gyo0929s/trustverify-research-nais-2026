@@ -1,0 +1,43 @@
+{
+  "contract_version": "trustverify-citation-finding-v1",
+  "kind": "RESEARCH_FINDING",
+  "finding_id": "fixture-finding-metadata-drift",
+  "track": "CITATION_INTEGRITY",
+  "status": "METADATA_DRIFT",
+  "rule_id": "REF-META-002",
+  "rule_version": "1.0",
+  "input": {
+    "citation_id": "fixture-citation-2",
+    "title": "Computer Vision-based Basketball Player Training System",
+    "publication_year": "2023"
+  },
+  "evidence": [
+    {
+      "evidence_id": "fixture-evidence-2",
+      "evidence_type": "KCI_RECORD",
+      "source_system": "KCI",
+      "source_record_id": "ART003062835",
+      "retrieved_at": "2026-09-30T00:00:00Z",
+      "normalized_content_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "redacted_snapshot_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "publication_year": "2024"
+      }
+    }
+  ],
+  "field_comparisons": [
+    {
+      "field": "publication_year",
+      "input_value": "2023",
+      "evidence_value": "2024",
+      "result": "MISMATCH",
+      "evidence_ids": ["fixture-evidence-2"]
+    }
+  ],
+  "reason": "Fixture example: coherent record identity is assumed, while the supplied year differs from KCI evidence.",
+  "limitations": ["This fixture does not implement or demonstrate record matching."],
+  "human_review_required": true,
+  "fixture": true,
+  "fixture_notice": "Synthetic UI fixture; not an executed citation finding."
+}

@@ -1,0 +1,45 @@
+{
+  "contract_version": "trustverify-citation-finding-v1",
+  "kind": "RESEARCH_FINDING",
+  "finding_id": "fixture-finding-verified",
+  "track": "CITATION_INTEGRITY",
+  "status": "VERIFIED",
+  "rule_id": "REF-META-001",
+  "rule_version": "1.0",
+  "input": {
+    "citation_id": "fixture-citation-1",
+    "title": "Computer Vision-based Basketball Player Training System",
+    "publication_year": "2024",
+    "doi": "10.9728/dcs.2024.25.3.595"
+  },
+  "evidence": [
+    {
+      "evidence_id": "fixture-evidence-1",
+      "evidence_type": "KCI_RECORD",
+      "source_system": "KCI",
+      "source_record_id": "ART003062835",
+      "retrieved_at": "2026-09-30T00:00:00Z",
+      "normalized_content_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "redacted_snapshot_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "data": {
+        "title": "Computer Vision-based Basketball Player Training System",
+        "publication_year": "2024",
+        "doi_normalized": "10.9728/dcs.2024.25.3.595"
+      }
+    }
+  ],
+  "field_comparisons": [
+    {
+      "field": "publication_year",
+      "input_value": "2024",
+      "evidence_value": "2024",
+      "result": "MATCH",
+      "evidence_ids": ["fixture-evidence-1"]
+    }
+  ],
+  "reason": "Fixture example: one coherent KCI record supports the supplied bibliographic fields.",
+  "limitations": ["Bibliographic agreement does not verify scientific claims."],
+  "human_review_required": true,
+  "fixture": true,
+  "fixture_notice": "Synthetic UI fixture; not an executed citation finding."
+}

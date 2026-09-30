@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trustverify.example/schemas/citation-finding-v1.json",
+  "title": "TrustVerify citation integrity finding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "kind",
+    "finding_id",
+    "track",
+    "status",
+    "rule_id",
+    "rule_version",
+    "input",
+    "evidence",
+    "field_comparisons",
+    "reason",
+    "limitations",
+    "human_review_required"
+  ],
+  "properties": {
+    "contract_version": { "const": "trustverify-citation-finding-v1" },
+    "kind": { "const": "RESEARCH_FINDING" },
+    "finding_id": { "type": "string", "minLength": 1 },
+    "track": { "const": "CITATION_INTEGRITY" },
+    "status": {
+      "enum": ["VERIFIED", "METADATA_DRIFT", "CHIMERA", "REVIEW_REQUIRED", "NOT_FOUND_IN_KCI"]
+    },
+    "rule_id": { "type": "string", "minLength": 1 },
+    "rule_version": { "type": "string", "minLength": 1 },
+    "input": { "type": "object" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "evidence_type", "source_system", "source_record_id", "data"],
+        "properties": {
+          "evidence_id": { "type": "string", "minLength": 1 },
+          "evidence_type": { "enum": ["KCI_RECORD", "KCI_SEARCH_RESULT"] },
+          "source_system": { "const": "KCI" },
+          "source_record_id": { "type": ["string", "null"] },
+          "retrieved_at": { "type": ["string", "null"] },
+          "normalized_content_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+          "redacted_snapshot_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+          "data": { "type": "object" }
+        }
+      }
+    },
+    "field_comparisons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "input_value", "evidence_value", "result", "evidence_ids"],
+        "properties": {
+          "field": { "type": "string", "minLength": 1 },
+          "input_value": {},
+          "evidence_value": {},
+          "result": { "enum": ["MATCH", "MISMATCH", "MULTI_RECORD", "UNKNOWN"] },
+          "evidence_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "human_review_required": { "type": "boolean" },
+    "fixture": { "type": "boolean" },
+    "fixture_notice": { "type": "string" }
+  }
+}

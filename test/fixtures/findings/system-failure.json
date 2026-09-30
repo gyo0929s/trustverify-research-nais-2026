@@ -1,0 +1,14 @@
+{
+  "contract_version": "trustverify-system-failure-v1",
+  "kind": "SYSTEM_FAILURE",
+  "failure_id": "fixture-system-failure-1",
+  "track": "CITATION_INTEGRITY",
+  "system_state": "KCI_UNAVAILABLE",
+  "operation": "articleSearch",
+  "messages": [],
+  "reason": "Fixture example: the KCI request could not complete because of a transport failure.",
+  "retry_recommended": true,
+  "research_finding_emitted": false,
+  "fixture": true,
+  "fixture_notice": "Synthetic UI fixture; not a citation finding."
+}

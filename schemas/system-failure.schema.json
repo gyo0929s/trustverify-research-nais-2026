@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trustverify.example/schemas/system-failure-v1.json",
+  "title": "TrustVerify KCI system failure",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "kind",
+    "failure_id",
+    "track",
+    "system_state",
+    "operation",
+    "messages",
+    "reason",
+    "retry_recommended",
+    "research_finding_emitted"
+  ],
+  "properties": {
+    "contract_version": { "const": "trustverify-system-failure-v1" },
+    "kind": { "const": "SYSTEM_FAILURE" },
+    "failure_id": { "type": "string", "minLength": 1 },
+    "track": { "const": "CITATION_INTEGRITY" },
+    "system_state": {
+      "enum": ["KCI_UNAVAILABLE", "KCI_AUTH_FAILED", "KCI_INVALID_RESPONSE", "KCI_PARSE_FAILED"]
+    },
+    "operation": { "enum": ["articleSearch", "articleDetail"] },
+    "messages": { "type": "array", "items": { "type": "string" } },
+    "reason": { "type": "string", "minLength": 1 },
+    "retry_recommended": { "type": "boolean" },
+    "research_finding_emitted": { "const": false },
+    "fixture": { "type": "boolean" },
+    "fixture_notice": { "type": "string" }
+  }
+}

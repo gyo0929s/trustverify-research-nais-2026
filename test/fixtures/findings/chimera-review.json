@@ -1,0 +1,51 @@
+{
+  "contract_version": "trustverify-citation-finding-v1",
+  "kind": "RESEARCH_FINDING",
+  "finding_id": "fixture-finding-chimera",
+  "track": "CITATION_INTEGRITY",
+  "status": "CHIMERA",
+  "rule_id": "REF-CHIMERA-001",
+  "rule_version": "1.0",
+  "input": {
+    "citation_id": "fixture-citation-3",
+    "title": "Synthetic Mixed Citation Title",
+    "publication_year": "2024",
+    "doi": "10.0000/synthetic-fixture"
+  },
+  "evidence": [
+    {
+      "evidence_id": "fixture-evidence-3a",
+      "evidence_type": "KCI_RECORD",
+      "source_system": "KCI",
+      "source_record_id": "ART_FIXTURE_A",
+      "retrieved_at": null,
+      "normalized_content_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "redacted_snapshot_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "data": { "fixture_field": "title candidate" }
+    },
+    {
+      "evidence_id": "fixture-evidence-3b",
+      "evidence_type": "KCI_RECORD",
+      "source_system": "KCI",
+      "source_record_id": "ART_FIXTURE_B",
+      "retrieved_at": null,
+      "normalized_content_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "redacted_snapshot_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "data": { "fixture_field": "DOI candidate" }
+    }
+  ],
+  "field_comparisons": [
+    {
+      "field": "record_identity",
+      "input_value": "fields from one supplied citation",
+      "evidence_value": ["ART_FIXTURE_A", "ART_FIXTURE_B"],
+      "result": "MULTI_RECORD",
+      "evidence_ids": ["fixture-evidence-3a", "fixture-evidence-3b"]
+    }
+  ],
+  "reason": "Fixture example: different supplied fields strongly map to two distinct records.",
+  "limitations": ["Synthetic candidates are placeholders; fuzzy matching and CHIMERA rules are not implemented."],
+  "human_review_required": true,
+  "fixture": true,
+  "fixture_notice": "Synthetic UI fixture; not an executed citation finding."
+}

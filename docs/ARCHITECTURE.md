@@ -85,6 +85,8 @@ Every planned finding should expose:
 - Comparison, result, missing evidence, uncertainty and human review recommendation.
 - Retrieval/processing timestamp and links to pinned evidence hashes.
 
+The versioned [finding contract](FINDING_CONTRACT.md) uses a `kind` discriminator so clients cannot confuse a research finding with a system failure. It defines data shapes and synthetic UI fixtures only; status assignment and citation matching remain future work.
+
 For KCI, the adapter now supplies `source_system=KCI`, `source_record_id` derived from the actual article attribute, `retrieved_at`, normalized metadata, `normalizer_version=kci-normalizer-v1`, `normalized_content_sha256`, and `redacted_snapshot_sha256`. These are application concepts, not invented KCI response fields. The runtime snapshot hash covers exact persisted redacted tree JSON bytes; the earlier probe hashes cover saved redacted XML. Neither is a raw-wire hash. The shared ledger and rule engine remain future work.
 
 For the language tracks, pin the corpus manifest, permitted derived observations, model/prompt/extraction versions, and aggregation rules. Deterministic reruns need the preserved inputs as well as their hashes. Live retrieval or model re-execution may change results. Stale snapshots must be labeled, and processing failures must remain distinct from manuscript findings.
