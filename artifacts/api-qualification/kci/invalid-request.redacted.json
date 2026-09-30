@@ -1,0 +1,14 @@
+{
+  "case": "invalid",
+  "retrieved_at": "2026-09-30T11:22:32.3238747Z",
+  "request_parameters": {
+    "apiCode": "articleDetail"
+  },
+  "http_status": 200,
+  "content_type": "application/xml; charset=UTF-8",
+  "latency_ms": 80,
+  "root": "MetaData",
+  "response_snapshot_sha256": "355ee4d905b290d30b08345e9de19b8df07ea9bd5ae90d44163fccc8163fc20f",
+  "response_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><MetaData><inputData><key>[REDACTED]</key><apiCode>articleDetail</apiCode><page>1</page><displayCount>10</displayCount></inputData><outputData><result><resultMsg>필수 요청 파라미터가 없음 =&gt; id</resultMsg><resultMsg>검색 조건이 없습니다.</resultMsg></result></outputData></MetaData>",
+  "transport_failure": false
+}

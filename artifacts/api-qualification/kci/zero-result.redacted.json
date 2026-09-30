@@ -1,0 +1,16 @@
+{
+  "case": "zero",
+  "retrieved_at": "2026-09-30T11:22:31.9222237Z",
+  "request_parameters": {
+    "apiCode": "articleSearch",
+    "title": "TrustVerifyNoSuchTitle7f924d9e6a824bcaa5c12026",
+    "displayCount": "1"
+  },
+  "http_status": 200,
+  "content_type": "application/xml; charset=UTF-8",
+  "latency_ms": 195,
+  "root": "MetaData",
+  "response_snapshot_sha256": "b805d2e33ce865883067506a3bcec85fddccf2c506f260f0abbfff0005236b12",
+  "response_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><MetaData><inputData><key>[REDACTED]</key><apiCode>articleSearch</apiCode><title><![CDATA[TrustVerifyNoSuchTitle7f924d9e6a824bcaa5c12026]]></title><page>1</page><displayCount>10</displayCount></inputData><outputData><result><resultMsg>No Data</resultMsg></result></outputData></MetaData>",
+  "transport_failure": false
+}
