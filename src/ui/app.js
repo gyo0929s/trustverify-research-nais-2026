@@ -195,11 +195,14 @@ const el = {
   // Extension Rail & Workspaces
   extensionRail: $('extensionRail'),
   railBtnCitation: $('railBtnCitation'),
+  railBtnClaimEvidence: $('railBtnClaimEvidence'),
   railBtnTranslation: $('railBtnTranslation'),
   railBtnAcademicRef: $('railBtnAcademicRef'),
   workspaceCitation: $('workspaceCitation'),
+  workspaceClaimEvidence: $('workspaceClaimEvidence'),
   workspaceTranslation: $('workspaceTranslation'),
   workspaceAcademicRef: $('workspaceAcademicRef'),
+  btnBackToCitationFromCe: $('btnBackToCitationFromCe'),
   btnBackToCitationFromTf: $('btnBackToCitationFromTf'),
   btnBackToCitationFromAr: $('btnBackToCitationFromAr'),
 
@@ -277,14 +280,17 @@ const el = {
 function switchWorkspaceModule(moduleName) {
   state.currentModule = moduleName;
   const isCitation = moduleName === 'citation';
+  const isClaimEvidence = moduleName === 'claim-evidence';
   const isTranslation = moduleName === 'translation';
   const isAcademicRef = moduleName === 'academic-reference';
 
   el.railBtnCitation?.classList.toggle('is-active', isCitation);
+  el.railBtnClaimEvidence?.classList.toggle('is-active', isClaimEvidence);
   el.railBtnTranslation?.classList.toggle('is-active', isTranslation);
   el.railBtnAcademicRef?.classList.toggle('is-active', isAcademicRef);
 
   if (el.workspaceCitation) el.workspaceCitation.hidden = !isCitation;
+  if (el.workspaceClaimEvidence) el.workspaceClaimEvidence.hidden = !isClaimEvidence;
   if (el.workspaceTranslation) el.workspaceTranslation.hidden = !isTranslation;
   if (el.workspaceAcademicRef) el.workspaceAcademicRef.hidden = !isAcademicRef;
 
@@ -1372,8 +1378,10 @@ function escapeHtml(str) {
 function init() {
   // Extension Rail Module Switching
   el.railBtnCitation?.addEventListener('click', () => switchWorkspaceModule('citation'));
+  el.railBtnClaimEvidence?.addEventListener('click', () => switchWorkspaceModule('claim-evidence'));
   el.railBtnTranslation?.addEventListener('click', () => switchWorkspaceModule('translation'));
   el.railBtnAcademicRef?.addEventListener('click', () => switchWorkspaceModule('academic-reference'));
+  el.btnBackToCitationFromCe?.addEventListener('click', () => switchWorkspaceModule('citation'));
   el.btnBackToCitationFromTf?.addEventListener('click', () => switchWorkspaceModule('citation'));
   el.btnBackToCitationFromAr?.addEventListener('click', () => switchWorkspaceModule('citation'));
 
@@ -1487,13 +1495,15 @@ function init() {
 
   // Check URL hash on load
   const hash = location.hash.replace('#', '').toLowerCase();
-  if (hash === 'translation' || hash === 'viewtranslation') {
+  if (hash === 'claim-evidence' || hash === 'viewclaimevidence' || hash === 'claim' || hash === 'layer3') {
+    switchWorkspaceModule('claim-evidence');
+  } else if (hash === 'translation' || hash === 'viewtranslation') {
     switchWorkspaceModule('translation');
   } else if (hash === 'academic-reference' || hash === 'finance-20' || hash === 'viewacademicref') {
     switchWorkspaceModule('academic-reference');
   } else if (hash === 'single' || hash === 'viewsingle') {
     switchMainView('single');
-  } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'claim-evidence' || hash === 'architecture') {
+  } else if (hash === 'method' || hash === 'viewmethod' || hash === 'test-evidence' || hash === 'architecture') {
     switchMainView('method');
   } else {
     switchMainView('batch');

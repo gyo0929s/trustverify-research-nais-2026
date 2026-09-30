@@ -49,15 +49,15 @@
     <aside class="extension-rail" id="extensionRail" aria-label="연구 검증 확장 레일">
       <!-- Active Core Module Switch / Indicator -->
       <div class="rail-group">
-        <div class="rail-group-label">핵심 검증</div>
-        <button class="rail-item is-active" id="railBtnCitation" type="button" data-module="citation" title="KCI 인용 무결성 검증 (CORE / LIVE)">
+        <div class="rail-group-label">현재 검증</div>
+        <button class="rail-item is-active" id="railBtnCitation" type="button" data-module="citation" title="Citation Integrity (LIVE)">
           <div class="rail-item-top">
-            <span class="rail-item-icon">📚</span>
-            <span class="rail-item-title">인용 무결성</span>
+            <span class="rail-item-icon">●</span>
+            <span class="rail-item-title">Citation Integrity</span>
           </div>
-          <div class="rail-item-sub">Citation Integrity</div>
+          <div class="rail-item-sub">인용 무결성</div>
           <div class="rail-item-meta">
-            <span class="rail-badge badge-core">CORE · LIVE</span>
+            <span class="rail-badge badge-core">LIVE</span>
           </div>
         </button>
       </div>
@@ -68,25 +68,37 @@
       <div class="rail-group">
         <div class="rail-group-label">확장 연구 검증</div>
         <div class="rail-list">
-          <!-- MODULE 1: 번역 충실도 -->
-          <button class="rail-item" id="railBtnTranslation" type="button" data-module="translation" title="번역 충실도 검증 모듈">
+          <!-- MODULE 1: Claim–Evidence Alignment (Layer 3 · EXPANSION / P0) -->
+          <button class="rail-item" id="railBtnClaimEvidence" type="button" data-module="claim-evidence" title="Claim–Evidence Alignment (EXPANSION / P0)">
             <div class="rail-item-top">
-              <span class="rail-item-icon">🌐</span>
-              <span class="rail-item-title">번역 충실도</span>
+              <span class="rail-item-icon">◇</span>
+              <span class="rail-item-title">Claim–Evidence Alignment</span>
             </div>
-            <div class="rail-item-sub">숫자 · 인용 · 부정 · 인과 · 확신 변화</div>
+            <div class="rail-item-sub">공개 근거 ↔ 인용 문장</div>
             <div class="rail-item-meta">
-              <span class="rail-badge badge-expansion">EXPANSION</span>
+              <span class="rail-badge badge-expansion">EXPANSION / P0</span>
             </div>
           </button>
 
-          <!-- MODULE 2: 학술 표현 참조 -->
-          <button class="rail-item" id="railBtnAcademicRef" type="button" data-module="academic-reference" title="학술 표현 참조 모듈">
+          <!-- MODULE 2: Translation Fidelity -->
+          <button class="rail-item" id="railBtnTranslation" type="button" data-module="translation" title="Translation Fidelity (FUTURE)">
             <div class="rail-item-top">
-              <span class="rail-item-icon">📊</span>
+              <span class="rail-item-icon">◇</span>
+              <span class="rail-item-title">Translation Fidelity</span>
+            </div>
+            <div class="rail-item-sub">KO→EN 의미 보존</div>
+            <div class="rail-item-meta">
+              <span class="rail-badge badge-future">FUTURE</span>
+            </div>
+          </button>
+
+          <!-- MODULE 3: 학술 표현 참조 -->
+          <button class="rail-item" id="railBtnAcademicRef" type="button" data-module="academic-reference" title="학술 표현 참조 (PILOT)">
+            <div class="rail-item-top">
+              <span class="rail-item-icon">◇</span>
               <span class="rail-item-title">학술 표현 참조</span>
             </div>
-            <div class="rail-item-sub">실제 분야 논문의 표현 분포와 비교</div>
+            <div class="rail-item-sub">분야별 표현 분포</div>
             <div class="rail-item-meta">
               <span class="rail-badge badge-pilot">PILOT</span>
             </div>
@@ -797,6 +809,291 @@
     </div>
   </div>
   <!-- ============================== END WORKSPACE 1 ============================== -->
+
+      <!-- =========================================================================
+           WORKSPACE: CLAIM–EVIDENCE ALIGNMENT (LAYER 3 · EXPANSION / P0)
+           ========================================================================= -->
+      <div class="workspace-module" id="workspaceClaimEvidence" hidden>
+        <!-- Header -->
+        <section class="ext-workspace-hero">
+          <div class="ext-hero-top">
+            <div class="ce-method-badges">
+              <span class="rail-badge badge-expansion">EXPANSION / P0</span>
+              <span class="ce-tag-pill">ABSTRACT-ONLY</span>
+              <span class="ce-tag-pill">DETERMINISTIC-FIRST</span>
+              <span class="ce-tag-pill">HUMAN REVIEW</span>
+            </div>
+            <button class="btn btn-sm btn-ghost btn-back-citation" id="btnBackToCitationFromCe" type="button">
+              ← 인용 무결성 검증으로 돌아가기
+            </button>
+          </div>
+          <h1 class="ext-hero-title">Claim–Evidence Alignment</h1>
+          <p class="ext-hero-sub">주장–근거 정합성 (Layer 3)</p>
+          <p class="ext-hero-desc">
+            "형식적으로 맞는 인용이 실제 논문의 공개 근거와도 정합적인가?"
+          </p>
+          <div class="ce-hero-notice">
+            <span class="ce-notice-icon">ℹ️</span>
+            <span class="ce-notice-text">
+              <strong>관측 원칙:</strong> 본 모듈은 진위 여부를 단정하지 않으며, 인용 문장이 KCI 공식 초록(Abstract)의 공개 근거와 비교하여 주장 강도나 서술 방향에서 차이를 보이는지 객관적으로 관측합니다.
+            </span>
+          </div>
+        </section>
+
+        <!-- Status Definition Banner -->
+        <div class="batch-card ce-status-banner-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">CANONICAL STATUSES</span>
+              <h3 class="batch-title">정합성 관측 3대 정규 상태 (Canonical Statuses)</h3>
+            </div>
+            <span class="batch-helper-text">진위 단정이 아닌 공개 근거 대비 서술 일치도 관측</span>
+          </div>
+          <div class="ce-statuses-grid">
+            <div class="ce-status-card status-consistent">
+              <div class="ce-status-head">
+                <span class="ce-status-badge badge-consistent">CONSISTENT_WITH_EVIDENCE</span>
+                <span class="ce-status-ko">공개 근거 범위에서 정합</span>
+              </div>
+              <p class="ce-status-desc">KCI 초록에서 접지된 문장(Grounded span)이 확인되고, 모니터링 5대 차원(인과·양상·확신·부정·방향)의 서술 강도가 보존됨.</p>
+            </div>
+
+            <div class="ce-status-card status-shift">
+              <div class="ce-status-head">
+                <span class="ce-status-badge badge-shift">POTENTIAL_CLAIM_SHIFT</span>
+                <span class="ce-status-ko">주장 강도 변화 가능성</span>
+              </div>
+              <p class="ce-status-desc">인용 문장이 확보된 공개 근거 대비 상관성 ➔ 인과 격상, 추측 ➔ 단정 등 서술 강도 변화 또는 방향 전도를 보임. (사람 검토 필요)</p>
+            </div>
+
+            <div class="ce-status-card status-insufficient">
+              <div class="ce-status-head">
+                <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+                <span class="ce-status-ko">현재 근거만으로 판단 불충분</span>
+              </div>
+              <p class="ce-status-desc">현재 확보된 KCI 공개 초록 범위 내에서 인용 문장과 충분히 대응하는 근거 문장을 확정할 수 없음. (근거 범위의 한계)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Part Layout: Input / Evidence / Observation Card (Case A: Grounded Span - Potential Claim Shift) -->
+        <div class="batch-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">OBSERVATION DEMO</span>
+              <h3 class="batch-title">정합성 관측 사례 1: 상관 ➔ 인과 서술 격상 (Potential Claim Shift)</h3>
+            </div>
+            <span class="ce-integration-badge">EXPANSION / P0 · Backend integration pending</span>
+          </div>
+
+          <div class="ce-three-col-layout">
+            <!-- Left: Citing Statement -->
+            <div class="ce-col ce-col-citing">
+              <div class="ce-col-label">
+                <span class="ce-col-tag">인용 문장</span>
+                <span class="ce-col-sub">Citing Statement</span>
+              </div>
+              <div class="ce-statement-box">
+                <p class="ce-statement-text">"Computer vision-based basketball player tracking directly <mark class="mark-shift">causes</mark> significant tactical performance improvements."</p>
+                <div class="ce-statement-meta">
+                  <span>출처 문맥: 연구 결과 단락 본문 인용</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center: KCI Abstract Evidence Span -->
+            <div class="ce-col ce-col-evidence">
+              <div class="ce-col-label">
+                <span class="ce-col-tag">KCI 공개 근거</span>
+                <span class="ce-col-sub">Abstract Evidence Span</span>
+              </div>
+              <div class="ce-evidence-box">
+                <div class="ce-paper-info">
+                  <span class="ce-paper-id">KCI ID: ART003062835</span>
+                  <span class="ce-paper-title">Computer Vision-based Basketball Player Training System</span>
+                </div>
+                <div class="ce-grounded-span">
+                  <span class="ce-span-badge">접지된 근거 문장 (Grounded Span)</span>
+                  <p class="ce-span-text">"The experimental results <mark class="mark-grounded">are associated with</mark> tactical training support, while correlation does not establish direct causation."</p>
+                </div>
+                <!-- Collapsible Full Abstract -->
+                <details class="ce-full-abstract-details">
+                  <summary class="ce-full-abstract-summary">
+                    <span>전체 abstract 보기</span>
+                  </summary>
+                  <div class="ce-full-abstract-body">
+                    [KCI 공식 수록 초록]<br>
+                    In this paper, we propose a computer vision-based basketball player training system that analyzes motion trajectories. The experimental results are associated with tactical training support, while correlation does not establish direct causation. Future studies need to examine player cognitive load and long-term tactical retention.
+                  </div>
+                </details>
+              </div>
+            </div>
+
+            <!-- Right: Observed Result -->
+            <div class="ce-col ce-col-result">
+              <div class="ce-col-label">
+                <span class="ce-col-tag">관측 결과</span>
+                <span class="ce-col-sub">Observation & Verdict</span>
+              </div>
+              <div class="ce-result-box">
+                <div class="ce-result-status-row">
+                  <span class="ce-status-badge badge-shift">POTENTIAL_CLAIM_SHIFT</span>
+                  <span class="ce-action-badge">사람 검토 필요</span>
+                </div>
+                <div class="ce-signals-list">
+                  <span class="ce-signal-badge">CAUSALITY_STRENGTHENED</span>
+                </div>
+                <div class="ce-obs-summary">
+                  <span class="ce-obs-label">Observed:</span>
+                  <span class="ce-obs-val">Association → explicit causation (상관 ➔ 직접 인과 표현)</span>
+                </div>
+                <div class="ce-why-box">
+                  <strong>Why?</strong>
+                  <p>"인용 문장이 현재 확보된 abstract evidence보다 더 강한 인과 표현을 사용합니다."</p>
+                </div>
+                <div class="ce-observer-row">
+                  <span class="ce-observer-lbl">Semantic Observer:</span>
+                  <span class="ce-observer-badge">NON-CANONICAL (UNASSESSED)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Technical Provenance -->
+          <details class="ce-provenance-details">
+            <summary class="ce-provenance-summary">
+              <span>⚙️ 상세 근거 및 규칙 메타데이터 (Technical Provenance)</span>
+            </summary>
+            <div class="ce-provenance-body">
+              <div class="ce-prov-grid">
+                <div class="ce-prov-item">
+                  <span class="cp-k">KCI Article ID</span>
+                  <code class="cp-v">ART003062835</code>
+                </div>
+                <div class="ce-prov-item">
+                  <span class="cp-k">Evidence Span Hash</span>
+                  <code class="cp-v">sha256:7f83b165...4b2d</code>
+                </div>
+                <div class="ce-prov-item">
+                  <span class="cp-k">Rule ID & Version</span>
+                  <code class="cp-v">CE-SHIFT-001 (v1.0)</code>
+                </div>
+                <div class="ce-prov-item">
+                  <span class="cp-k">Processing Version</span>
+                  <code class="cp-v">claim-evidence-p0-1.0</code>
+                </div>
+                <div class="ce-prov-item full-width">
+                  <span class="cp-k">Human Review Reason</span>
+                  <span class="cp-v">인용문의 인과 단정 표현("directly causes")과 KCI 공개 초록의 상관 유보 표현("associated with") 간 강도 차이에 대한 연구자 비판적 검토 권장</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Evidence Sufficiency UX (Case B: Insufficient Evidence) -->
+        <div class="batch-card ce-insuff-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">EVIDENCE SUFFICIENCY</span>
+              <h3 class="batch-title">정합성 관측 사례 2: 근거 불충분 상태 (Evidence Sufficiency Gate)</h3>
+            </div>
+            <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+          </div>
+
+          <div class="ce-two-col-insuff">
+            <div class="ce-col-left">
+              <div class="ce-col-label">
+                <span class="ce-col-tag">인용 문장</span>
+                <span class="ce-col-sub">Citing Statement</span>
+              </div>
+              <div class="ce-statement-box">
+                <p class="ce-statement-text">"이 시스템은 초당 120프레임 전력 소모량을 15% 감축시켰다."</p>
+                <div class="ce-statement-meta">
+                  <span>세부 하드웨어 측정 수치 인용</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ce-col-right">
+              <div class="ce-col-label">
+                <span class="ce-col-tag">KCI 초록 접지 확인 결과</span>
+                <span class="ce-col-sub">Grounding Verification</span>
+              </div>
+              <div class="ce-insuff-message-box">
+                <div class="ce-insuff-msg-head">
+                  <span class="ce-status-badge badge-insufficient">INSUFFICIENT_EVIDENCE</span>
+                  <span class="ce-status-ko">현재 근거만으로 판단 불충분</span>
+                </div>
+                <p class="ce-insuff-text">
+                  "현재 확보된 KCI 공개 근거만으로 이 인용 문장을 충분히 확인할 수 없습니다."
+                </p>
+                <div class="ce-insuff-reason">
+                  <strong>안내:</strong> 해당 논문의 공개 초록에 전력 소모량이나 프레임 속도에 관한 접지 문장(Grounded span)이 포함되어 있지 않습니다. 이는 내용의 오류나 결함이 아니며, 전체 본문(Full text) 확인이 필요한 공개 근거 범위의 한계입니다.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monitored Dimensions & Signal Badges Catalog -->
+        <div class="batch-card">
+          <div class="batch-card-header">
+            <div class="batch-title-wrap">
+              <span class="batch-step-pill">SIGNALS CATALOG</span>
+              <h3 class="batch-title">모니터링 5대 차원 및 신호 뱃지 (Observation Signals)</h3>
+            </div>
+            <span class="batch-helper-text">확률치나 점수가 아닌 결정론적 표현 차원 관측</span>
+          </div>
+
+          <div class="ce-signals-grid">
+            <div class="ce-signal-item">
+              <div class="ce-signal-item-head">
+                <span class="ce-signal-badge">CAUSALITY_STRENGTHENED</span>
+                <span class="ce-signal-item-title">인과 표현 강화</span>
+              </div>
+              <p class="ce-signal-item-desc">원문의 상관성(associated with) 서술이 명시적 인과(causes, leads to) 표현으로 격상됨</p>
+            </div>
+
+            <div class="ce-signal-item">
+              <div class="ce-signal-item-head">
+                <span class="ce-signal-badge">MODALITY_STRENGTHENED</span>
+                <span class="ce-signal-item-title">양상 표현 강화</span>
+              </div>
+              <p class="ce-signal-item-desc">원문의 가능성(may, could) 서술이 당위성이나 필연성(must, necessarily)으로 격상됨</p>
+            </div>
+
+            <div class="ce-signal-item">
+              <div class="ce-signal-item-head">
+                <span class="ce-signal-badge">CERTAINTY_STRENGTHENED</span>
+                <span class="ce-signal-item-title">확신 어조 강화</span>
+              </div>
+              <p class="ce-signal-item-desc">원문의 신중한 유보(suggests, likely)가 절대적 단정(proves, conclusively)으로 격상됨</p>
+            </div>
+
+            <div class="ce-signal-item">
+              <div class="ce-signal-item-head">
+                <span class="ce-signal-badge">NEGATION_CHANGED</span>
+                <span class="ce-signal-item-title">부정 극성 변화</span>
+              </div>
+              <p class="ce-signal-item-desc">원문의 부정 표현("유의하지 않음")이 긍정 표현으로 누락되거나 반전됨</p>
+            </div>
+
+            <div class="ce-signal-item">
+              <div class="ce-signal-item-head">
+                <span class="ce-signal-badge">DIRECTION_CHANGED</span>
+                <span class="ce-signal-item-title">효과 방향 반전</span>
+              </div>
+              <p class="ce-signal-item-desc">원문의 효과 방향(증가/상승)이 인용문에서 반대 방향(감소/하락)으로 전도됨</p>
+            </div>
+          </div>
+
+          <div class="ext-footer-note">
+            <span>💡 <strong>검증 위계 안내:</strong> TrustVerify의 핵심 실시간 검증은 <strong>Citation Integrity(서지 존재성 및 메타데이터 무결성)</strong>입니다. Claim–Evidence Alignment는 KCI 공식 서지가 확정된 논문의 공개 초록을 바탕으로 인용 문장의 서술 차이를 보조 관측하는 직후 연구 확장층(Layer 3)입니다.</span>
+          </div>
+        </div>
+      </div>
+      <!-- ============================== END WORKSPACE CLAIM–EVIDENCE ============================== -->
 
       <!-- =========================================================================
            WORKSPACE 2: TRANSLATION FIDELITY (EXPANSION MODULE)
