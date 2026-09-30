@@ -64,6 +64,7 @@ Tests use the committed redacted qualification fixtures and synthetic transport 
 - [KCI qualification summary](artifacts/api-qualification/kci/SUMMARY.md)
 - [Observed KCI field map](artifacts/api-qualification/kci/field-map.md)
 - [Citation finding and system-failure contracts](docs/FINDING_CONTRACT.md)
+- [Deterministic citation audit rules](docs/CITATION_AUDIT_RULES.md)
 - `src/kci/adapter.js`: runtime adapter and explicit redacted snapshot persistence.
 - `test/kci.test.js`: offline fixture, failure-boundary, transport and audit tests.
 - `tools/api-probe/kci/`: isolated qualification and offline verification scripts, separate from future product runtime.
