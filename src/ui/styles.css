@@ -3996,3 +3996,23 @@ button { font: inherit; color: inherit; }
   }
 }
 
+
+/* Claim–Evidence result hierarchy: decision first; sentence / KCI paper / observation collapsed below. */
+.ce-detail-section { margin-top: 12px; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; background: #ffffff; padding: 0 14px; }
+.ce-detail-summary { cursor: pointer; list-style: none; padding: 10px 0; font-size: 13px; font-weight: 700; color: var(--text-2, #334155); }
+.ce-detail-summary::-webkit-details-marker { display: none; }
+.ce-detail-section[open] { padding-bottom: 14px; }
+.ce-compare-view .ce-contrast-head { align-items: flex-start; }
+.ce-compare-titles { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.ce-compare-headline { font-size: 18px; }
+.ce-compare-sub { font-size: 13px; color: var(--text-3, #64748b); }
+.ce-compare-sub code { margin-left: 6px; font-weight: 800; color: #1d4ed8; }
+.ce-compare-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.ce-compare-row { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; }
+.ce-compare-k { font-size: 12px; font-weight: 700; color: var(--text-3, #64748b); }
+.ce-compare-v { font-family: var(--mono, monospace); font-size: 15px; }
+.ce-compare-v.is-pass { color: #15803d; }
+.ce-compare-v.is-fail { color: #b91c1c; }
+.ce-compare-v.is-shift { color: #b45309; }
+.ce-compare-v.is-muted { color: #64748b; }
+@media (max-width: 900px) { .ce-compare-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

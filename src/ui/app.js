@@ -492,9 +492,35 @@ function switchCeView(viewName) {
   el.navTabCeExamples?.classList.toggle('is-active', isExamples);
   el.navTabCeMethod?.classList.toggle('is-active', isMethod);
 
-  if (el.ceViewVerify) el.ceViewVerify.hidden = !isVerify;
+  if (el.ceCompareNavBanner) el.ceCompareNavBanner.hidden = !isVerify;
+
+  if (isVerify) {
+    const isCompare = state.currentCeCompareMode === 'compare';
+    if (el.ceViewVerify) el.ceViewVerify.hidden = isCompare;
+    if (el.ceViewCompare) el.ceViewCompare.hidden = !isCompare;
+  } else {
+    if (el.ceViewVerify) el.ceViewVerify.hidden = true;
+    if (el.ceViewCompare) el.ceViewCompare.hidden = true;
+  }
   if (el.ceViewExamples) el.ceViewExamples.hidden = !isExamples;
   if (el.ceViewMethod) el.ceViewMethod.hidden = !isMethod;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchCeCompareMode(mode) {
+  state.currentCeCompareMode = mode;
+  const isDefault = mode === 'default';
+  const isCompare = mode === 'compare';
+
+  el.btnCeNavDefault?.classList.toggle('is-active', isDefault);
+  el.btnCeNavDefault?.setAttribute('aria-selected', isDefault ? 'true' : 'false');
+
+  el.btnCeNavContrast?.classList.toggle('is-active', isCompare);
+  el.btnCeNavContrast?.setAttribute('aria-selected', isCompare ? 'true' : 'false');
+
+  if (el.ceViewVerify) el.ceViewVerify.hidden = !isDefault;
+  if (el.ceViewCompare) el.ceViewCompare.hidden = !isCompare;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2430,6 +2456,7 @@ function init() {
   el.navTabCeVerify?.addEventListener('click', () => {
     location.hash = 'ce-verify';
     switchCeView('verify');
+    switchCeCompareMode('default');
   });
   el.navTabCeExamples?.addEventListener('click', () => {
     location.hash = 'ce-examples';
@@ -2438,6 +2465,20 @@ function init() {
   el.navTabCeMethod?.addEventListener('click', () => {
     location.hash = 'ce-method';
     switchCeView('method');
+  });
+
+  // Claim-Evidence Comparison Navigation
+  el.btnCeNavDefault?.addEventListener('click', () => {
+    location.hash = 'ce-verify';
+    switchCeCompareMode('default');
+  });
+  el.btnCeNavContrast?.addEventListener('click', () => {
+    location.hash = 'ce-compare';
+    switchCeCompareMode('compare');
+  });
+  el.btnCeBackToDefault?.addEventListener('click', () => {
+    location.hash = 'ce-verify';
+    switchCeCompareMode('default');
   });
 
   // Claim-Evidence Input Actions: presets only fill committed claims; results always come from the backend.
@@ -2597,8 +2638,13 @@ function handleHashRouting() {
   const hash = location.hash.replace('#', '').toLowerCase();
   if (hash === 'claim-evidence' || hash === 'viewclaimevidence' || hash === 'claim' || hash === 'layer3') {
     switchWorkspaceModule('claim-evidence', 'verify');
+    switchCeCompareMode('default');
+  } else if (hash === 'ce-compare' || hash === 'ce-contrast') {
+    switchWorkspaceModule('claim-evidence', 'verify');
+    switchCeCompareMode('compare');
   } else if (hash === 'ce-verify') {
     switchWorkspaceModule('claim-evidence', 'verify');
+    switchCeCompareMode('default');
   } else if (hash.startsWith('ce-examples')) {
     switchWorkspaceModule('claim-evidence', 'examples');
     if (hash.includes('contrast')) switchCeCase('D4-CONTRAST');
